@@ -100,7 +100,6 @@ of map data structure is as follows:
 ``` {.programlisting .language-markup}
 Map<RowKey, SortedMap<ColumnKey, ColumnValue>>
 ```
-:::
 
 The `Map` data structure gives efficient
 key lookup, and the sorted nature provides efficient scans.
@@ -507,7 +506,6 @@ volume bigint,
 PRIMARY KEY (symbol, tick_date)
 );
 ```
-:::
 
 Consider the following three cases: first, we want to list out all
 stocks and their description in all exchanges. The SQL query for this is
@@ -519,7 +517,6 @@ very simple:
 SELECT symbol, description, exchange
 FROM stock_symbol;
 ```
-:::
 
 Second, if we want to know all the daily close
 prices and descriptions of the stocks listed in the `NASDAQ`
@@ -534,7 +531,6 @@ FROM stock_symbol, stock_ticker
 WHERE stock_symbol.symbol = stock_ticker.symbol
 AND stock_symbol.exchange = ''NASDAQ'';
 ```
-:::
 
 Furthermore, if we want to know all the day close prices and
 descriptions of the stocks listed in the `NASDAQ` exchange on
@@ -552,7 +548,6 @@ WHERE stock_symbol.symbol = stock_ticker.symbol
 AND stock_symbol.exchange = ''NASDAQ''
 AND stock_ticker.tick_date = ''2014-04-24'';
 ```
-:::
 
 By virtue of the relational data model, we can simply write different
 SQL queries to return different results with no changes to the
@@ -585,7 +580,6 @@ volume bigint,
 PRIMARY KEY (symbol, tick_date)
 );
 ```
-:::
 
 They seem to be correct at first sight.
 
@@ -598,7 +592,6 @@ As for `Query A` , we can query the Cassandra
 SELECT symbol, description, exchange
 FROM stock_symbol;
 ```
-:::
 
 The following figure depicts the logical and physical storage views of
 the `stock_symbol `table:
@@ -620,7 +613,6 @@ data structure mentioned in the previous section:
 ``` {.programlisting .language-markup}
 Map<RowKey, SortedMap<ColumnKey, ColumnValue>>
 ```
-:::
 
 The assigned values are as follows:
 
@@ -632,7 +624,6 @@ ColumnValue=Apple Inc.
 ColumnKey=exchange
 ColumnValue=NASDAQ
 ```
-:::
 
 So far so good, right?
 
@@ -681,7 +672,6 @@ close decimal,
 PRIMARY KEY (exchange, symbol, tick_date)
 );
 ```
-:::
 
 The logical and physical storage views of
 `stock_ticker_by_exchange` are shown as follows:
@@ -752,7 +742,6 @@ close decimal,
 PRIMARY KEY ((exchange, tick_date), symbol)
 );
 ```
-:::
 
 This time you should be aware of the definition of the primary key. It
 is interesting that there is an additional pair of parentheses for the

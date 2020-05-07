@@ -293,7 +293,6 @@ rpc_address: 0.0.0.0
 endpoint_snitch: GossipingPropertyFileSnitch
 auto_bootstrap: false
 ```
-:::
 
 The reason for using `GossipingPropertyFileSnitch` is that we
 want the Cassandra cluster to automatically update all nodes with the
@@ -310,7 +309,6 @@ the following code:
 dc=NY1
 rack=RACK1
 ```
-:::
 
 
 #### Configuration procedure
@@ -553,7 +551,6 @@ def testcase003():
 
 testcase003()
 ```
-:::
 
 The cluster connection code right at the beginning
 of the `testcase003()` function is passed with an array of the
@@ -887,7 +884,6 @@ statement to enable the row cache for `watchlist`:
 ``` {.programlisting .language-markup}
 ALTER TABLE watchlist WITH caching=''ROWS_ONLY'';
 ```
-:::
 
 Other available table caching options include
 `ALL` , `KEYS_ONLY` and `NONE`. They are
@@ -917,7 +913,3 @@ We then learned the basics of monitoring and performance tuning which
 are a must for a live running system. If you have experience in
 deploying other database and system, you may well appreciate the
 neatness and simplicity of Cassandra.
-
-In the next lab, we will have a look at the supplementary
-information pertinent to application design and development. We will
-also summarize of the essence of each lab.

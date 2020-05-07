@@ -247,7 +247,6 @@ CREATE TABLE quote (
   PRIMARY KEY (symbol, price_time) // primary key
 );
 ```
-:::
 
 The column data types and names are
 self-explanatory.
@@ -437,7 +436,6 @@ $ sudo apt-get –y upgrade
 $ sudo apt-get install python-pip python-dev \
 $ python2.7-dev build-essential
 ```
-:::
 
 Once the installation is complete, type the following command:
 
@@ -445,7 +443,6 @@ Once the installation is complete, type the following command:
 ``` {.programlisting .language-markup}
 $ python --version
 ```
-:::
 
 You should see the version string returned by Python, which tells you
 that the installation has been successful.
@@ -600,7 +597,6 @@ for index, row in data.iterrows():
     print index.date(), '\t', row['Open'], '\t', row['High'], \
           '\t', row['Low'], '\t', row['Close'], '\t', row['Volume']
 ```
-:::
 
 A brief explanation is required. pandas offers a very handy data
 structure called `DataFrame` , which is a two-dimensional
@@ -696,7 +692,6 @@ for index, row in data.iterrows():
                               row['close_price'], '\t', \
                               row['volume']
 ```
-:::
 
 
 #### Storing data in Cassandra
@@ -747,7 +742,6 @@ session.execute('CREATE TABLE IF NOT EXISTS quote (' + \
 ## close Cassandra connection
 cluster.shutdown()
 ```
-:::
 
 The comments of the code are sufficient to explain what it is doing.
 Now, we have the Historical Data repository ready
@@ -794,7 +788,6 @@ def insert_quote(ss, sym, d):
                    Decimal(row['volume']) \
                    ])
 ```
-:::
 
 Although `lab05_004.py` contains less than ten lines of
 code, it is rather complicated and needs some explanation.
@@ -1015,7 +1008,6 @@ def retrieve_data(ss, sym, sd, ed):
                       'low_price', 'close_price', 'volume'])
     return df
 ```
-:::
 
 The first portion of the function should be easy to understand. It
 executes a `select_cql` query for a particular stock symbol
@@ -1054,7 +1046,6 @@ def sma(d, prd):
     d['sma'] = pd.rolling_mean(d.close_price, prd)
     return d
 ```
-:::
 
 
 #### The screening rule
@@ -1079,7 +1070,6 @@ Amazing! Here is an example:
 def signal_close_higher_than_sma10(d):
     return d[d.close_price > d.sma]
 ```
-:::
 
 
 #### The Stock Screener engine

@@ -124,8 +124,16 @@ def insert_alert(ss, sym, sd, cp, sn):
     ss.execute(batch)
 
 def testcase003():
+
+    ######################################################################## 
+    # We will be running the example on single node in the lab environment # 
+    ######################################################################## 
+
+    ## create Cassandra instance
+    cluster = Cluster()
+
     ## create Cassandra instance with multiple nodes
-    cluster = Cluster(['ubtc01', 'ubtc02'])
+    # cluster = Cluster(['ubtc01', 'ubtc02'])
     
     ## establish Cassandra connection, using local default
     session = cluster.connect('fenagocdma')

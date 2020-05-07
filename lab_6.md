@@ -147,7 +147,6 @@ create_watchlist(session)
 ## close Cassandra connection
 cluster.shutdown()
 ```
-:::
 
 The `create_watchlist` function creates the table. Note that
 the `watchlist` table has a compound primary key made of `watch_list_code` and
@@ -212,7 +211,6 @@ create_alertlist(session)
 ## close Cassandra connection
 cluster.shutdown()
 ```
-:::
 
 The primary key is also a compound primary key that
 consists of `symbol` and `price_time`.
@@ -279,7 +277,6 @@ add_stockname_to_quote(session)
 ## close Cassandra connection
 cluster.shutdown()
 ```
-:::
 
 It is quite self-explanatory. Here, we use the
 `ALTER TABLE` statement to add the `stock_name`
@@ -343,7 +340,6 @@ create_alertbydate(session)
 ## close Cassandra connection
 cluster.shutdown()
 ```
-:::
 
 When compared to `alertlist` in `lab06_002.py` ,
 `alert_by_date` only swaps the order of the columns in the
@@ -428,7 +424,6 @@ def insert_quote(ss, sym, d, sn):
                    Decimal(row['volume']), \
                    sn])
 ```
-:::
 
 Here, we changed the `INSERT` statement
 to store the stock name into `quote` in the
@@ -489,7 +484,6 @@ def load_watchlist(ss, ws):
 
     return stw
 ```
-:::
 
 Here, the  new function, `load_watchlist` ,
 submits a `SELECT` query on `watch_list` to retrieve
@@ -540,7 +534,6 @@ def testcase001():
 
 testcase001()
 ```
-:::
 
 The change here is a new function named
 `get_stock_name` , which sends a web service request to Yahoo!
@@ -645,7 +638,6 @@ def retrieve_data(ss, sym, sd, ed):
                       'volume', 'stock_name'])
     return df
 ```
-:::
 
 As we have included the stock name in the query
 resultset, we need to modify the `SELECT` statement in the
@@ -758,7 +750,6 @@ def testcase002():
 
 testcase002()
 ```
-:::
 
 At the bottom of `lab06_006.py` , the
 `for` loop is responsible for iterating `watchlist`
@@ -889,7 +880,6 @@ def testcase001():
 
 testcase001()
 ```
-:::
 
 A function named `alert_over_daterange` is defined to retrieve
 the rows relevant to the first question. Then it transforms the CQL
@@ -974,7 +964,6 @@ def testcase001():
 
 testcase001()
 ```
-:::
 
 Once again, denormalization is a friend of
 Cassandra. It does not require a foreign key, referential integrity, or
