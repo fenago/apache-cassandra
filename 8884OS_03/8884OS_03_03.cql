@@ -1,3 +1,5 @@
+USE fenago;
+
 CREATE TABLE table01 (
   rowkey ascii,
   asciifield ascii,

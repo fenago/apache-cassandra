@@ -1,3 +1,5 @@
+USE fenago;
+
 INSERT INTO dayquote03
   (exchange, symbol, price_time, open_price,
    high_price, low_price, close_price, volume)

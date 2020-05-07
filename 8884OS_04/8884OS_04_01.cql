@@ -1,3 +1,5 @@
+USE fenago;
+
 CREATE TABLE dayquote01 (
   symbol varchar PRIMARY KEY,
   exchange varchar,

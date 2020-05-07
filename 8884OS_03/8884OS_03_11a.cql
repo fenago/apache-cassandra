@@ -1,3 +1,5 @@
+USE fenago;
+
 CREATE TYPE contact (
  facebook text,
  twitter text,

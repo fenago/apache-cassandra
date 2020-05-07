@@ -1,3 +1,5 @@
+USE fenago;
+
 INSERT INTO table01
  ( rowkey, asciifield, bigintfield, blobfield, booleanfield,
    decimalfield, doublefield, floatfield, inetfield, intfield,
