@@ -392,8 +392,8 @@ The modified source code is shown in `chapter06_005.py`:
 from cassandra.cluster import Cluster
 from decimal import *
 
-## web is the shorthand alias of pandas.io.data
-import pandas.io.data as web
+## web is the shorthand alias of pandas_datareader
+import pandas_datareader as web
 import datetime
 
 ## import BeautifulSoup and requests

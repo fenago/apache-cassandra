@@ -85,4 +85,4 @@ alerts = signal_close_higher_than_sma10(data)
 
 ## print out the alert list
 for index, r in alerts.iterrows():
-    print index.date(), '\t', r['close_price']
+    print (index.date(), '\t', r['close_price'])

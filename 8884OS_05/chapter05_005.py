@@ -5,8 +5,8 @@
 from cassandra.cluster import Cluster
 from decimal import Decimal
 
-## web is the shorthand alias of pandas.io.data
-import pandas.io.data as web
+## web is the shorthand alias of pandas_datareader
+import pandas_datareader as web
 import datetime
 
 ## function to insert historical data into table quote

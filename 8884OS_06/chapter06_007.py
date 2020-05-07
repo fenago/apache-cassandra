@@ -64,10 +64,10 @@ def testcase001():
                                   start_date, end_date)
     
     for index, r in alerts.iterrows():
-        print index.date(), '\t', \
+        print (index.date(), '\t', \
             r['symbol'], '\t', \
             r['stock_name'], '\t', \
-            r['signal_price']
+            r['signal_price'])
     
     ## close Cassandra connection
     cluster.shutdown()

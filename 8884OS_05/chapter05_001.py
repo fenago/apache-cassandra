@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # program: chapter05_001.py
 
-## web is the shorthand alias of pandas.io.data
-import pandas.io.data as web
+## web is the shorthand alias of pandas_datareader
+import pandas_datareader as web
 import datetime
 
 ## we want to retrieve the historical daily stock quote of
@@ -17,5 +17,5 @@ data = web.DataReader(symbol, 'yahoo', start_date, end_date)
 
 ## use a for-loop to print out the data
 for index, row in data.iterrows():
-    print index.date(), '\t', row['Open'], '\t', row['High'], \
-          '\t', row['Low'], '\t', row['Close'], '\t', row['Volume']
+    print (index.date(), '\t', row['Open'], '\t', row['High'], \
+          '\t', row['Low'], '\t', row['Close'], '\t', row['Volume'])

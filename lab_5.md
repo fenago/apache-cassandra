@@ -596,7 +596,7 @@ data. You can go to <http://pandas.pydata.org/> for more details.
 
 
 pandas offers a `DataReader` function in its
-`pandas.io.data` package. `DataReader` extracts
+`pandas_datareader` package. `DataReader` extracts
 financial data from various Internet sources into
 a data structure known as `DataFrame`.
 Yahoo! Finance is one of the supported Internet sources, making the
@@ -608,8 +608,8 @@ the following Python code, `chapter05_001.py`:
 # -*- coding: utf-8 -*-
 # program: chapter05_001.py
 
-## web is the shorthand alias of pandas.io.data
-import pandas.io.data as web
+## web is the shorthand alias of pandas_datareader
+import pandas_datareader as web
 import datetime
 
 ## we want to retrieve the historical daily stock quote of
@@ -687,8 +687,8 @@ them to standardize the data format, as shown in
 # -*- coding: utf-8 -*-
 # program: chapter05_002.py
 
-## web is the shorthand alias of pandas.io.data
-import pandas.io.data as web
+## web is the shorthand alias of pandas_datareader
+import pandas_datareader as web
 import datetime
 
 ## we want to retrieve the historical daily stock quote of
@@ -885,8 +885,8 @@ the collection of stock quote is encapsulated in a function called
 from cassandra.cluster import Cluster
 from decimal import Decimal
 
-## web is the shorthand alias of pandas.io.data
-import pandas.io.data as web
+## web is the shorthand alias of pandas_datareader
+import pandas_datareader as web
 import datetime
 
 ## function to insert historical data into table quote

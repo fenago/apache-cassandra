@@ -61,9 +61,9 @@ def testcase001():
     
     ## print out alerts
     for index, r in alerts.iterrows():
-        print index, '\t', \
+        print (index, '\t', \
               r['stock_name'], '\t', \
-              r['signal_price']
+              r['signal_price'])
     
     ## close Cassandra connection
     cluster.shutdown()

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # program: chapter05_002.py
 
-## web is the shorthand alias of pandas.io.data
-import pandas.io.data as web
+## web is the shorthand alias of pandas_datareader
+import pandas_datareader as web
 import datetime
 
 ## we want to retrieve the historical daily stock quote of
@@ -31,8 +31,8 @@ data = data.rename(columns={'Open':'open_price', \
 
 ## use a for-loop to print out the transformed data
 for index, row in data.iterrows():
-    print index.date(), '\t', row['open_price'], '\t', \
+    print (index.date(), '\t', row['open_price'], '\t', \
                               row['high_price'], '\t', \
                               row['low_price'], '\t', \
                               row['close_price'], '\t', \
-                              row['volume']
+                              row['volume'])
