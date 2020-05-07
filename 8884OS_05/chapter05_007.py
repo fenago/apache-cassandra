@@ -8,5 +8,5 @@ import pandas as pd
 ## prd: period of SMA
 ## return a DataFrame with an additional column of SMA
 def sma(d, prd):
-    d['sma'] = pd.rolling_mean(d.close_price, prd)
+    d['sma'] = d['close_price'].rolling(window=prd).mean()
     return d

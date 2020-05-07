@@ -650,7 +650,7 @@ resultset, we need to modify the `SELECT` statement in the
 ## prd: period of SMA
 ## return a DataFrame with an additional column of SMA
 def sma(d, prd):
-    d['sma'] = pd.rolling_mean(d.close_price, prd)
+    d['sma'] = d['close_price'].rolling(window=prd).mean()
     return d
 
 ## function to apply screening rule to generate buy signals

@@ -1043,7 +1043,7 @@ import pandas as pd
 ## prd: period of SMA
 ## return a DataFrame with an additional column of SMA
 def sma(d, prd):
-    d['sma'] = pd.rolling_mean(d.close_price, prd)
+    d['sma'] = d['close_price'].rolling(window=prd).mean()
     return d
 ```
 
@@ -1133,7 +1133,7 @@ def retrieve_data(ss, sym, sd, ed):
 ## prd: period of SMA
 ## return a DataFrame with an additional column of SMA
 def sma(d, prd):
-    d['sma'] = pd.rolling_mean(d.close_price, prd)
+    d['sma'] = d['close_price'].rolling(window=prd).mean()
     return d
 
 ## function to apply screening rule to generate buy signals
