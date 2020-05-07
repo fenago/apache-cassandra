@@ -228,10 +228,9 @@ different cluster scenarios in real-life production.
 
 
 Let us return to the Stock Screener Application.
-The cluster it runs on in [Chapter
-6](https://subscription.packtpub.com/book/big_data_and_business_intelligence/9781783988884/6){.link},
+The cluster it runs on ,
 *Enhancing a Version*, is a single-node cluster. In
-this  section, we will set up a cluster of two nodes
+this section, we will set up a cluster of two nodes
 that can be used in small-scale production. We will also migrate the
 existing data in the development database to the new fresh production
 cluster. It should be noted that for quorum reads/writes, it's usually
@@ -321,13 +320,9 @@ The configuration procedure of the cluster (refer
 to the following bash shell scripts: `setup_ubtc01.sh` and
 `setup_ubtc02.sh`) is enumerated as follows:
 
-::: {.orderedlist}
+
 1.  Stop Cassandra service:
 
-    ::: {.informalexample}
-    ::: {.toolbar .clearfix}
-    Copy
-    :::
 
     ``` {.programlisting .language-markup}
     ubtc01:~$ sudo service cassandra stop
@@ -337,10 +332,6 @@ to the following bash shell scripts: `setup_ubtc01.sh` and
 
 2.  Remove the system keyspace:
 
-    ::: {.informalexample}
-    ::: {.toolbar .clearfix}
-    Copy
-    :::
 
     ``` {.programlisting .language-markup}
     ubtc01:~$ sudo rm -rf /var/lib/cassandra/data/system/*
@@ -354,10 +345,6 @@ to the following bash shell scripts: `setup_ubtc01.sh` and
 
 4.  Start the seed node `ubtc01` first:
 
-    ::: {.informalexample}
-    ::: {.toolbar .clearfix}
-    Copy
-    :::
 
     ``` {.programlisting .language-markup}
     ubtc01:~$ sudo service cassandra start
@@ -366,10 +353,6 @@ to the following bash shell scripts: `setup_ubtc01.sh` and
 
 5.  Then start `ubtc02`:
 
-    ::: {.informalexample}
-    ::: {.toolbar .clearfix}
-    Copy
-    :::
 
     ``` {.programlisting .language-markup}
     ubtc02:~$ sudo service cassandra start
@@ -379,10 +362,6 @@ to the following bash shell scripts: `setup_ubtc01.sh` and
 6.  Wait for a minute and check if `ubtc01` and
     `ubtc02` are both up and running:
 
-    ::: {.informalexample}
-    ::: {.toolbar .clearfix}
-    Copy
-    :::
 
     ``` {.programlisting .language-markup}
     ubtc01:~$ nodetool status
@@ -409,18 +388,14 @@ this production cluster. In the case of the latter approach, the
 following procedure can help us ease the  data
 migration task:
 
-::: {.orderedlist}
+
 1.  Take a snapshot of the `packcdma` keyspace in the
     development database (ubuntu is the hostname of the development
     machine):
 
-    ::: {.informalexample}
-    ::: {.toolbar .clearfix}
-    Copy
-    :::
 
     ``` {.programlisting .language-markup}
-    ubuntu:~$ nodetool snapshot packtcdma
+    ubuntu:~$ nodetool snapshot fenagocdma
     ```
     :::
 
@@ -430,61 +405,49 @@ migration task:
 3.  To play it safe, copy all SSTables under the snapshot directory to a
     temporary location, say `~/temp/`:
 
-    ::: {.informalexample}
-    ::: {.toolbar .clearfix}
-    Copy
-    :::
 
     ``` {.programlisting .language-markup}
     ubuntu:~$ mkdir ~/temp/
-    ubuntu:~$ mkdir ~/temp/packtcdma/
-    ubuntu:~$ mkdir ~/temp/packtcdma/alert_by_date/
-    ubuntu:~$ mkdir ~/temp/packtcdma/alertlist/
-    ubuntu:~$ mkdir ~/temp/packtcdma/quote/
-    ubuntu:~$ mkdir ~/temp/packtcdma/watchlist/
-    ubuntu:~$ sudo cp -p /var/lib/cassandra/data/packtcdma/alert_by_date/snapshots/1412082842986/* ~/temp/packtcdma/alert_by_date/
-    ubuntu:~$ sudo cp -p /var/lib/cassandra/data/packtcdma/alertlist/snapshots/1412082842986/* ~/temp/packtcdma/alertlist/
-    ubuntu:~$ sudo cp -p /var/lib/cassandra/data/packtcdma/quote/snapshots/1412082842986/* ~/temp/packtcdma/quote/
-    ubuntu:~$ sudo cp -p /var/lib/cassandra/data/packtcdma/watchlist/snapshots/1412082842986/* ~/temp/packtcdma/watchlist/
+    ubuntu:~$ mkdir ~/temp/fenagocdma/
+    ubuntu:~$ mkdir ~/temp/fenagocdma/alert_by_date/
+    ubuntu:~$ mkdir ~/temp/fenagocdma/alertlist/
+    ubuntu:~$ mkdir ~/temp/fenagocdma/quote/
+    ubuntu:~$ mkdir ~/temp/fenagocdma/watchlist/
+    ubuntu:~$ sudo cp -p /var/lib/cassandra/data/fenagocdma/alert_by_date/snapshots/1412082842986/* ~/temp/fenagocdma/alert_by_date/
+    ubuntu:~$ sudo cp -p /var/lib/cassandra/data/fenagocdma/alertlist/snapshots/1412082842986/* ~/temp/fenagocdma/alertlist/
+    ubuntu:~$ sudo cp -p /var/lib/cassandra/data/fenagocdma/quote/snapshots/1412082842986/* ~/temp/fenagocdma/quote/
+    ubuntu:~$ sudo cp -p /var/lib/cassandra/data/fenagocdma/watchlist/snapshots/1412082842986/* ~/temp/fenagocdma/watchlist/
     ```
     :::
 
 4.  Open cqlsh to connect to `ubtc01` and create a keyspace
     with the appropriate replication strategy in the production cluster:
 
-    ::: {.informalexample}
-    ::: {.toolbar .clearfix}
-    Copy
-    :::
 
     ``` {.programlisting .language-markup}
     ubuntu:~$ cqlsh ubtc01
-    cqlsh> CREATE KEYSPACE packtcdma WITH replication = {'class': 'NetworkTopologyStrategy',  'NY1': '2'};
+    cqlsh> CREATE KEYSPACE fenagocdma WITH replication = {'class': 'NetworkTopologyStrategy',  'NY1': '2'};
     ```
     :::
 
 5.  Create the `alert_by_date` , `alertlist` ,
     `quote` , and `watchlist` tables:
 
-    ::: {.informalexample}
-    ::: {.toolbar .clearfix}
-    Copy
-    :::
 
     ``` {.programlisting .language-markup}
-    cqlsh> CREATE TABLE packtcdma.alert_by_date (
+    cqlsh> CREATE TABLE fenagocdma.alert_by_date (
       price_time timestamp,
       symbol varchar,
       signal_price float,
       stock_name varchar,
       PRIMARY KEY (price_time, symbol));
-    cqlsh> CREATE TABLE packtcdma.alertlist (
+    cqlsh> CREATE TABLE fenagocdma.alertlist (
       symbol varchar,
       price_time timestamp,
       signal_price float,
       stock_name varchar,
       PRIMARY KEY (symbol, price_time));
-    cqlsh> CREATE TABLE packtcdma.quote (
+    cqlsh> CREATE TABLE fenagocdma.quote (
       symbol varchar,
       price_time timestamp,
       close_price float,
@@ -494,7 +457,7 @@ migration task:
       stock_name varchar,
       volume double,
       PRIMARY KEY (symbol, price_time));
-    cqlsh> CREATE TABLE packtcdma.watchlist (
+    cqlsh> CREATE TABLE fenagocdma.watchlist (
       watch_list_code varchar,
       symbol varchar,
       PRIMARY KEY (watch_list_code, symbol));
@@ -504,33 +467,25 @@ migration task:
 6.  Load the SSTables back to the production
     cluster using the `sstableloader` utility:
 
-    ::: {.informalexample}
-    ::: {.toolbar .clearfix}
-    Copy
-    :::
 
     ``` {.programlisting .language-markup}
     ubuntu:~$ cd ~/temp
-    ubuntu:~/temp$ sstableloader -d ubtc01 packtcdma/alert_by_date
-    ubuntu:~/temp$ sstableloader -d ubtc01 packtcdma/alertlist
-    ubuntu:~/temp$ sstableloader -d ubtc01 packtcdma/quote
-    ubuntu:~/temp$ sstableloader -d ubtc01 packtcdma/watchlist
+    ubuntu:~/temp$ sstableloader -d ubtc01 fenagocdma/alert_by_date
+    ubuntu:~/temp$ sstableloader -d ubtc01 fenagocdma/alertlist
+    ubuntu:~/temp$ sstableloader -d ubtc01 fenagocdma/quote
+    ubuntu:~/temp$ sstableloader -d ubtc01 fenagocdma/watchlist
     ```
     :::
 
 7.  Check the legacy data in the production database on
     `ubtc02`:
 
-    ::: {.informalexample}
-    ::: {.toolbar .clearfix}
-    Copy
-    :::
 
     ``` {.programlisting .language-markup}
-    cqlsh> select * from packtcdma.alert_by_date;
-    cqlsh> select * from packtcdma.alertlist;
-    cqlsh> select * from packtcdma.quote;
-    cqlsh> select * from packtcdma.watchlist;
+    cqlsh> select * from fenagocdma.alert_by_date;
+    cqlsh> select * from fenagocdma.alertlist;
+    cqlsh> select * from fenagocdma.quote;
+    cqlsh> select * from fenagocdma.watchlist;
     ```
     :::
 :::
@@ -569,7 +524,7 @@ def testcase003():
     cluster = Cluster(['ubtc01', 'ubtc02'])
     
     ## establish Cassandra connection, using local default
-    session = cluster.connect('packtcdma')
+    session = cluster.connect('fenagocdma')
     
     start_date = datetime.datetime(2012, 6, 28)
     end_date = datetime.datetime(2013, 9, 28)
@@ -948,8 +903,6 @@ at
 
 Summary
 -------------------------
-
-
 
 This chapter highlights the most important aspects of deploying a
 Cassandra cluster into the production environment. Cassandra can be

@@ -88,8 +88,7 @@ Cassandra.
 ### Map and SortedMap
 
 
-In [Chapter
-1](https://subscription.packtpub.com/book/big_data_and_business_intelligence/9781783988884/1){.link},
+In
 *Bird's Eye View of Cassandra*, you learned that
 Cassandra's storage model is based on BigTable, a column-oriented
 store. A column-oriented store is a multidimensional map. Specifically,
@@ -654,7 +653,7 @@ the row key, or at least part of the row key.
 
 Remember two rules:
 
-::: {.orderedlist}
+
 1.  A row key is regarded as a partition key to locate the nodes storing
     that row
 

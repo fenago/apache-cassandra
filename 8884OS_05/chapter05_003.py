@@ -10,15 +10,15 @@ cluster = Cluster()
 ## establish Cassandra connection, using local default
 session = cluster.connect()
 
-## create keyspace packtcdma if not exists
+## create keyspace fenagocdma if not exists
 ## currently it runs on a single-node cluster
-session.execute("CREATE KEYSPACE IF NOT EXISTS packtcdma " + \
+session.execute("CREATE KEYSPACE IF NOT EXISTS fenagocdma " + \
                 "WITH replication" + \
                 "={'class':'SimpleStrategy', " + \
                 "'replication_factor':1}")
 
-## use packtcdma keyspace
-session.set_keyspace('packtcdma')
+## use fenagocdma keyspace
+session.set_keyspace('fenagocdma')
 
 ## execute CQL statement to create quote table if not exists
 session.execute('CREATE TABLE IF NOT EXISTS quote (' + \

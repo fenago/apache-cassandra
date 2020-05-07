@@ -128,7 +128,7 @@ def testcase002():
     cluster = Cluster()
     
     ## establish Cassandra connection, using local default
-    session = cluster.connect('packtcdma')
+    session = cluster.connect('fenagocdma')
     
     start_date = datetime.datetime(2012, 6, 28)
     end_date = datetime.datetime(2012, 7, 28)

@@ -50,8 +50,8 @@ def testcase001():
     ## establish Cassandra connection, using local default
     session = cluster.connect()
     
-    ## use packtcdma keyspace
-    session.set_keyspace('packtcdma')
+    ## use fenagocdma keyspace
+    session.set_keyspace('fenagocdma')
     
     ## scan buy-and-hold signals for GS over 1 month since 28-Jun-2012
     on_date = datetime.datetime(2012, 7, 13)

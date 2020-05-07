@@ -14,8 +14,7 @@ related technologies, we now have alternatives to embrace such business
 changes.
 
 By continuing with the enhancements of the Stock Screener Application
-developed in [Chapter
-5](https://subscription.packtpub.com/book/big_data_and_business_intelligence/9781783988884/5){.link},
+developed in lab 5,
 *First-cut Design and Implementation*, the techniques of
 how to evolve an existing Cassandra data model will be explained in
 detail. Meanwhile, the techniques of modeling by query will be
@@ -29,10 +28,7 @@ can use it as a foundation to quickly develop your own.
 Evolving the data model
 -----------------------------------------
 
-
-
-the  Stock Screener Application created in [Chapter
-5](https://subscription.packtpub.com/book/big_data_and_business_intelligence/9781783988884/5){.link},
+The Stock Screener Application created in,
 *First-cut Design and Implementation*, is good enough to
 retrieve and analyze a single stock at one time.
 However, scanning just a single stock looks very limited in practical
@@ -109,7 +105,7 @@ same node for faster retrieval. But how can we do that?
 We can create an additional column, say `watch_list_code` , for
 this particular purpose. The new table is called
 `watchlist` and will be created in the
-`packtcdma` keyspace. The CQL statement is shown in
+`fenagocdma` keyspace. The CQL statement is shown in
 `chapter06_001.py`:
 
 
@@ -142,8 +138,8 @@ cluster = Cluster()
 ## establish Cassandra connection, using local default
 session = cluster.connect()
 
-## use packtcdma keyspace
-session.set_keyspace('packtcdma')
+## use fenagocdma keyspace
+session.set_keyspace('fenagocdma')
 
 ## create watchlist table
 create_watchlist(session)
@@ -163,8 +159,7 @@ created, which contains three stocks, `AAPL` ,
 #### Alert List
 
 
-In [Chapter
-5](https://subscription.packtpub.com/book/big_data_and_business_intelligence/9781783988884/5){.link},
+In
 *First-cut Design and Implementation*, **Alert
 List** is very rudimentary. It is
 produced by a Python program and enumerates the
@@ -208,8 +203,8 @@ cluster = Cluster()
 ## establish Cassandra connection, using local default
 session = cluster.connect()
 
-## use packtcdma keyspace
-session.set_keyspace('packtcdma')
+## use fenagocdma keyspace
+session.set_keyspace('fenagocdma')
 
 ## create alertlist table
 create_alertlist(session)
@@ -225,7 +220,7 @@ consists of `symbol` and `price_time`.
 
 #### Adding the descriptive stock name
 
-Until now, the `packtcdma` keyspace has
+Until now, the `fenagocdma` keyspace has
 three tables, which are `alertlist` , `quote` , and
 `watchlist`. To add the descriptive stock name, one can think
 of only adding a column of stock name to `alertlist` only. As
@@ -275,8 +270,8 @@ cluster = Cluster()
 ## establish Cassandra connection, using local default
 session = cluster.connect()
 
-## use packtcdma keyspace
-session.set_keyspace('packtcdma')
+## use fenagocdma keyspace
+session.set_keyspace('fenagocdma')
 
 ## add stock_name column
 add_stockname_to_quote(session)
@@ -339,8 +334,8 @@ cluster = Cluster()
 ## establish Cassandra connection, using local default
 session = cluster.connect()
 
-## use packtcdma keyspace
-session.set_keyspace('packtcdma')
+## use fenagocdma keyspace
+session.set_keyspace('fenagocdma')
 
 ## create alert_by_date table
 create_alertbydate(session)
@@ -379,7 +374,7 @@ Feed Provider module, and its source code file is
 `chapter05_005.py`. Most of the source code can be left
 intact; we only need to add code to:
 
-::: {.orderedlist}
+
 1.  Load Watch List for a Watch List code and retrieve data feed based
     on that
 
@@ -518,7 +513,7 @@ def testcase001():
     cluster = Cluster()
     
     ## establish Cassandra connection, using local default
-    session = cluster.connect('packtcdma')
+    session = cluster.connect('fenagocdma')
     
     start_date = datetime.datetime(2012, 1, 1)
     end_date = datetime.datetime(2014, 6, 28)
@@ -578,12 +573,11 @@ That is all about the changes on Data Mapper and Archiver.
 #### Stock Screener Engine
 
 We will use the  source code of Stock Screener
-Engine in [Chapter
-5](https://subscription.packtpub.com/book/big_data_and_business_intelligence/9781783988884/5){.link},
+Engine in
 *First-cut Design and Implementation* to include the
 enhancements; to do so, we will perform the following:
 
-::: {.orderedlist}
+
 1.  Similar to Data Mapper and Archiver, we will load Watch List for a
     Watch List code and scan for alerts on each stock.
 
@@ -735,7 +729,7 @@ def testcase002():
     cluster = Cluster()
     
     ## establish Cassandra connection, using local default
-    session = cluster.connect('packtcdma')
+    session = cluster.connect('fenagocdma')
     
     start_date = datetime.datetime(2012, 6, 28)
     end_date = datetime.datetime(2012, 7, 28)
@@ -871,8 +865,8 @@ def testcase001():
     ## establish Cassandra connection, using local default
     session = cluster.connect()
     
-    ## use packtcdma keyspace
-    session.set_keyspace('packtcdma')
+    ## use fenagocdma keyspace
+    session.set_keyspace('fenagocdma')
 
     ## scan buy-and-hold signals for GS
     ## over 1 month since 28-Jun-2012
@@ -960,8 +954,8 @@ def testcase001():
     ## establish Cassandra connection, using local default
     session = cluster.connect()
     
-    ## use packtcdma keyspace
-    session.set_keyspace('packtcdma')
+    ## use fenagocdma keyspace
+    session.set_keyspace('fenagocdma')
     
     ## scan buy-and-hold signals for GS over 1 month since 28-Jun-2012
     on_date = datetime.datetime(2012, 7, 13)
@@ -996,7 +990,7 @@ Implementing system changes
 We can now the
 changes to the system one-by-one:
 
-::: {.orderedlist}
+
 1.  First we run `chapter06_001.py` through to
     `chapter06_004.py` in sequence to make changes to the data
     model.

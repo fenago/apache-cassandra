@@ -71,7 +71,7 @@ def transform_yahoo(d):
 cluster = Cluster()
 
 ## establish Cassandra connection, using local default
-session = cluster.connect('packtcdma')
+session = cluster.connect('fenagocdma')
 
 symbol = 'GS'
 start_date = datetime.datetime(2012, 1, 1)

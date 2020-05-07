@@ -546,8 +546,7 @@ implementation of the application:
 ![](images/8884OS_05_06.jpg)
 
 It is worth noting that the system will be developed on a single Ubuntu
-machine first and then on a single node Cassandra cluster (In [Chapter
-7](https://subscription.packtpub.com/book/big_data_and_business_intelligence/9781783988884/7){.link},
+machine first and then on a single node Cassandra cluster,
 *Deployment and Monitoring*, we will expand the
 cluster to a two-node cluster). It serves as a
 limit to the superb clustering capabilities of Cassandra. However, from
@@ -577,7 +576,7 @@ Screener. First, we will build the Data Feed Provider.
 The Data Feed Provider achieves the following three
 tasks:
 
-::: {.orderedlist}
+
 1.  Collecting the historical stock quote data from Yahoo! Finance.
 
 2.  Transforming the received data into a standardized format.
@@ -602,7 +601,7 @@ financial data from various Internet sources into
 a data structure known as `DataFrame`.
 Yahoo! Finance is one of the supported Internet sources, making the
 collection of the historical stock quote data a piece of cake. Refer to
-the following Python code, `cha` `pter05_001.py`:
+the following Python code, `chapter05_001.py`:
 
 
 ``` {.programlisting .language-markup}
@@ -732,7 +731,7 @@ for index, row in data.iterrows():
 
 Before storing the retrieved data in Cassandra, we
 need to create the keyspace and table in the Cassandra database. We will
-create a keyspace called `packtcdma` and
+create a keyspace called `fenagocdma` and
 a table called `quote` in `chapter05_003.py` to hold
 the Historical Data, as shown in the following
 code:
@@ -751,15 +750,15 @@ cluster = Cluster()
 ## establish Cassandra connection, using local default
 session = cluster.connect()
 
-## create keyspace packtcdma if not exists
+## create keyspace fenagocdma if not exists
 ## currently it runs on a single-node cluster
-session.execute("CREATE KEYSPACE IF NOT EXISTS packtcdma " + \
+session.execute("CREATE KEYSPACE IF NOT EXISTS fenagocdma " + \
                 "WITH replication" + \
                 "={'class':'SimpleStrategy', " + \
                 "'replication_factor':1}")
 
-## use packtcdma keyspace
-session.set_keyspace('packtcdma')
+## use fenagocdma keyspace
+session.set_keyspace('fenagocdma')
 
 ## execute CQL statement to create quote table if not exists
 session.execute('CREATE TABLE IF NOT EXISTS quote (' + \
@@ -875,7 +874,7 @@ the Data Feed Provider. To make the code cleaner, the code fragment for
 the collection of stock quote is encapsulated in a function called
 `collect_data()` and that for data transformation in
 `transform_yahoo()` function. The complete program,
-`chapter05_` `005.py` , is listed as follows:.
+`chapter05_005.py` , is listed as follows:.
 
 
 ``` {.programlisting .language-markup}
@@ -952,7 +951,7 @@ def transform_yahoo(d):
 cluster = Cluster()
 
 ## establish Cassandra connection, using local default
-session = cluster.connect('packtcdma')
+session = cluster.connect('fenagocdma')
 
 symbol = 'GS'
 start_date = datetime.datetime(2012, 1, 1)
@@ -979,7 +978,7 @@ data from the Cassandra database
 and applies technical analysis techniques to produce alerts.
 It has four components:
 
-::: {.orderedlist}
+
 1.  Retrieve historical data over a specified period
 
 2.  Program a technical analysis indicator for time-series data
@@ -1185,7 +1184,7 @@ def signal_close_higher_than_sma10(d):
 cluster = Cluster()
 
 ## establish Cassandra connection, using local default
-session = cluster.connect('packtcdma')
+session = cluster.connect('fenagocdma')
 ## scan buy-and-hold signals for GS over 1 month since 28-Jun-2012
 symbol = 'GS'
 start_date = datetime.datetime(2012, 6, 28)

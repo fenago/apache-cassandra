@@ -65,7 +65,7 @@ def signal_close_higher_than_sma10(d):
 cluster = Cluster()
 
 ## establish Cassandra connection, using local default
-session = cluster.connect('packtcdma')
+session = cluster.connect('fenagocdma')
 ## scan buy-and-hold signals for GS over 1 month since 28-Jun-2012
 symbol = 'GS'
 start_date = datetime.datetime(2012, 6, 28)

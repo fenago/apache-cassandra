@@ -7,20 +7,10 @@ Chapter 3. CQL Data Types
 In this chapter, we will have an overview of Cassandra Query Language
 and take a detailed look into the wealthy set of data types supported by
 Cassandra. We will walk through the data types to study what their
-internal storage structure looks like. If you want to know how Cassandra
-implements them behind the scenes, the Java source code of Cassandra can
-be referenced. For those of you who have not installed and set up
-Cassandra, you can refer to [Chapter
-5](https://subscription.packtpub.com/book/big_data_and_business_intelligence/9781783988884/5){.link},
-*First-cut Design and Implementation*, for a quick
-procedure.
-
-
+internal storage structure looks like.
 
 Introduction to CQL
 -------------------------------------
-
-
 
 Cassandra introduced Cassandra Query Language (CQL) in release 0.8 as a
 SQL-like alternative to the traditional Thrift RPC
@@ -93,10 +83,8 @@ We can use `cqlsh` to connect to other nodes by appending the
 host (either hostname or IP address) and port as command-line
 parameters.
 
-If we want to create a keyspace called `packt` using
-`SimpleStrategy` (which ` `will be explained in
-[Chapter
-6](https://subscription.packtpub.com/book/big_data_and_business_intelligence/9781783988884/6){.link},
+If we want to create a keyspace called `fenago` using
+`SimpleStrategy` (which will be explained in,
 *Enhancing a Version*) as its replication strategy and
 setting the replication factor as one for a single-node Cassandra
 cluster, we can type the CQL statement, shown in the following
@@ -109,7 +97,7 @@ use CQL to define the Cassandra data model:
 ![](images/8884OS_03_02.jpg)
 
 :::
-Create keyspace packt in cqlsh
+Create keyspace fenago in cqlsh
 :::
 
 
@@ -194,7 +182,7 @@ to specify the type of data to be stored in a column of a table. Now let
 us create an experimental table with columns of each native data type
 (except counter type since it requires a separate table), and then
 insert some data into it. We need to specify the keyspace,
-`packt` in this example, before creating the table called
+`fenago` in this example, before creating the table called
 `table01` , as shown in the following screenshot:
 
 
@@ -748,7 +736,7 @@ paged internally. The maximum number of items of a collection is 64K and
 the maximum size of an item is 64K.
 
 To better demonstrate the CQL support on these collections, let us
-create a table in the `packt` keyspace 
+create a table in the `fenago` keyspace 
 with columns of each collection and insert some data into it,
 as shown in the following screenshot:
 
@@ -859,7 +847,7 @@ cannot update parts of a UDT value. The entire value must be
 overwritten. Cassandra treats the value of a frozen UDT like a
 `BLOB`.
 
-We create a UDT called `contact` in the `packt`
+We create a UDT called `contact` in the `fenago`
 keyspace and use it to define `contactfield` in
 `table04`. Moreover, we have another column,
 `tuplefield` , to store a tuple in a row. Pay attention to the

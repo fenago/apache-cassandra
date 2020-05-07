@@ -26,8 +26,8 @@ cluster = Cluster()
 ## establish Cassandra connection, using local default
 session = cluster.connect()
 
-## use packtcdma keyspace
-session.set_keyspace('packtcdma')
+## use fenagocdma keyspace
+session.set_keyspace('fenagocdma')
 
 ## create watchlist table
 create_watchlist(session)
