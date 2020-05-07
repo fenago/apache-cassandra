@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# program: chapter05_007.py
+# program: lab05_007.py
 
 import pandas as pd
 

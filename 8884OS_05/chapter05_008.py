@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# program: chapter05_008.py
+# program: lab05_008.py
 
 ## function to apply screening rule to generate buy signals
 ## screening rule, Close > 10-Day SMA

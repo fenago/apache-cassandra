@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# program: chapter05_002.py
+# program: lab05_002.py
 
 ## web is the shorthand alias of pandas_datareader
 import pandas_datareader as web

@@ -1,11 +1,11 @@
 
 
-Chapter 5. First-cut Design and Implementation
+Lab 5. First-cut Design and Implementation
 -------------------------------------------------------
 
 
 Riding on the ingredients of a Cassandra data model that were explained
-in the previous chapters, now it is time to put them into a working
+in the previous labs, now it is time to put them into a working
 application. We will begin defining what we really want to store and
 inquire in the data model, setting up the environment, writing the
 program code, and finally testing the application.
@@ -121,7 +121,7 @@ produce intraday signals, you need to look for other Data Feed Providers
 who typically have a wide range of paid service offers available.
 **Historical Data** is a repository to
 store the historical stock quote data. **Stock Screener** is
-the application to be developed in this chapter. Lastly, **Alert
+the application to be developed in this lab. Lastly, **Alert
 List** is  a list of trading signals found
 by the **Stock Screener**.
 
@@ -183,13 +183,12 @@ are just a few of them listed for your reference:
 
 
 -   Yahoo! Finance:
-    [http://finance.yahoo.com](http://finance.yahoo.com/){.ulink}
+    [http://finance.yahoo.com](http://finance.yahoo.com/)
 
 -   Google Finance:
     <https://www.google.com/finance>
 
--   EODData: [http://eoddata.com](http://eoddata.com/){.ulink}
-:::
+-   EODData: [http://eoddata.com](http://eoddata.com/)
 
 However, there is a caveat that stock quote data might have errors, for
 example, incorrect high and low prices. In this book, I selected Yahoo!
@@ -394,32 +393,6 @@ Package Manager with the following command in a terminal:
 ``` {.programlisting .language-markup}
 $ sudo apt-get install libjna-java
 ```
-:::
-
-
-### Cassandra version
-
-
-I used Cassandra Version 2.0.9, which is
-distributed by DataStax Community, on 
-Debian or Ubuntu. The installation steps are well documented
-at
-<http://www.datastax.com/documentation/getting_started/doc/getting_started/gettingStartedDeb_t.html>.
-
-The installation process typically takes several minutes depending on
-your Internet bandwidth and the performance of your machine.
-
-
-### Note
-
-**DataStax**
-
-DataStax is a computer software company based in
-Santa Clara, California which offers commercial enterprise grade for
-Apache Cassandra in its DataStax Enterprise product. It also provides
-tremendous support for the Apache Cassandra community.
-:::
-
 
 ### Programming language
 
@@ -601,12 +574,12 @@ financial data from various Internet sources into
 a data structure known as `DataFrame`.
 Yahoo! Finance is one of the supported Internet sources, making the
 collection of the historical stock quote data a piece of cake. Refer to
-the following Python code, `chapter05_001.py`:
+the following Python code, `lab05_001.py`:
 
 
 ``` {.programlisting .language-markup}
 # -*- coding: utf-8 -*-
-# program: chapter05_001.py
+# program: lab05_001.py
 
 ## web is the shorthand alias of pandas_datareader
 import pandas_datareader as web
@@ -636,7 +609,7 @@ labeled data structure with columns of potentially different
 is generally the most commonly used pandas object.
 
 The following is a screenshot demonstrating the use of Spyder to write
-and test `chapter05_001.py` code:
+and test `lab05_001.py` code:
 
 
 ![](images/8884OS_05_07.jpg)
@@ -661,7 +634,7 @@ returned by Yahoo! Finance are **Date**, **Open**,
 returned `DataFrame`. The remaining column names become the
 column labels of the `DataFrame`.
 
-The last for-loop in `chapter05_001.py` is also worth some
+The last for-loop in `lab05_001.py` is also worth some
 remarks. `DataFrame` has a function, `iterrows()` ,
 for iterating over its rows as (index, columns)
 pairs. Therefore, the for-loop uses `iterrows()` to iterate
@@ -680,12 +653,12 @@ mapping them to our standardized data model. `DataFrame`
 provides a very handy way to retrieve the data by column names and a few
 useful functions to manipulate the index and columns. We can make use of
 them to standardize the data format, as shown in
-`chapter05_002.py`:
+`lab05_002.py`:
 
 
 ``` {.programlisting .language-markup}
 # -*- coding: utf-8 -*-
-# program: chapter05_002.py
+# program: lab05_002.py
 
 ## web is the shorthand alias of pandas_datareader
 import pandas_datareader as web
@@ -732,14 +705,14 @@ for index, row in data.iterrows():
 Before storing the retrieved data in Cassandra, we
 need to create the keyspace and table in the Cassandra database. We will
 create a keyspace called `fenagocdma` and
-a table called `quote` in `chapter05_003.py` to hold
+a table called `quote` in `lab05_003.py` to hold
 the Historical Data, as shown in the following
 code:
 
 
 ``` {.programlisting .language-markup}
 # -*- coding: utf-8 -*-
-# program: chapter05_003.py
+# program: lab05_003.py
 
 ## import Cassandra driver library
 from cassandra.cluster import Cluster
@@ -779,14 +752,14 @@ cluster.shutdown()
 The comments of the code are sufficient to explain what it is doing.
 Now, we have the Historical Data repository ready
 and what follows is to store the received data into it. This is exactly
-the purpose of `chapter05_004.py` in
+the purpose of `lab05_004.py` in
 which a Python function is created to insert the
 data, as shown in the following code:
 
 
 ``` {.programlisting .language-markup}
 # -*- coding: utf-8 -*-
-# program: chapter05_004.py
+# program: lab05_004.py
 
 ## import Cassandra driver library
 from cassandra.cluster import Cluster
@@ -823,14 +796,14 @@ def insert_quote(ss, sym, d):
 ```
 :::
 
-Although `chapter05_004.py` contains less than ten lines of
+Although `lab05_004.py` contains less than ten lines of
 code, it is rather complicated and needs some explanation.
 
 We can create a function in Python using the
 keyword `def`. This must be followed by the function name and
 the parenthesized list of formal parameters. The
 code that form the body of the function starts in
-the next line, indented by a tab. Thus, in `chapter05_004.py` ,
+the next line, indented by a tab. Thus, in `lab05_004.py` ,
 the function name is `insert_quote()` with three parameters,
 namely, `ss` , `sym` , and `d`.
 
@@ -874,12 +847,12 @@ the Data Feed Provider. To make the code cleaner, the code fragment for
 the collection of stock quote is encapsulated in a function called
 `collect_data()` and that for data transformation in
 `transform_yahoo()` function. The complete program,
-`chapter05_005.py` , is listed as follows:.
+`lab05_005.py` , is listed as follows:.
 
 
 ``` {.programlisting .language-markup}
 # -*- coding: utf-8 -*-
-# program: chapter05_005.py
+# program: lab05_005.py
 
 ## import Cassandra driver library
 from cassandra.cluster import Cluster
@@ -1001,7 +974,7 @@ historical data from the table quote within a specified period:
 
 ``` {.programlisting .language-markup}
 # -*- coding: utf-8 -*-
-# program: chapter05_006.py
+# program: lab05_006.py
 
 import pandas as pd
 import numpy as np
@@ -1064,12 +1037,12 @@ As a simple illustration, we use a 10-day
 technical analysis signal for stock screening. pandas provides a rich
 set of functions to work with time-series data. The SMA
  can be easily computed by the `rolling_mean()`
-function, as shown in `chapter05_007.py`:
+function, as shown in `lab05_007.py`:
 
 
 ``` {.programlisting .language-markup}
 # -*- coding: utf-8 -*-
-# program: chapter05_007.py
+# program: lab05_007.py
 
 import pandas as pd
 
@@ -1097,7 +1070,7 @@ Amazing! Here is an example:
 
 ``` {.programlisting .language-markup}
 # -*- coding: utf-8 -*-
-# program: chapter05_008.py
+# program: lab05_008.py
 
 ## function to apply screening rule to generate buy signals
 ## screening rule, Close > 10-Day SMA
@@ -1119,7 +1092,7 @@ the Alert List, as shown in the following code:
 
 ``` {.programlisting .language-markup}
 # -*- coding: utf-8 -*-
-# program: chapter05_009.py
+# program: lab05_009.py
 
 ## import Cassandra driver library
 from cassandra.cluster import Cluster
@@ -1215,10 +1188,10 @@ Test run
 
 
 An End-to-End Test consists of two parts. First, we test and verify
-`chapter05_005.py` , which is the complete Data Feed Provider
-module. Then run `chapter05_005.py` in Spyder. Historical
+`lab05_005.py` , which is the complete Data Feed Provider
+module. Then run `lab05_005.py` in Spyder. Historical
 stock quote data should be stored in the Cassandra database. Then run
-and verify the Stock Screener module, `chapter05_009.py` , also
+and verify the Stock Screener module, `lab05_009.py` , also
 in Spyder.
 
 A sample screen of the test run is shown in the
@@ -1235,7 +1208,7 @@ Summary
 
 
 
-This chapter was rather jam-packed. We designed a simple stock screening
+This lab was rather jam-packed. We designed a simple stock screening
 application that collects stock quote data from Yahoo! Finance, which
 uses Cassandra as its repository. The system environment of the
 application was also introduced with brief setup instructions. Then we
@@ -1243,6 +1216,6 @@ developed the application in Python with a step-by-step explanation.
 Despite of using one Cassandra table, the basic row manipulation logic
 has been demonstrated.
 
-In the next chapter, we will continue enhancing the Stock Screener
+In the next lab, we will continue enhancing the Stock Screener
 Application to collect stock quote data of a bunch of stocks and
 optimize the application with several refinements.

@@ -1,6 +1,6 @@
 
 
-Chapter 4. Indexes
+Lab 4. Indexes
 ---------------------------
 
 
@@ -10,7 +10,7 @@ such a data abyss, it is meaningless. Cassandra provides very good
 support to search and retrieve the desired data by the primary index and
 secondary index.
 
-In this chapter, we will look at how Cassandra uses the primary index
+In this lab, we will look at how Cassandra uses the primary index
 and the secondary index to spotlight the data. After developing an
 understanding of them, we can then design a high-performance data model.
 
@@ -42,7 +42,7 @@ then be located by scanning the row indexes only on the relevant
 replicas. The range of the primary keys that a node manages is
 determined by the partition key and a cluster-wide configuration
 parameter called partitioner. Cassandra provides three choices to
-partitioner that will be covered later in this chapter.
+partitioner that will be covered later in this lab.
 
 A primary key can be defined by the CQL keywords
 `PRIMARY KEY` , with the column(s) to be indexed. Imagine that
@@ -568,14 +568,14 @@ Summary
 
 
 
-We have learned about the primary and secondary indexes in this chapter.
+We have learned about the primary and secondary indexes in this lab.
 Related topics such as compound primary key, composite partition key,
 and partitioner are also introduced. With the help of the explanation of
 the internal storage and inner working mechanisms of Cassandra, you
 should now be able to state the difference between the primary index and
 the secondary index, as well as use them properly in your data model.
 
-In the next chapter, we will start building the first version of the
+In the next lab, we will start building the first version of the
 technical analysis application using Cassandra and Python. A quick
 installation and setup guide on how to connect Python to Cassandra and
 collect market data will also be provided.

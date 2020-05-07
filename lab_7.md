@@ -1,12 +1,12 @@
 
 
-Chapter 7. Deployment and Monitoring
+Lab 7. Deployment and Monitoring
 ---------------------------------------------
 
 
 We have explored the development of the Stock Screener Application in
-previous chapters; it is now time to consider how to deploy it in the
-production environment. In this chapter, we will discuss the most
+previous labs; it is now time to consider how to deploy it in the
+production environment. In this lab, we will discuss the most
 important aspects of deploying a Cassandra database in production. These
 aspects include the selection of an appropriate combination of
 replication strategy, snitch, and replication factor to make up a
@@ -68,7 +68,7 @@ Data replication is configured by the so-called replication factor in a
  **keyspace**. The replication factor
 refers to the total number of copies of each row across the cluster. So
 a replication factor of `1` (as seen in the examples in
-previous chapters) means that there is only one copy of each row on one
+previous labs) means that there is only one copy of each row on one
 node. For a replication factor of `2` , two copies of each row
 are on two different nodes. Typically, a replication factor of
 `3` is sufficient in most production scenarios.
@@ -505,17 +505,17 @@ As we have set up the production cluster and moved
 the legacy data into it, it is time to deploy the Stock Screener
 Application. The only thing needed to modify is the code to establish
 Cassandra connection to the production cluster. This is very easy to do
-with Python. The code in `chapter06_006.py` is modified to
-work with the production cluster as `chapter07_001.py`. A new
+with Python. The code in `lab06_006.py` is modified to
+work with the production cluster as `lab07_001.py`. A new
 test case named `testcase003()` is created to replace
 `testcase002()`. To save pages, the complete source code of
-`chapter07_001.py` is not shown here; only the
+`lab07_001.py` is not shown here; only the
 `testcase003()` function is depicted as follows:
 
 
 ``` {.programlisting .language-markup}
 # -*- coding: utf-8 -*-
-# program: chapter07_001.py
+# program: lab07_001.py
 
 # other functions are not shown for brevity
 
@@ -904,7 +904,7 @@ at
 Summary
 -------------------------
 
-This chapter highlights the most important aspects of deploying a
+This lab highlights the most important aspects of deploying a
 Cassandra cluster into the production environment. Cassandra can be
 taught to understand the physical location of the nodes in the cluster
 in order to intelligently manage its availability, scalability and
@@ -918,6 +918,6 @@ are a must for a live running system. If you have experience in
 deploying other database and system, you may well appreciate the
 neatness and simplicity of Cassandra.
 
-In the next chapter, we will have a look at the supplementary
+In the next lab, we will have a look at the supplementary
 information pertinent to application design and development. We will
-also summarize of the essence of each chapter.
+also summarize of the essence of each lab.

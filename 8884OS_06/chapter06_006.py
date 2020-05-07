@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# program: chapter06_006.py
+# program: lab06_006.py
 
 ## import Cassandra driver library
 from cassandra.cluster import Cluster

@@ -1,6 +1,6 @@
 
 
-Chapter 1. Bird's Eye View of Cassandra
+Lab 1. Bird's Eye View of Cassandra
 -------------------------------------------------
 
 
@@ -908,7 +908,7 @@ Features of Cassandra
 
 
 
-In order to keep this chapter short, the following
+In order to keep this lab short, the following
 bullet list covers the great features provided by Cassandra:
 
 
@@ -961,7 +961,7 @@ Summary
 
 
 
-In this chapter, we have gone through a bit of history starting from the
+In this lab, we have gone through a bit of history starting from the
 1970s. We were in total control of the data models that were rather
 stable and the applications that were pretty simple. The relational
 databases were a perfect fit in the old days. With the emergence of
@@ -979,5 +979,5 @@ one of the NoSQL databases that is a blend of Google BigTable and Amazon
 Dynamo. The elegance of its architecture inherits from the DNA of these
 two parents.
 
-In the next chapter, we will look at the flexible data model supported
+In the next lab, we will look at the flexible data model supported
 by Cassandra.

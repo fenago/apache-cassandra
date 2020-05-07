@@ -1,10 +1,10 @@
 
 
-Chapter 3. CQL Data Types
+Lab 3. CQL Data Types
 ----------------------------------
 
 
-In this chapter, we will have an overview of Cassandra Query Language
+In this lab, we will have an overview of Cassandra Query Language
 and take a detailed look into the wealthy set of data types supported by
 Cassandra. We will walk through the data types to study what their
 internal storage structure looks like.
@@ -886,7 +886,7 @@ Summary
 
 
 
-This chapter is the second part of Cassandra data modeling. We have
+This lab is the second part of Cassandra data modeling. We have
 learned the basics of Cassandra Query Language (CQL), which offers a
 SQL-like language to implement a Cassandra data model and operate the
 data inside. Then a very detailed walkthrough, with ample examples of
@@ -896,5 +896,5 @@ data types for your data models. The internal storage of each data type
 was also explained to let you know how Cassandra implements its data
 types.
 
-In the next chapter, we will learn another important element of a
+In the next lab, we will learn another important element of a
 Cassandra query---indexes.

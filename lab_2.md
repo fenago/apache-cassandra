@@ -1,10 +1,10 @@
 
 
-Chapter 2. Cassandra Data Modeling
+Lab 2. Cassandra Data Modeling
 -------------------------------------------
 
 
-In this chapter, we will open the door to the world of Cassandra data
+In this lab, we will open the door to the world of Cassandra data
 modeling. We will briefly go through its building blocks, the main
 differences to the relational data model, and examples of constructing
 queries on a Cassandra data model.
@@ -123,7 +123,7 @@ the `ColumnKey` values. However, it brings us a very powerful
 feature of Cassandra. `RowKey` and `ColumnKey`
 can store data themselves and not just in
 `ColumnValue`. We will not go too deep
-into this at the moment; we will revisit it in later chapters.
+into this at the moment; we will revisit it in later labs.
 
 
 ### Note
@@ -330,7 +330,7 @@ Cassandra allows the following collections:
 :::
 
 Here we only provided a brief introduction, and we will revisit the
-collections in subsequent chapters.
+collections in subsequent labs.
 
 
 ### No foreign key
@@ -445,7 +445,7 @@ examined all the nodes in the cluster. Hence, the performance is
 unpredictable.
 
 More information on secondary keys will be provided as we go through the
-later chapters.
+later labs.
 
 
 
@@ -778,7 +778,7 @@ previously mentioned additional pair of parentheses? If you define a
 primary key in that way, you intend to use more than one column to be
 the row key and the partition key. It is called a composite partition
 key. For the time being, it is enough for you to know the terminology
-only. Further information will be given in later chapters.
+only. Further information will be given in later labs.
 
 Until now, you might have felt dizzy and uncomfortable, especially for
 those of you having so many years of expertise in the relational data
@@ -908,7 +908,7 @@ Cassandra Query Language
 
 It is quite common for other authors to start
 introducing the Cassandra data model from CQL. I use a different
-approach in this chapter. I try to avoid diving too deep in CQL before
+approach in this lab. I try to avoid diving too deep in CQL before
 we have a firm understanding of how Cassandra handles its physical
 storage.
 
@@ -921,7 +921,7 @@ to model data in Cassandra. It might cause more confusion in the end. I
 prefer the approach of a microscopic view of how the data model relates
 to the physical storage. By doing so, you can grasp the key points more
 quickly and understand the inner working mechanism more clearly. CQL is
-covered extensively in the next chapter.
+covered extensively in the next lab.
 
 
 
@@ -930,7 +930,7 @@ Summary
 
 
 
-In this chapter, we looked at the basics of a Cassandra data model and
+In this lab, we looked at the basics of a Cassandra data model and
 are now familiar with the column, row, column family, keyspace, counter,
 and other related terms. A comparison of the main differences between a
 relational data model and the Cassandra data model was also given to
@@ -940,6 +940,6 @@ data modeling and typical usage patterns were introduced. Finally, the
 reason why the introduction of CQL is deliberately postponed was
 expressed.
 
-This chapter is only the first part on Cassandra data modeling. In the
-next chapter, we will continue the second part of the tour, Cassandra
+This lab is only the first part on Cassandra data modeling. In the
+next lab, we will continue the second part of the tour, Cassandra
 Query Language.

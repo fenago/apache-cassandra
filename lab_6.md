@@ -1,6 +1,6 @@
 
 
-Chapter 6. Enhancing a Version
+Lab 6. Enhancing a Version
 ---------------------------------------
 
 
@@ -19,7 +19,7 @@ developed in lab 5,
 how to evolve an existing Cassandra data model will be explained in
 detail. Meanwhile, the techniques of modeling by query will be
 demonstrated as well. The source code of the Stock Screener Application
-will then be modified accordingly. By the end of this chapter, a
+will then be modified accordingly. By the end of this lab, a
 complete technical analysis application on stocks will be developed. You
 can use it as a foundation to quickly develop your own.
 
@@ -106,12 +106,12 @@ We can create an additional column, say `watch_list_code` , for
 this particular purpose. The new table is called
 `watchlist` and will be created in the
 `fenagocdma` keyspace. The CQL statement is shown in
-`chapter06_001.py`:
+`lab06_001.py`:
 
 
 ``` {.programlisting .language-markup}
 # -*- coding: utf-8 -*-
-# program: chapter06_001.py
+# program: lab06_001.py
 
 ## import Cassandra driver library
 from cassandra.cluster import Cluster
@@ -177,12 +177,12 @@ the tables that will be queried. A rule of thumb is *one table for one
 query*; as simple as that.
 
 The `alertlist` table is created by the CQL statement, as
-shown in `chapter06_002.py`:
+shown in `lab06_002.py`:
 
 
 ``` {.programlisting .language-markup}
 # -*- coding: utf-8 -*-
-# program: chapter06_002.py
+# program: lab06_002.py
 
 ## import Cassandra driver library
 from cassandra.cluster import Cluster
@@ -248,12 +248,12 @@ should be retrieved from the Data Feed Provider, which is Yahoo! Finance
 in our case, the most suitable time to get it is when the corresponding
 stock quote data is retrieved. Hence, a new column called
 `stock_name` is added to `quote` , as shown in
-`chapter06_003.py`:
+`lab06_003.py`:
 
 
 ``` {.programlisting .language-markup}
 # -*- coding: utf-8 -*-
-# program: chapter06_003.py
+# program: lab06_003.py
 
 ## import Cassandra driver library
 from cassandra.cluster import Cluster
@@ -308,12 +308,12 @@ that question. This is an example of modeling by query.
 Basically, the structure of the new table for the second question should
 resemble the structure of `alertlist`. We give that table a name,
 `alert_by_date` , and create it as shown in
-`chapter06_004.py`:
+`lab06_004.py`:
 
 
 ``` {.programlisting .language-markup}
 # -*- coding: utf-8 -*-
-# program: chapter06_004.py
+# program: lab06_004.py
 
 ## import Cassandra driver library
 from cassandra.cluster import Cluster
@@ -345,7 +345,7 @@ cluster.shutdown()
 ```
 :::
 
-When compared to `alertlist` in `chapter06_002.py` ,
+When compared to `alertlist` in `lab06_002.py` ,
 `alert_by_date` only swaps the order of the columns in the
 compound primary key. One might think that a secondary index can be
 created on `alertlist` to achieve the same effect.
@@ -371,7 +371,7 @@ changes in this section.
 
 Data Mapper and Archiver are components of the Data
 Feed Provider module, and its source code file is
-`chapter05_005.py`. Most of the source code can be left
+`lab05_005.py`. Most of the source code can be left
 intact; we only need to add code to:
 
 
@@ -381,12 +381,12 @@ intact; we only need to add code to:
 2.  Retrieve the name of the stocks and store it in the quote table
 :::
 
-The modified source code is shown in `chapter06_005.py`:
+The modified source code is shown in `lab06_005.py`:
 
 
 ``` {.programlisting .language-markup}
 # -*- coding: utf-8 -*-
-# program: chapter06_005.py
+# program: lab06_005.py
 
 ## import Cassandra driver library
 from cassandra.cluster import Cluster
@@ -587,12 +587,12 @@ enhancements; to do so, we will perform the following:
 3.  Save the alerts into `alertlist`.
 :::
 
-The modified source code is shown in `chapter06_006.py`:
+The modified source code is shown in `lab06_006.py`:
 
 
 ``` {.programlisting .language-markup}
 # -*- coding: utf-8 -*-
-# program: chapter06_006.py
+# program: lab06_006.py
 
 ## import Cassandra driver library
 from cassandra.cluster import Cluster
@@ -760,10 +760,10 @@ testcase002()
 ```
 :::
 
-At the bottom of `chapter06_006.py` , the
+At the bottom of `lab06_006.py` , the
 `for` loop is responsible for iterating `watchlist`
 loaded by the new `load_watchlist` function, which is the same
-function as in `chapter06_005.py` and does not require further
+function as in `lab06_005.py` and does not require further
 explanation. Another `for` loop inside saves the scanned
 alerts into `alertlist` by calling the new
 `insert_alert` function.
@@ -809,12 +809,12 @@ the two questions, which are as follows:
 :::
 
 As we have used denormalization on the data model, it is very easy to
-execute. For the first query, see `chapter06_007.py`:
+execute. For the first query, see `lab06_007.py`:
 
 
 ``` {.programlisting .language-markup}
 # -*- coding: utf-8 -*-
-# program: chapter06_007.py
+# program: lab06_007.py
 
 ## import Cassandra driver library
 from cassandra.cluster import Cluster
@@ -897,13 +897,13 @@ resultset to a pandas DataFrame.
 
 Then we can come up with a query for the second
 question with reference to the same logic in
-`chapter06_007.py`. The source code is shown in
-`chapter06_008.py`:
+`lab06_007.py`. The source code is shown in
+`lab06_008.py`:
 
 
 ``` {.programlisting .language-markup}
 # -*- coding: utf-8 -*-
-# program: chapter06_008.py
+# program: lab06_008.py
 
 ## import Cassandra driver library
 from cassandra.cluster import Cluster
@@ -991,11 +991,11 @@ We can now the
 changes to the system one-by-one:
 
 
-1.  First we run `chapter06_001.py` through to
-    `chapter06_004.py` in sequence to make changes to the data
+1.  First we run `lab06_001.py` through to
+    `lab06_004.py` in sequence to make changes to the data
     model.
 
-2.  Then we execute `chapter06_005.py` to retrieve stock quote
+2.  Then we execute `lab06_005.py` to retrieve stock quote
     data for the Watch List. It is worth mentioning that UPSERT is a
     very nice feature of Cassandra. We do not encounter a duplicate
     primary key while we insert the same row into a table. It simply
@@ -1006,7 +1006,7 @@ changes to the system one-by-one:
     scanning over the stock quote data of each stock in the Watch List.
 
 4.  Finally, we execute
-    `chapter06_007.py` and `chapter06_008.py` to
+    `lab06_007.py` and `lab06_008.py` to
     enquire `alertlist` and
     `alert_by_date` , respectively. Their sample test results
     are shown in the following figure:
@@ -1018,18 +1018,18 @@ changes to the system one-by-one:
 Summary
 --------
 
-This chapter extends the Stock Screener Application by a number of
+This lab extends the Stock Screener Application by a number of
 enhancements. We made changes to the data model to demonstrate the
 modeling by query techniques and how denormalization can help us achieve
 a high-performance application. We also tried the batch feature provided
 by Cassandra 2.0.
 
-Note that the source code in this chapter is not housekept and can be
+Note that the source code in this lab is not housekept and can be
 refactored somehow. However, because of the limit on the number of
 pages, it is left as an exercise for the reader.
 
 The Stock Screener Application is now running on a single node cluster.
 
-In the next chapter, we will delve into the considerations and
+In the next lab, we will delve into the considerations and
 procedures of expanding it to a larger cluster, which is quite common in
 real-life production systems.
