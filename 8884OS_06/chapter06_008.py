@@ -50,6 +50,12 @@ def testcase001():
     ## establish Cassandra connection, using local default
     session = cluster.connect()
     
+        
+    session.execute("CREATE KEYSPACE IF NOT EXISTS fenagocdma " + \
+                "WITH replication" + \
+                "={'class':'SimpleStrategy', " + \
+                "'replication_factor':1}")
+
     ## use fenagocdma keyspace
     session.set_keyspace('fenagocdma')
     

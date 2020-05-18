@@ -100,8 +100,8 @@ def get_stock_name(sym):
           '+Historical+Prices'
 	r = requests.get(url)
 	soup = BeautifulSoup(r.text)
-	data = soup.findAll('h2')
-	return data[2].text
+	data = soup.findAll('h1')
+	return data[0].text
 
 def testcase001():
     ## create Cassandra instance
