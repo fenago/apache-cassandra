@@ -1,0 +1,325 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "# -*- coding: utf-8 -*-\r\n# program: lab05_001.py\r\n\r\n## web is the shorthand alias of pandas_datareader\r\nimport pandas_datareader as web\r\nimport datetime\r\n\r\n## we want to retrieve the historical daily stock quote of\r\n## Goldman Sachs from Yahoo! Finance for the period\r\n## between 1-Jan-2012 and 28-Jun-2014\r\nsymbol = 'GS'\r\nstart_date = datetime.datetime(2012, 1, 1)\r\nend_date = datetime.datetime(2014, 6, 28)\r\n\r\n## data is a DataFrame holding the daily stock quote\r\ndata = web.DataReader(symbol, 'yahoo', start_date, end_date)\r\n\r\n## use a for-loop to print out the data\r\nfor index, row in data.iterrows():\r\n    print (index.date(), '\\t', row['Open'], '\\t', row['High'], \\\r\n          '\\t', row['Low'], '\\t', row['Close'], '\\t', row['Volume'])\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-05-18T13:44:16+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1589809445834_1256970500",
+      "id": "paragraph_1589809445834_1256970500",
+      "dateCreated": "2020-05-18T13:44:05+0000",
+      "dateStarted": "2020-05-18T13:44:16+0000",
+      "dateFinished": "2020-05-18T13:44:18+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:335"
+    },
+    {
+      "text": "# -*- coding: utf-8 -*-\r\n# program: lab05_002.py\r\n\r\n## web is the shorthand alias of pandas_datareader\r\nimport pandas_datareader as web\r\nimport datetime\r\n\r\n## we want to retrieve the historical daily stock quote of\r\n## Goldman Sachs from Yahoo! Finance for the period\r\n## between 1-Jan-2012 and 28-Jun-2014\r\nsymbol = 'GS'\r\nstart_date = datetime.datetime(2012, 1, 1)\r\nend_date = datetime.datetime(2014, 6, 28)\r\n\r\n## data is a DataFrame holding the daily stock quote\r\ndata = web.DataReader(symbol, 'yahoo', start_date, end_date)\r\n\r\n## standardize the column names\r\n## rename index column to price_date to match the Cassandra table\r\ndata.index.names=['price_date']\r\n\r\n## drop extra column 'Adj Close'\r\ndata = data.drop(['Adj Close'], axis=1)\r\n\r\n## rename the columns to match the respective columns in Cassandra\r\ndata = data.rename(columns={'Open':'open_price', \\\r\n                            'High':'high_price', \\\r\n                            'Low':'low_price', \\\r\n                            'Close':'close_price', \\\r\n                            'Volume':'volume'})\r\n\r\n## use a for-loop to print out the transformed data\r\nfor index, row in data.iterrows():\r\n    print (index.date(), '\\t', row['open_price'], '\\t', \\\r\n                              row['high_price'], '\\t', \\\r\n                              row['low_price'], '\\t', \\\r\n                              row['close_price'], '\\t', \\\r\n                              row['volume'])\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-05-18T13:44:27+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1589809456213_-2142268776",
+      "id": "paragraph_1589809456213_-2142268776",
+      "dateCreated": "2020-05-18T13:44:16+0000",
+      "dateStarted": "2020-05-18T13:44:27+0000",
+      "dateFinished": "2020-05-18T13:44:29+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:336"
+    },
+    {
+      "text": "# -*- coding: utf-8 -*-\r\n# program: lab05_003.py\r\n\r\n## import Cassandra driver library\r\nfrom cassandra.cluster import Cluster\r\n\r\n## create Cassandra instance\r\ncluster = Cluster()\r\n\r\n## establish Cassandra connection, using local default\r\nsession = cluster.connect()\r\n\r\n## create keyspace fenagocdma if not exists\r\n## currently it runs on a single-node cluster\r\nsession.execute(\"CREATE KEYSPACE IF NOT EXISTS fenagocdma \" + \\\r\n                \"WITH replication\" + \\\r\n                \"={'class':'SimpleStrategy', \" + \\\r\n                \"'replication_factor':1}\")\r\n\r\n## use fenagocdma keyspace\r\nsession.set_keyspace('fenagocdma')\r\n\r\n## execute CQL statement to create quote table if not exists\r\nsession.execute('CREATE TABLE IF NOT EXISTS quote (' + \\\r\n                'symbol varchar,' + \\\r\n                'price_time timestamp,' + \\\r\n                'open_price float,' + \\\r\n                'high_price float,' + \\\r\n                'low_price float,' + \\\r\n                'close_price float,' + \\\r\n                'volume double,' + \\\r\n                'PRIMARY KEY (symbol, price_time))')\r\n\r\n## close Cassandra connection\r\ncluster.shutdown()\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-05-18T13:44:34+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1589809467574_378285908",
+      "id": "paragraph_1589809467574_378285908",
+      "dateCreated": "2020-05-18T13:44:27+0000",
+      "dateStarted": "2020-05-18T13:44:34+0000",
+      "dateFinished": "2020-05-18T13:44:36+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:337"
+    },
+    {
+      "text": "# -*- coding: utf-8 -*-\r\n# program: lab05_004.py\r\n\r\n## import Cassandra driver library\r\nfrom cassandra.cluster import Cluster\r\nfrom decimal import Decimal\r\n\r\n## function to insert historical data into table quote\r\n## ss: Cassandra session\r\n## sym: stock symbol\r\n## d: standardized DataFrame containing historical data\r\ndef insert_quote(ss, sym, d):\r\n    ## CQL to insert data, ? is the placeholder for parameters\r\n    insert_cql = 'INSERT INTO quote (' + \\\r\n                 'symbol, price_time, open_price, high_price,' + \\\r\n                 'low_price, close_price, volume' + \\\r\n                 ') VALUES (' + \\\r\n                 '?, ?, ?, ?, ?, ?, ?' + \\\r\n                 ')'\r\n    ## prepare the insert CQL as it will run repeatedly\r\n    insert_stmt = ss.prepare(insert_cql)\r\n\r\n    ## set decimal places to 4 digits\r\n    getcontext().prec = 4\r\n\r\n    ## loop thru the DataFrame and insert records\r\n    for index, row in d.iterrows():\r\n        ss.execute(insert_stmt, \\\r\n                   [sym, index, \\\r\n                   Decimal(row['open_price']), \\\r\n                   Decimal(row['high_price']), \\\r\n                   Decimal(row['low_price']), \\\r\n                   Decimal(row['close_price']), \\\r\n                   Decimal(row['volume']) \\\r\n                   ])\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-05-18T13:44:41+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1589809474754_-443629134",
+      "id": "paragraph_1589809474754_-443629134",
+      "dateCreated": "2020-05-18T13:44:34+0000",
+      "dateStarted": "2020-05-18T13:44:41+0000",
+      "dateFinished": "2020-05-18T13:44:41+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:338"
+    },
+    {
+      "text": "# -*- coding: utf-8 -*-\r\n# program: lab05_005.py\r\n\r\n## import Cassandra driver library\r\nfrom cassandra.cluster import Cluster\r\nfrom decimal import Decimal\r\n\r\n## web is the shorthand alias of pandas_datareader\r\nimport pandas_datareader as web\r\nimport datetime\r\n\r\n## function to insert historical data into table quote\r\n## ss: Cassandra session\r\n## sym: stock symbol\r\n## d: standardized DataFrame containing historical data\r\ndef insert_quote(ss, sym, d):\r\n    ## CQL to insert data, ? is the placeholder for parameters\r\n    insert_cql = \"INSERT INTO quote (\" + \\\r\n                 \"symbol, price_time, open_price, high_price,\" + \\\r\n                 \"low_price, close_price, volume\" + \\\r\n                 \") VALUES (\" + \\\r\n                 \"?, ?, ?, ?, ?, ?, ?\" + \\\r\n                 \")\"\r\n    ## prepare the insert CQL as it will run repeatedly\r\n    insert_stmt = ss.prepare(insert_cql)\r\n\r\n    ## set decimal places to 4 digits\r\n    getcontext().prec = 4\r\n\r\n    ## loop thru the DataFrame and insert records\r\n    for index, row in d.iterrows():\r\n        ss.execute(insert_stmt, \\\r\n                   [sym, index, \\\r\n                   Decimal(row['open_price']), \\\r\n                   Decimal(row['high_price']), \\\r\n                   Decimal(row['low_price']), \\\r\n                   Decimal(row['close_price']), \\\r\n                   Decimal(row['volume']) \\\r\n                   ])\r\n\r\n## retrieve the historical daily stock quote from Yahoo! Finance\r\n## Parameters\r\n## sym: stock symbol\r\n## sd: start date\r\n## ed: end date\r\ndef collect_data(sym, sd, ed):\r\n    ## data is a DataFrame holding the daily stock quote\r\n    data = web.DataReader(sym, 'yahoo', sd, ed)\r\n    return data\r\n\r\n## transform received data into standardized format\r\n## Parameter\r\n## d: DataFrame containing Yahoo! Finance stock quote\r\ndef transform_yahoo(d):\r\n    ## drop extra column 'Adj Close'\r\n    d1 = d.drop(['Adj Close'], axis=1)\r\n\r\n    ## standardize the column names\r\n    ## rename index column to price_date\r\n    d1.index.names=['price_date']\r\n\r\n    ## rename the columns to match the respective columns\r\n    d1 = d1.rename(columns={'Open':'open_price', \\\r\n                            'High':'high_price', \\\r\n                            'Low':'low_price', \\\r\n                            'Close':'close_price', \\\r\n                            'Volume':'volume'})\r\n    return d1\r\n\r\n## create Cassandra instance\r\ncluster = Cluster()\r\n\r\n## establish Cassandra connection, using local default\r\nsession = cluster.connect('fenagocdma')\r\n\r\nsymbol = 'GS'\r\nstart_date = datetime.datetime(2012, 1, 1)\r\nend_date = datetime.datetime(2014, 6, 28)\r\n\r\n## collect data\r\ndata = collect_data(symbol, start_date, end_date)\r\n\r\n## transform Yahoo! Finance data\r\ndata = transform_yahoo(data)\r\n\r\n## insert historical data\r\ninsert_quote(session, symbol, data)\r\n\r\n## close Cassandra connection\r\ncluster.shutdown()\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-05-18T13:44:49+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1589809481463_-1975483584",
+      "id": "paragraph_1589809481463_-1975483584",
+      "dateCreated": "2020-05-18T13:44:41+0000",
+      "dateStarted": "2020-05-18T13:44:49+0000",
+      "dateFinished": "2020-05-18T13:44:51+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:339"
+    },
+    {
+      "text": "# -*- coding: utf-8 -*-\r\n# program: lab05_006.py\r\n\r\nimport pandas as pd\r\nimport numpy as np\r\n\r\n## function to insert historical data into table quote\r\n## ss: Cassandra session\r\n## sym: stock symbol\r\n## sd: start date\r\n## ed: end date\r\n## return a DataFrame of stock quote\r\ndef retrieve_data(ss, sym, sd, ed):\r\n    ## CQL to select data, ? is the placeholder for parameters\r\n    select_cql = \"SELECT * FROM quote WHERE symbol=? \" + \\\r\n                 \"AND price_time >= ? AND price_time <= ?\"\r\n\r\n    ## prepare select CQL\r\n    select_stmt = ss.prepare(select_cql)\r\n\r\n    ## execute the select CQL\r\n    result = ss.execute(select_stmt, [sym, sd, ed])\r\n\r\n    ## initialize an index array\r\n    idx = np.asarray([])\r\n\r\n    ## initialize an array for columns\r\n    cols = np.asarray([])\r\n\r\n    ## loop thru the query resultset to make up the DataFrame\r\n    for r in result:\r\n        idx = np.append(idx, [r.price_time])\r\n        cols = np.append(cols, [r.open_price, r.high_price, \\\r\n                         r.low_price, r.close_price, r.volume])\r\n\r\n    ## reshape the 1-D array into a 2-D array for each day\r\n    cols = cols.reshape(idx.shape[0], 5)\r\n\r\n    ## convert the arrays into a pandas DataFrame\r\n    df = pd.DataFrame(cols, index=idx, \\\r\n                      columns=['close_price', 'high_price', \\\r\n                      'low_price', 'close_price', 'volume'])\r\n    return df\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-05-18T13:44:58+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1589809489824_72697182",
+      "id": "paragraph_1589809489824_72697182",
+      "dateCreated": "2020-05-18T13:44:49+0000",
+      "dateStarted": "2020-05-18T13:44:58+0000",
+      "dateFinished": "2020-05-18T13:44:58+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:340"
+    },
+    {
+      "text": "# -*- coding: utf-8 -*-\r\n# program: lab05_007.py\r\n\r\nimport pandas as pd\r\n\r\n## function to compute a Simple Moving Average on a DataFrame\r\n## d: DataFrame\r\n## prd: period of SMA\r\n## return a DataFrame with an additional column of SMA\r\ndef sma(d, prd):\r\n    d['sma'] = d['close_price'].rolling(window=prd).mean()\r\n    return d\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-05-18T13:45:14+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1589809498217_2008932856",
+      "id": "paragraph_1589809498217_2008932856",
+      "dateCreated": "2020-05-18T13:44:58+0000",
+      "dateStarted": "2020-05-18T13:45:14+0000",
+      "dateFinished": "2020-05-18T13:45:14+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:341"
+    },
+    {
+      "text": "# -*- coding: utf-8 -*-\r\n# program: lab05_008.py\r\n\r\n## function to apply screening rule to generate buy signals\r\n## screening rule, Close > 10-Day SMA\r\n## d: DataFrame\r\n## return a DataFrame containing buy signals\r\ndef signal_close_higher_than_sma10(d):\r\n    return d[d.close_price > d.sma]\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-05-18T13:45:23+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1589809505835_-895647126",
+      "id": "paragraph_1589809505835_-895647126",
+      "dateCreated": "2020-05-18T13:45:05+0000",
+      "dateStarted": "2020-05-18T13:45:23+0000",
+      "dateFinished": "2020-05-18T13:45:23+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:342"
+    },
+    {
+      "text": "# -*- coding: utf-8 -*-\r\n# program: lab05_009.py\r\n\r\n## import Cassandra driver library\r\nfrom cassandra.cluster import Cluster\r\n\r\nimport pandas as pd\r\nimport numpy as np\r\nimport datetime\r\n\r\n## function to insert historical data into table quote\r\n## ss: Cassandra session\r\n## sym: stock symbol\r\n## sd: start date\r\n## ed: end date\r\n## return a DataFrame of stock quote\r\ndef retrieve_data(ss, sym, sd, ed):\r\n    ## CQL to select data, ? is the placeholder for parameters\r\n    select_cql = \"SELECT * FROM quote WHERE symbol=? \" + \\\r\n                 \"AND price_time >= ? AND price_time <= ?\"\r\n\r\n    ## prepare select CQL\r\n    select_stmt = ss.prepare(select_cql)\r\n\r\n    ## execute the select CQL\r\n    result = ss.execute(select_stmt, [sym, sd, ed])\r\n\r\n    ## initialize an index array\r\n    idx = np.asarray([])\r\n\r\n    ## initialize an array for columns\r\n    cols = np.asarray([])\r\n\r\n    ## loop thru the query resultset to make up the DataFrame\r\n    for r in result:\r\n        idx = np.append(idx, [r.price_time])\r\n        cols = np.append(cols, [r.open_price, r.high_price, \\\r\n                         r.low_price, r.close_price, r.volume])\r\n\r\n    ## reshape the 1-D array into a 2-D array for each day\r\n    cols = cols.reshape(idx.shape[0], 5)\r\n\r\n    ## convert the arrays into a pandas DataFrame\r\n    df = pd.DataFrame(cols, index=idx, \\\r\n                      columns=['open_price', 'high_price', \\\r\n                      'low_price', 'close_price', 'volume'])\r\n    return df\r\n\r\n## function to compute a Simple Moving Average on a DataFrame\r\n## d: DataFrame\r\n## prd: period of SMA\r\n## return a DataFrame with an additional column of SMA\r\ndef sma(d, prd):\r\n    d['sma'] = d['close_price'].rolling(window=prd).mean()\r\n    return d\r\n\r\n## function to apply screening rule to generate buy signals\r\n## screening rule, Close > 10-Day SMA\r\n## d: DataFrame\r\n## return a DataFrame containing buy signals\r\ndef signal_close_higher_than_sma10(d):\r\n    return d[d.close_price > d.sma]\r\n\r\n## create Cassandra instance\r\ncluster = Cluster()\r\n\r\n## establish Cassandra connection, using local default\r\nsession = cluster.connect('fenagocdma')\r\n## scan buy-and-hold signals for GS over 1 month since 28-Jun-2012\r\nsymbol = 'GS'\r\nstart_date = datetime.datetime(2012, 6, 28)\r\nend_date = datetime.datetime(2012, 7, 28)\r\n\r\n## retrieve data\r\ndata = retrieve_data(session, symbol, start_date, end_date)\r\n\r\n## close Cassandra connection\r\ncluster.shutdown()\r\n\r\n## compute 10-Day SMA\r\ndata = sma(data, 10)\r\n\r\n## generate the buy-and-hold signals\r\nalerts = signal_close_higher_than_sma10(data)\r\n\r\n## print out the alert list\r\nfor index, r in alerts.iterrows():\r\n    print (index.date(), '\\t', r['close_price'])\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-05-18T13:45:28+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1589809523355_-960156020",
+      "id": "paragraph_1589809523355_-960156020",
+      "dateCreated": "2020-05-18T13:45:23+0000",
+      "dateStarted": "2020-05-18T13:45:28+0000",
+      "dateFinished": "2020-05-18T13:45:28+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:343"
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1589809528836_748809649",
+      "id": "paragraph_1589809528836_748809649",
+      "dateCreated": "2020-05-18T13:45:28+0000",
+      "status": "READY",
+      "$$hashKey": "object:344"
+    }
+  ],
+  "name": "lab_5",
+  "id": "2F9M7NF5B",
+  "defaultInterpreterGroup": "python",
+  "version": "0.9.0-preview1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/lab_5"
+}

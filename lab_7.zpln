@@ -1,0 +1,77 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "# -*- coding: utf-8 -*-\r\n# program: lab07_001.py\r\n\r\n## import Cassandra driver library\r\nfrom cassandra.cluster import Cluster\r\n\r\nimport pandas as pd\r\nimport numpy as np\r\nimport datetime\r\n\r\n## import Cassandra BatchStatement library\r\nfrom cassandra.query import BatchStatement\r\nfrom decimal import *\r\n\r\n## function to insert historical data into table quote\r\n## ss: Cassandra session\r\n## sym: stock symbol\r\n## sd: start date\r\n## ed: end date\r\n## return a DataFrame of stock quote\r\ndef retrieve_data(ss, sym, sd, ed):\r\n    ## CQL to select data, ? is the placeholder for parameters\r\n    select_cql = \"SELECT * FROM quote WHERE symbol=? \" + \\\r\n                 \"AND price_time >= ? AND price_time <= ?\"\r\n\r\n    ## prepare select CQL\r\n    select_stmt = ss.prepare(select_cql)\r\n\r\n    ## execute the select CQL\r\n    result = ss.execute(select_stmt, [sym, sd, ed])\r\n\r\n    ## initialize an index array\r\n    idx = np.asarray([])\r\n\r\n    ## initialize an array for columns\r\n    cols = np.asarray([])\r\n\r\n    ## loop thru the query resultset to make up the DataFrame\r\n    for r in result:\r\n        idx = np.append(idx, [r.price_time])\r\n        cols = np.append(cols, [r.open_price, r.high_price, \\\r\n                         r.low_price, r.close_price, \\\r\n                         r.volume, r.stock_name])\r\n\r\n    ## reshape the 1-D array into a 2-D array for each day\r\n    cols = cols.reshape(idx.shape[0], 6)\r\n\r\n    ## convert the arrays into a pandas DataFrame\r\n    df = pd.DataFrame(cols, index=idx, \\\r\n                      columns=['open_price', 'high_price', \\\r\n                      'low_price', 'close_price', \\\r\n                      'volume', 'stock_name'])\r\n    return df\r\n\r\n## function to compute a Simple Moving Average on a DataFrame\r\n## d: DataFrame\r\n## prd: period of SMA\r\n## return a DataFrame with an additional column of SMA\r\ndef sma(d, prd):\r\n    d['sma'] = d['close_price'].rolling(window=prd).mean()\r\n    return d\r\n\r\n## function to apply screening rule to generate buy signals\r\n## screening rule, Close > 10-Day SMA\r\n## d: DataFrame\r\n## return a DataFrame containing buy signals\r\ndef signal_close_higher_than_sma10(d):\r\n    return d[d.close_price.eq(d.sma)]\r\n\r\n## function to retrieve watchlist\r\n## ss: Cassandra session\r\n## ws: watchlist code\r\ndef load_watchlist(ss, ws):\r\n    ## CQL to select data, ? is the placeholder for parameters\r\n    select_cql = \"SELECT symbol FROM watchlist \" + \\\r\n                 \"WHERE watch_list_code=?\"\r\n\r\n    ## prepare select CQL\r\n    select_stmt = ss.prepare(select_cql)\r\n\r\n    ## execute the select CQL\r\n    result = ss.execute(select_stmt, [ws])\r\n\r\n    ## initialize the stock array\r\n    stw = []\r\n\r\n    ## loop thru the query resultset to make up the DataFrame\r\n    for r in result:\r\n        stw.append(r.symbol)\r\n\r\n    return stw\r\n\r\n## function to insert historical data into table quote\r\n## ss: Cassandra session\r\n## sym: stock symbol\r\n## d: standardized DataFrame containing historical data\r\n## sn: stock name\r\ndef insert_alert(ss, sym, sd, cp, sn):\r\n    ## CQL to insert data, ? is the placeholder for parameters\r\n    insert_cql1 = \"INSERT INTO alertlist (\" + \\\r\n                 \"symbol, price_time, signal_price, stock_name\" +\\\r\n                 \") VALUES (?, ?, ?, ?)\"\r\n\r\n    ## CQL to insert data, ? is the placeholder for parameters\r\n    insert_cql2 = \"INSERT INTO alert_by_date (\" + \\\r\n                 \"symbol, price_time, signal_price, stock_name\" +\\\r\n                 \") VALUES (?, ?, ?, ?)\"\r\n\r\n    ## prepare the insert CQL as it will run repeatedly\r\n    insert_stmt1 = ss.prepare(insert_cql1)\r\n    insert_stmt2 = ss.prepare(insert_cql2)\r\n\r\n    ## set decimal places to 4 digits\r\n    getcontext().prec = 4\r\n\r\n    ## begin a batch\r\n    batch = BatchStatement()\r\n    \r\n    ## add insert statements into the batch\r\n    batch.add(insert_stmt1, [sym, sd, cp, sn])\r\n    batch.add(insert_stmt2, [sym, sd, cp, sn])\r\n    \r\n    ## execute the batch\r\n    ss.execute(batch)\r\n\r\ndef testcase003():\r\n\r\n    ######################################################################## \r\n    # We will be running the example on single node in the lab environment # \r\n    ######################################################################## \r\n\r\n    ## create Cassandra instance\r\n    cluster = Cluster()\r\n\r\n    ## create Cassandra instance with multiple nodes\r\n    # cluster = Cluster(['ubtc01', 'ubtc02'])\r\n    \r\n    ## establish Cassandra connection, using local default\r\n    session = cluster.connect('fenagocdma')\r\n    \r\n    start_date = datetime.datetime(2012, 6, 28)\r\n    end_date = datetime.datetime(2013, 9, 28)\r\n    \r\n    ## load the watch list\r\n    stocks_watched = load_watchlist(session, \"WS01\")\r\n    \r\n    for symbol in stocks_watched:\r\n        ## retrieve data\r\n        data = retrieve_data(session, symbol, start_date, end_date)\r\n        \r\n        ## compute 10-Day SMA\r\n        data = sma(data, 10)\r\n        \r\n        ## generate the buy-and-hold signals\r\n        alerts = signal_close_higher_than_sma10(data)\r\n        \r\n        ## save the alert list\r\n        for index, r in alerts.iterrows():\r\n            insert_alert(session, symbol, index, \\\r\n                         Decimal(r['close_price']), \\\r\n                         r['stock_name'])\r\n    \r\n    ## close Cassandra connection\r\n    cluster.shutdown()\r\n\r\ntestcase003()\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-05-18T14:41:16+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1589809690178_1693822238",
+      "id": "paragraph_1589809690178_1693822238",
+      "dateCreated": "2020-05-18T13:48:10+0000",
+      "dateStarted": "2020-05-18T14:41:16+0000",
+      "dateFinished": "2020-05-18T14:41:16+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:1420"
+    },
+    {
+      "user": "anonymous",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "python",
+          "editOnDblClick": false,
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/python"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1589809697620_-498148424",
+      "id": "paragraph_1589809697620_-498148424",
+      "dateCreated": "2020-05-18T13:48:17+0000",
+      "status": "READY",
+      "$$hashKey": "object:1421"
+    }
+  ],
+  "name": "lab_7",
+  "id": "2FARVS8V7",
+  "defaultInterpreterGroup": "python",
+  "version": "0.9.0-preview1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/lab_7"
+}
