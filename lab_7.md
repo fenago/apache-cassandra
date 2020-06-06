@@ -13,7 +13,7 @@ replication strategy, snitch, and replication factor to make up a
 fault-tolerant, highly available cluster. Then we will demonstrate the
 procedure to migrate our Cassandra development database of the Stock
 Screener Application to a production database. However, cluster
-maintenance is beyond the scope of this book.
+maintenance is beyond the scope of this course.
 
 Moreover, a live production system that continuously operates certainly
 requires monitoring of its health status. We will cover the basic tools
@@ -582,7 +582,7 @@ recommendations. It is remarkable that each operating system also
 provides a bunch of tools and utilities for
 monitoring, for example, `top` , `df` , `du`
 on Linux and Task Manager on Windows. However, they are beyond the scope
-of this book.
+of this course.
 
 
 
@@ -773,7 +773,7 @@ Performance tuning is a large and complex topic
 that in itself can be a whole course. We can only scratch the surface of
 it in this short section. Similar to monitoring in the last section,
 operating system-specific performance tuning techniques are beyond the
-scope of this book.
+scope of this course.
 
 
 

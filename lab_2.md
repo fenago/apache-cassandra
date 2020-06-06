@@ -46,7 +46,7 @@ upfront in the process of data modeling. Perhaps it is the cost of the
 trade-off for the attainment of superb scalability, performance, and
 fault tolerance.
 
-To enjoy reading this book, you are advised to temporarily think in both
+To enjoy reading this course, you are advised to temporarily think in both
 relational and NoSQL ways. Although you may not become a friend of
 Cassandra, you will have an eye-opening experience in realizing the fact
 that there exists a different way of working in the world.
@@ -884,7 +884,7 @@ based on the storage model. Therefore, Cassandra can handle voluminous
 time-series data in a blazing fast fashion. TTL is another excellent
 feature to simplify data housekeeping.
 
-In the second half of this book, a complete stock quote technical
+In the second half of this course, a complete stock quote technical
 analysis application will be developed to further explain the details of
 using Cassandra to handle time-series data.
 

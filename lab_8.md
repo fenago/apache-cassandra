@@ -45,7 +45,7 @@ warrants a discussion on the evolution of CQL.
 Before we get started, let's create a keyspace for this chapter's work:
 
 ```
-CREATE KEYSPACE packt_ch3 WITH replication =
+CREATE KEYSPACE fenago_ch3 WITH replication =
  {'class': 'NetworkTopologyStrategy', 'ClockworkAngels':'1'};
 ```
 
@@ -270,12 +270,12 @@ can be used.
 
 #### Single data center example
 
-The following example will create the `packt_ch3` keyspace.
+The following example will create the `fenago_ch3` keyspace.
 When a write occurs, one replica will be written to the cluster. Writes
 will also be sent to the commit log for extra durability:
 
 ```
-CREATE KEYSPACE IF NOT EXISTS packt_ch3
+CREATE KEYSPACE IF NOT EXISTS fenago_ch3
  WITH replication =
  {'class': 'NetworkTopologyStrategy', 'ClockworkAngels':'1'}
  AND durable_writes = true;
@@ -297,7 +297,7 @@ center environment later.
 
 #### Multi-data center example
 
-The following example will create the `packt_ch3b` keyspace,
+The following example will create the `fenago_ch3b` keyspace,
 as long as it does not already exist. When a write occurs, two replicas
 will be written to the `ClockworkAngels` data center, and
 three will be written to the `PermanentWaves` and
@@ -305,7 +305,7 @@ three will be written to the `PermanentWaves` and
 the commit log for extra durability:
 
 ```
-CREATE KEYSPACE packt_ch3_mdc
+CREATE KEYSPACE fenago_ch3_mdc
  WITH replication = {'class': 'NetworkTopologyStrategy',
   'ClockworkAngels':'2', 'MovingPictures':'3', 'PermanentWaves':'3'}
  AND durable_writes = true;
@@ -316,8 +316,8 @@ keep typing it later. Notice that this will also change your Command
 Prompt:
 
 ```
-cassdba@cqlsh> use packt_ch3 ;
-cassdba@cqlsh:packt_ch3>
+cassdba@cqlsh> use fenago_ch3 ;
+cassdba@cqlsh:fenago_ch3>
 ```
 
 ### Creating a table
@@ -1674,10 +1674,10 @@ One day is 86,400 seconds.
 
 Changing a keyspace to use a different RF or strategy is a simple matter
 of using the `ALTER KEYSPACE` command. Let's assume that we
-have created a keyspace called `packt_test`:
+have created a keyspace called `fenago_test`:
 
 ```
-CREATE KEYSPACE packt_test WITH replication = {
+CREATE KEYSPACE fenago_test WITH replication = {
   'class': 'SimpleStrategy', 'replication_factor': '1'}
 AND durable_writes = true;
 ```
@@ -1686,7 +1686,7 @@ As it is preferable to use `NetworkTopologyStrategy`, we can
 alter that easily:
 
 ```
-ALTER KEYSPACE packt_test  WITH replication = { 'class':'NetworkTopologyStrategy',
+ALTER KEYSPACE fenago_test  WITH replication = { 'class':'NetworkTopologyStrategy',
   'datacenter1': '1'};
 ```
 
@@ -1694,7 +1694,7 @@ If, at some point, we want to add our second data center, that command
 would look like this:
 
 ```
-ALTER KEYSPACE packt_test  WITH replication = { 'class': 'NetworkTopologyStrategy',
+ALTER KEYSPACE fenago_test  WITH replication = { 'class': 'NetworkTopologyStrategy',
  'datacenter1': '1', 'datacenter2': '1'};
 ```
 
@@ -1702,7 +1702,7 @@ If we added more nodes to both data centers, and needed to increase the
 RF in each, we can simply run this:
 
 ```
-ALTER KEYSPACE packt_test  WITH replication = {'class': 'NetworkTopologyStrategy',
+ALTER KEYSPACE fenago_test  WITH replication = {'class': 'NetworkTopologyStrategy',
  'datacenter1': '3', 'datacenter2': '3'};
 ```
 
@@ -1717,7 +1717,7 @@ Removing a keyspace is a simple matter of using the
 `DROP KEYSPACE` command:
 
 ```
-DROP KEYSPACE packt_test;
+DROP KEYSPACE fenago_test;
 ```
 
 ### Note
@@ -1968,7 +1968,7 @@ the bottom of the definition. Then you can `DROP` it:
 CREATE INDEX ON query_test(c5);
 DESC TABLE query_test ;
 
-CREATE TABLE packt_ch3.query_test (
+CREATE TABLE fenago_ch3.query_test (
    pk1 text,
    pk2 text,
    ck3 text,
@@ -1978,7 +1978,7 @@ CREATE TABLE packt_ch3.query_test (
 ) WITH CLUSTERING ORDER BY (ck3 DESC, ck4 ASC)
 ...
    AND speculative_retry = '99PERCENTILE';
-CREATE INDEX query_test_c5_idx ON packt_ch3.query_test (c5);
+CREATE INDEX query_test_c5_idx ON fenago_ch3.query_test (c5);
 
 DROP INDEX query_test_c5_idx ;
 ```
@@ -2104,9 +2104,7 @@ for the appropriate version.
 
 #### Creating a user and role
 
-This creates a new role called `cassdba` (as seen in [Chapter
-1](https://subscription.packtpub.com/book/big_data_and_business_intelligence/9781789131499/1),
-*Quick Start*) and gives it a password and the ability to log in and
+This creates a new role called `cassdba` and gives it a password and the ability to log in and
 makes it a superuser:
 
 ```
@@ -2130,9 +2128,7 @@ CREATE ROLE nate WITH PASSWORD='canada' AND LOGIN=true;
 #### Altering a user and role
 
 By far, the most common reason for modifying a role is to change the
-password. This was also demonstrated in [Chapter
-1](https://cdp.packtpub.com/mastering_apache_cassandra_3_x__third_edition/wp-admin/post.php?post=26&action=edit#post_24), *Quick
-Start*, in showing how to change the default `cassandra`
+password. Run following coomand to change the default `cassandra`
 password:
 
 ```
@@ -2154,8 +2150,8 @@ DROP ROLE data_test;
 Once created, permissions can be granted to roles:
 
 ```
-GRANT SELECT ON KEYSPACE packt_test TO data_reader;
-GRANT MODIFY ON KEYSPACE packt_test TO data_reader;
+GRANT SELECT ON KEYSPACE fenago_test TO data_reader;
+GRANT MODIFY ON KEYSPACE fenago_test TO data_reader;
 ```
 
 Roles can also be granted to other roles:
@@ -2167,7 +2163,7 @@ GRANT data_reader TO kyle;
 More liberal permissions can also be granted:
 
 ```
-GRANT ALL PERMISSIONS ON KEYSPACE packt_test TO kyle;
+GRANT ALL PERMISSIONS ON KEYSPACE fenago_test TO kyle;
 ```
 
 #### Revoking permissions
@@ -2176,7 +2172,7 @@ Sometimes a permission granted to a role will need to be removed. This
 can be done with the `REVOKE` command:
 
 ```
-REVOKE MODIFY ON KEYSPACE packt_test FROM data_reader;
+REVOKE MODIFY ON KEYSPACE fenago_test FROM data_reader;
 ```
 
 ### Other CQL commands
@@ -2197,7 +2193,7 @@ aggregate function in SQL. This query will return the number of rows in
 the customer table with the last name `Washburne`:
 
 ```
-SELECT COUNT(*) FROM packt_ch3.customer WHERE last_name='Washburne';
+SELECT COUNT(*) FROM fenago_ch3.customer WHERE last_name='Washburne';
 
  count
 -------
@@ -2210,7 +2206,7 @@ rows in a table with an unbound query. Apache Cassandra allows you to
 attempt this, but it does warn you:
 
 ```
-SELECT COUNT(*) FROM packt_ch3.customer;
+SELECT COUNT(*) FROM fenago_ch3.customer;
 
  count
 -------
@@ -2288,7 +2284,7 @@ data.
 A new table can be created with a `STATIC` column like this:
 
 ```
-CREATE TABLE packt_ch3.fighter_jets (
+CREATE TABLE fenago_ch3.fighter_jets (
  type TEXT PRIMARY KEY,
  nickname TEXT STATIC,
  serial_number BIGINT);
@@ -2298,18 +2294,18 @@ Likewise, an existing table can be altered to contain a
 `STATIC` column:
 
 ```
-ALTER TABLE packt_ch3.users_by_dept ADD department_head TEXT STATIC;
+ALTER TABLE fenago_ch3.users_by_dept ADD department_head TEXT STATIC;
 ```
 
 Now, we can update data in that column:
 
 ```
-INSERT INTO packt_ch3.users_by_dept (department,department_head) VALUES
+INSERT INTO fenago_ch3.users_by_dept (department,department_head) VALUES
 ('Engineering','Richard');
-INSERT INTO packt_ch3.users_by_dept (department,department_head) VALUES ('Marketing','Erlich');
-INSERT INTO packt_ch3.users_by_dept (department,department_head) VALUES ('Finance/HR','Jared');
+INSERT INTO fenago_ch3.users_by_dept (department,department_head) VALUES ('Marketing','Erlich');
+INSERT INTO fenago_ch3.users_by_dept (department,department_head) VALUES ('Finance/HR','Jared');
 
-SELECT department,username,department_head,title FROM packt_ch3.users_by_dept ;
+SELECT department,username,department_head,title FROM fenago_ch3.users_by_dept ;
 
  department  | username | department_head | title
 -------------+----------+-----------------+---------------
@@ -2358,9 +2354,9 @@ Now, re-running the preceding query with `todate(now())`
 nested inside my new `year()` UDF returns this result:
 
 ```
-SELECT packt_ch3.year(todate(now())) FROM system.local;
+SELECT fenago_ch3.year(todate(now())) FROM system.local;
 
- packt_ch3.year(system.todate(system.now()))
+ fenago_ch3.year(system.todate(system.now()))
 ---------------------------------------------
                                         2018
 (1 rows)
@@ -2448,11 +2444,11 @@ Next, I will export the contents of my `customer` table using
 the `COPY TO` command:
 
 ```
-COPY customer (company,last_name,first_name,addresses) TO '/home/aploetz/Documents/Packt/customer.txt' WITH DELIMITER= '|' AND HEADER=true;
+COPY customer (company,last_name,first_name,addresses) TO '/home/aploetz/Documents/Fenago/customer.txt' WITH DELIMITER= '|' AND HEADER=true;
 Reading options from the command line: {'header': 'true', 'delimiter': '|'}
 Using 3 child processes
 
-Starting copy of packt_ch3.customer with columns [company, last_name, first_name, addresses].
+Starting copy of fenago_ch3.customer with columns [company, last_name, first_name, addresses].
 Processed: 3 rows; Rate: 28 rows/s; Avg. rate: 7 rows/s
 3 rows exported to 1 files in 0.410 seconds.
 ```
@@ -2461,11 +2457,11 @@ And finally, I will import that file into a new table using the
 `COPY FROM` command:
 
 ```
-COPY customer_by_company (company,last_name,first_name,addresses) FROM '/home/aploetz/Documents/Packt/customer.txt' WITH HEADER=true and DELIMITER='|';
+COPY customer_by_company (company,last_name,first_name,addresses) FROM '/home/aploetz/Documents/Fenago/customer.txt' WITH HEADER=true and DELIMITER='|';
 Reading options from the command line: {'header': 'true', 'delimiter': '|'}
 Using 3 child processes
 
-Starting copy of packt_ch3.customer_by_company with columns [company, last_name, first_name, addresses].
+Starting copy of fenago_ch3.customer_by_company with columns [company, last_name, first_name, addresses].
 Processed: 3 rows; Rate: 5 rows/s; Avg. rate: 7 rows/s
 3 rows imported from 1 files in 0.413 seconds (0 skipped).
 ```
@@ -2516,7 +2512,7 @@ Here, we will demonstrate using the `DESC` command on a table:
 ```
 DESC TYPE customer_address;
 
-CREATE TYPE packt_ch3.customer_address (
+CREATE TYPE fenago_ch3.customer_address (
  type text,
  street text,
  city text,
@@ -2533,7 +2529,7 @@ Likewise, the `DESC` command can be used to describe an
 ```
 DESC INDEX order_status_idx;
 
-CREATE INDEX order_status_idx ON packt_ch3.order_status_by_week (status);
+CREATE INDEX order_status_idx ON fenago_ch3.order_status_by_week (status);
 ```
 
 #### TRACING

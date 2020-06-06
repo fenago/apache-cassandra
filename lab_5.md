@@ -27,17 +27,17 @@ more advanced features to be made by you.
 **Disclaimer**
 
 It should be assumed that the methods, techniques, or indicators
-discussed in this book will be profitable and will not result in losses.
+discussed in this course will be profitable and will not result in losses.
 There is no assurance that the strategies and methods presented will be
 successful, or that you will become a profitable trader. The past
 performance and results of any trading system or trading methodology are
 not necessarily indicative of future results. You should not trade with
 money that you cannot afford to lose. The examples discussed and
-presented in this book are for educational purposes only. These are not
+presented in this course are for educational purposes only. These are not
 solicitations of any order to buy or sell. I assume no responsibility
 for your trading results. No representation is being made that any
 account will, or is likely to, achieve profits or losses similar to
-those discussed in this book. There is a very high degree of risk in
+those discussed in this course. There is a very high degree of risk in
 trading. You are encouraged to consult a certified financial advisor
 before making any investment or trading decisions.
 
@@ -96,7 +96,7 @@ patterns rather than external drivers such as economic, fundamental, and
 news events.
 :::
 
-In this book, technical analysis is solely used for the Stock Screener
+In this course, technical analysis is solely used for the Stock Screener
 Application. As technical analysis focuses on price actions, the Stock
 Screener Application requires stock price data as its input and then it
 applies technical analysis techniques to determine whether the stock
@@ -191,7 +191,7 @@ are just a few of them listed for your reference:
 -   EODData: [http://eoddata.com](http://eoddata.com/)
 
 However, there is a caveat that stock quote data might have errors, for
-example, incorrect high and low prices. In this book, I selected Yahoo!
+example, incorrect high and low prices. In this course, I selected Yahoo!
 Finance as the prime Data Feed Provider. The following screenshot is a
 sample of the historical prices of a stock called *GS*:
 
@@ -338,7 +338,7 @@ software for various system components.
 When considering the implementation, the first
 fundamental choice is the operating system. The
 single most important constraint is that it must be supported by
-Cassandra. For this book, I have selected Ubuntu 14.04 LTS 64-bit
+Cassandra. For this course, I have selected Ubuntu 14.04 LTS 64-bit
 Version, which can be obtained at the  official
 Ubuntu website, <http://www.ubuntu.com/>. You should be able to
 painlessly set up your Linux box by following the verbose installation
@@ -370,7 +370,7 @@ to properly set up the JRE.
 
 At the time of writing, Java SE has been updated to Version 8. However,
 I have not tested JRE 8 and DataStax recommends JRE 7 for Cassandra 2.0
-too. Therefore, I will stick to JRE 7 in this book.
+too. Therefore, I will stick to JRE 7 in this course.
 
 
 ### Java Native Access
@@ -397,7 +397,7 @@ $ sudo apt-get install libjna-java
 
 
 It is now time to turn our attention to the programming language for the
-implementation of the Stock Screener Application. For this book, I have
+implementation of the Stock Screener Application. For this course, I have
 chosen Python. Python is a high-level programming language 
 designed for speed of development. It is open source, free,
 and cross-platform. It possesses a wealthy set of libraries for almost
@@ -424,7 +424,7 @@ many programs running that are written in Python 2. This is caused by
 the breaking backward compatibility of Python 3 that makes the migration
 of so many libraries written in Python 2 to Python 3, a very long way to
 go. Hence, the coexistence of Python 2 and Python 3 is expected for
-quite a long time in future. For this book, Python 2.7.x is used.
+quite a long time in future. For this course, Python 2.7.x is used.
 
 The following steps are used to install Python 2.7
 in Ubuntu using a terminal:
@@ -501,7 +501,7 @@ SciPy, matplotlib, IPython, and other open source software. It is
 also my favorite Python development environment.
 
 There are many other good and popular Python IDEs, such as IPython and
-Eclipse. The code in this book is friendly to these IDEs.
+Eclipse. The code in this course is friendly to these IDEs.
 
 
 ### The system overview

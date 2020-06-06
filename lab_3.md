@@ -90,7 +90,7 @@ setting the replication factor as one for a single-node Cassandra
 cluster, we can type the CQL statement, shown in the following
 screenshot, in `cqlsh`.
 
-This utility will be used extensively in this book to demonstrate how to
+This utility will be used extensively in this course to demonstrate how to
 use CQL to define the Cassandra data model:
 
 

@@ -350,7 +350,7 @@ straightforward operation to update all or a subset of the nodes at the
 same time.
 
 So far, you have grasped the fundamentals of the NoSQL family. Since
-this book concentrates on Apache Cassandra and its data model, you need
+this course concentrates on Apache Cassandra and its data model, you need
 to know what Cassandra is and have a basic understanding of what its
 architecture is, so that you can select and leverage the best available
 options when you are designing your NoSQL data model and application.
