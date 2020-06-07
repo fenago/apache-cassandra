@@ -78,7 +78,6 @@ in order to assess and calculate the value of a company stock and
 predict its probable price evolution. The goal is to make financial
 forecasts and find out the undervalued stock (stock that is cheap, in
 other words) for buy-and-hold.
-:::
 
 In contrast, technical analysis is a totally different approach.
 
@@ -94,7 +93,6 @@ technical analysis is that the market price reflects all the relevant
 information, so the analysis looks at the history of the trading
 patterns rather than external drivers such as economic, fundamental, and
 news events.
-:::
 
 In this course, technical analysis is solely used for the Stock Screener
 Application. As technical analysis focuses on price actions, the Stock
@@ -487,7 +485,6 @@ $ pip install cassandra-driver
 pip is a command-line package management system
 used to install and manage Python library packages. Its project page can
 be found at Github, <https://github.com/pypa/pip>.
-:::
 
 
 ### The integrated development environment
@@ -552,7 +549,6 @@ tasks:
 2.  Transforming the received data into a standardized format.
 
 3.  Saving the standardized data into the Cassandra database.
-:::
 
 Python has a well-known data analysis library
 called pandas. It is an open source library
@@ -812,7 +808,6 @@ of this. Most of the Python IDE has features to check against the
 indentations. The article on the myths about indentation of Python is
 worth reading, which is available at
 <http://www.secnetix.de/olli/Python/block_indentation.hawk>.
-:::
 
 The second interesting thing is the `prepare()` function. It
 is used to prepare CQL statements that are parsed by Cassandra and then

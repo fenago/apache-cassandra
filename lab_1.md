@@ -121,7 +121,6 @@ be momentarily inconsistent (although it is eventually consistent). In
 addition, the range queries are not available in NoSQL databases.
 Furthermore, a flexible schema might lead to problems with efficient
 searches.
-:::
 
 The huge volume of structured, semi-structured, and unstructured data
 was mentioned earlier. What I want to dive deeper into here is that
@@ -195,7 +194,6 @@ to bring the two together.
 Impedance mismatch is the difference between the
 relational model and the in-memory data structures that are usually
 encountered in object-oriented programming languages.
-:::
 
 Built-in replication is a feature that most NoSQL databases provide to
 support high availability in a cluster of many nodes. It is usually
@@ -383,7 +381,6 @@ running on cloud. As of March 2013, Netflix's Cassandra deployment
 consists of 50 clusters with over 750 nodes. For more information,
 please visit the case study at
 <http://www.datastax.com/wp-content/uploads/2011/09/CS-Netflix.pdf>.
-:::
 
 In fact, many of the benefits that Cassandra provides are inherited from
 its two best-of-breed NoSQL parents, Google BigTable and Amazon Dynamo.
@@ -448,7 +445,6 @@ Partition-tolerance means that a node can still function when
 communication with other groups of nodes is lost. Originating from Eric
 A. Brewer, the theorem states that in a distributed system, only two out
 of the three characteristics can be attained at the most.
-:::
 
 Google BigTable has trouble with Availability while keeping Consistency
 across partitioned nodes when failures happen in the cluster.
@@ -482,7 +478,6 @@ distribute data across the database cluster. Data and workload are
 automatically balanced across the nodes in the cluster. When a node
 fails for whatever reason, the failed node can be quickly and
 transparently replaced without service interruptions.
-:::
 
 Dynamo focuses primarily on the high availability of
 a cluster and the most important idea is eventual consistency. While
@@ -619,7 +614,6 @@ to the token of each node in the cluster. If the hash value falls in
 between a node's token, and the token of the previous node in the ring
 (tokens are assigned to nodes in a clockwise direction), that node is
 the replica for that row.
-:::
 
 
 ### Replication
@@ -742,7 +736,6 @@ list of row keys and the start position of rows in the data file.
 Bloom filter is a sample subset of the primary index
 with very fast nondeterministic algorithms to check whether an element
 is a member of a set. It is used to boost the performance.
-:::
 
 For write operations, Cassandra supports tunable
 consistency by various write consistency levels. The write consistency

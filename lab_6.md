@@ -52,7 +52,6 @@ Backtesting is a jargon used to refer to testing a trading strategy,
 investment strategy, or a predictive model using existing historical
 data. It is also a special type of cross-validation applied to time
 series data.
-:::
 
 In addition, when the number of the stocks in the
 Watch List grows to a few hundred, it will be difficult for a user of
@@ -550,7 +549,6 @@ quick turnaround projects such as screen scraping. It primarily parses
 any text given to it and finds anything wanted through the tree
 traversal of the parsed text. More information can be found at
 <http://www.crummy.com/software/BeautifulSoup/>.
-:::
 
 A `for` loop is used to iterate through the Watch List to
 retrieve the stock name and the stock quote data. In addition, as we
@@ -578,7 +576,6 @@ enhancements; to do so, we will perform the following:
     table.
 
 3.  Save the alerts into `alertlist`.
-:::
 
 The modified source code is shown in `lab06_006.py`:
 

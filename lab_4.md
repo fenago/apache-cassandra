@@ -92,7 +92,6 @@ cause undesirable effects in the application logic.
 Hence, it is very important for an application developer to handle
 duplicate primary key situations in the application logic. Do not rely
 on Cassandra to check the uniqueness for you.
-:::
 
 In fact, the reason why Cassandra behaves like this becomes more clear
 when we know how the internal storage engine stores the row, as shown by
@@ -359,7 +358,6 @@ for the following reasons:
     of data. An ordered partitioner that is balanced for one table can
     cause hot spots and uneven distribution for another table in the
     same cluster.
-:::
 
 
 ### Paging and token function
@@ -409,7 +407,6 @@ primary index and a secondary index is that the primary index is a
 distributed index used to locate the node that stores the row key,
 whereas the secondary index is a local index just to index the data on
 the local node.
-:::
 
 Therefore, the secondary index will not be able to know immediately the
 locations of all matched rows without having examined all the nodes in
@@ -423,7 +420,6 @@ The secondary index is the most efficient when using equality
 predicates. This is indeed a limitation that must have at least one
 equality predicate clause to hopefully limit the set of rows that need
 to be read into memory.
-:::
 
 In addition, the secondary index cannot be created on the primary key
 itself.
@@ -438,7 +434,6 @@ Secondary indexes in Cassandra are
 are not akin to a B-tree index in RDBMS. They are mostly like a hash.
 So, the range queries do not work on secondary indexes in Cassandra,
 only equality queries work on secondary indexes.
-:::
 
 We can use the CQL `CREATE INDEX` statement to create an index
 on a column after we define a table. For example, we might want to add a
@@ -515,7 +510,6 @@ Do index the columns with values that have low cardinality. Cassandra
 stores secondary indexes only for local rows in the
 data node as a hash-multimap or as bitmap indexes, you can refer to it
 at <https://issues.apache.org/jira/browse/CASSANDRA-1472>.
-:::
 
 Secondary indexes should be avoided in the following situations:
 
@@ -544,7 +538,6 @@ Secondary indexes should be avoided in the following situations:
     A query on an indexed column in a large cluster typically requires
     collating responses from multiple data partitions. The query
     response slows down as more machines get added to the cluster.
-:::
 
 
 ### Tip

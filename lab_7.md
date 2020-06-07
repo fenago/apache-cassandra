@@ -166,7 +166,6 @@ follows:
 For more detailed information, please refer to the documentation made by
 DataStax at
 <http://www.datastax.com/documentation/cassandra/2.1/cassandra/architecture/architectureSnitchesAbout_c.html>.
-:::
 
 The following figure illustrates an example of a cluster of eight nodes
 in four racks across two data centers using
@@ -180,7 +179,6 @@ data center:
 ### Tip
 
 All nodes in the cluster must use the same snitch setting.
-:::
 
 Let us look at the IP address assignment in **Data Center 1**
 first. The IP addresses are grouped and assigned in a top-down fashion.
@@ -622,7 +620,6 @@ Here are the most commonly used `nodetool` options:
 A detailed documentation of nodetool can be
 referred to at
 <http://www.datastax.com/documentation/cassandra/2.0/cassandra/tools/toolsNodetool_r.html>.
-:::
 
 
 ### JMX and MBeans
@@ -643,7 +640,6 @@ JConsole is included with Sun JDK 5.0 and higher
 versions. However, it consumes a significant amount of system resources.
 It is recommended that you run it on a remote machine rather than on the
 same host as a Cassandra node.
-:::
 
 We can launch JConsole by typing
 `jconsole` in a terminal. Assuming that we want to monitor the
@@ -714,7 +710,6 @@ It can be used to collect statistics on concerns such as performance,
 resource usage, or problems, for getting and setting application
 configurations or properties, and notifying events like faults or state
 changes.
-:::
 
 
 ### The system log
@@ -804,7 +799,6 @@ otherwise, these boilerplate options should not be altered.
 A detailed documentation on how to tune JVM for
 Cassandra can be found at
 <http://www.datastax.com/documentation/cassandra/2.0/cassandra/operations/ops_tune_jvm_c.html>.
-:::
 
 
 ### Caching
@@ -852,7 +846,6 @@ row cache is disabled by default.
 
 We usually enable either the key or row cache for a table, not both at
 the same time.
-:::
 
 
 #### Monitoring cache

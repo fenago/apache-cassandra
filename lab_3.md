@@ -110,31 +110,7 @@ columns. It also supports collection types and all data types available
 to Cassandra. The following table lists the supported basic data types
 and their corresponding meanings:
 
-::: {.informaltable}
-  Type        Description
-  ----------- --------------------------------------------------------------------------------------------------------------------------------------
-  ascii       ASCII character string
-  bigint      64-bit signed long
-  blob        Arbitrary bytes (no validation)
-  Boolean     `True` or `False`
-  counter     Counter column (64-bit signed value)
-  decimal     Variable-precision decimal
-  double      64-bit IEEE 754 floating point
-  float       32-bit IEEE 754 floating point
-  inet        An IP address that can be either 4 bytes long (IPv4) or 16 bytes long (IPv6) and should be inputted as a string
-  int         32-bit signed integer
-  text        UTF8 encoded string
-  timestamp   A timestamp in which string constants are allowed to input timestamps as dates
-  timeuuid    Type 1 UUID that is generally used as a \"conflict-free\" timestamp
-  uuid        Type 1 or type 4 UUID
-  varchar     UTF8-encoded string
-  varint      Arbitrary-precision integer
-:::
-
-::: {.blockquote}
-> Table 1. CQL Version 3 basic data types
-:::
-
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/table1.png)
 
 ### Cassandra implementation
 
@@ -164,7 +140,6 @@ and so on are declared in the
 
 Cassandra source code is available on GitHub at
 <https://github.com/apache/cassandra>.
-:::
 
 Knowing the Java implementation of the native data types allows us to
 have a deeper understanding of how Cassandra handles them. For example,
@@ -231,7 +206,6 @@ navigate to Cassandra bin directory and type the following:
 
 Note that it was announced to be deprecated in Cassandra 3.0 and
 `cqlsh` should be used instead.
-:::
 
 The results of the `SELECT` statement in `cqlsh` and
 the `list` command in Cassandra CLI are shown in the following
@@ -317,7 +291,6 @@ will be removed in a future version. It is still supported only to allow
 smoother transition to a `BLOB` constant. Updating the client
 code to switch to `BLOB` constants should be done as soon as
 possible.
-:::
 
 
 ### Boolean
@@ -377,7 +350,6 @@ precision is a must, `BigDecimal` is the
 best choice (or `decimal` in CQL native data types), otherwise
 `double` or `float` should be
 good enough.
-:::
 
 
 ### Inet
@@ -424,7 +396,6 @@ IPv6 complicated.
 IPv6 addresses are usually represented as eight groups of four
 hexadecimal digits separated by colons, such as
 `2001:0db8:85a3:0042:1000:8a2e:0370:7334`.
-:::
 
 In `cqlsh` , the  leading zeros of each
 group of four hexadecimal digits are removed. In
@@ -549,7 +520,6 @@ designator \"Z\" or in local time together with a time zone offset in
 hours and minutes. A time zone offset of \"+/-hh:mm\" indicates the use
 of a local time zone which is \"hh\" hours and \"mm\" minutes
 ahead/behind of UTC.
-:::
 
 If no time zone is specified, the time zone of the
 Cassandra coordinator node handing the write
@@ -610,7 +580,6 @@ Demonstration of timeuuid functions
 Timestamp is  suitable for storing date and time
 values. TimeUUID, however, is more suitable in those cases where a
 conflict free, unique timestamp is needed.
-:::
 
 
 ### UUID
@@ -638,7 +607,6 @@ implementation of a type 1 generator might produce the same
 
 Type 4 uses random or pseudorandom numbers. Therefore, it is the
 recommended type of `UUID` to be used.
-:::
 
 
 ### Varchar
@@ -755,7 +723,6 @@ CQL also supports updation and deletion of elements
 in a collection. You can refer to the relevant
 information in DataStax's documentation at
 <http://www.datastax.com/documentation/cql/3.1/cql/cql_using/use_collections_c.html>.
-:::
 
 As in the case of native data types, let us walk through each collection
 below.

@@ -200,7 +200,6 @@ means is that columns are stored in sorted order by their column names.
 
 Sort order is extremely important because Cassandra
 cannot sort by value as we do in a relational database.
-:::
 
 Different names in columns are possible in different rows. That is why
 Cassandra is both row oriented and column oriented. It should be
@@ -300,7 +299,6 @@ open source project in the Apache Software Foundation.
 
 There are other alternatives, for example, Protocol Buffers, Avro,
 MessagePack, JSON, and so on.
-:::
 
 
 ### Collections
@@ -326,7 +324,6 @@ Cassandra allows the following collections:
     a store of key-value pairs. They are useful for
     storing table-like data within a single row. They can be a
     workaround of not having joins.
-:::
 
 Here we only provided a brief introduction, and we will revisit the
 collections in subsequent labs.
@@ -361,7 +358,6 @@ involving a large number of table joins.
 ### Note
 
 In Cassandra, denormalization is normal.
-:::
 
 Foreign keys and joins can be avoided in Cassandra with proper data
 modeling.
@@ -405,7 +401,6 @@ Idempotent was originally a term in mathematics.
 But in computer science, idempotent is used more comprehensively to
 describe an operation that will produce the same results if executed
 once or multiple times.
-:::
 
 
 ### Time-To-Live
@@ -709,7 +704,6 @@ If the primary key contains only one column, the row is a skinny row.
 
 If the primary key contains more than one column, it is called a
 compound primary key and the row is a wide row.
-:::
 
 In either case, the first column in the primary key
 definition is the row key.
