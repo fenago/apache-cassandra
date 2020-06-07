@@ -690,34 +690,9 @@ Apache Cassandra comes with many common types that can help you with
 efficient data storage and representation. As Cassandra is written in
 Java, the Cassandra data types correlate directly to Java data types:
 
-  ----------------------- ------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------
-  **CQL type**            **Java class**                                    **Description**
-  `ascii`       `String`                                US-ASCII (United States – American Standard Codes for Information Interchange) character string.
-  `bigint`      `Long`                                  64-bit signed long.
-  `blob`        `java.nio.ByteBuffer`                   Supports storage of BLOBs (binary large objects).
-  `date`        `java.time.LocalDate`                   32-bit integer denoting the number of days elapsed since January 1, 1970. Dates can also be specified in CQL queries as strings (such as July 22, 2018).
-  `decimal`     `java.math.BigDecimal`                  Arbitrary precision floating-point numeric.
-  `double`      `Double`                                64-bit floating-point numeric.
-  `float`       `Float`                                 32-bit floating-point numeric.
-  `inet`        `java.net.InetAddress`                  String type for working with IP addresses. Supports both IPv4 and IPv4 addresses.
-  `int`         `Integer`                               32-bit signed Integer.
-  `list`        `java.util.List`                        A collection of ordered items of a specified type.
-  `map`         `java.util.Map`                         A key/value collection that stores values by a unique key. Type can be specified for both key and value.
-  `set`         `java.util.Set`                         A collection of unique items of a specified type.
-  `smallint`    `Short`                                 16-bit integer.
-  `text`        `String`                                UTF-8 character string.
-  `time`        `Long`                                  The current time in milliseconds elapsed since midnight of the current day.
-  `timestamp`   `java.util.Date`                        Date/time with milliseconds, can also be specified in CQL queries as strings (such as `2018-07-22 22:51:13.442`).
-  `timeuuid`    `java.util.UUID`                        Type 1 UUID (128-bit), used for storing times.
-  `tinyint`     `Byte`                                  8-bit integer.
-  `tuple`       `com.datastax.driver.core.TupleValue`   A tuple type, consisting of a collection of 2 to 3 values.
-  `uuid`        `java.util.UUID`                        Type 4 (randomly-generated) UUID.
-  `varchar`     `String`                                UTF-8 character string.
-  `varint`      `java.math.BigInteger`                  Arbitrary precision integer.
-  ----------------------- ------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8_1_1.jpg)
 
-Table 3.1: List of CQL data types with their Java equivalents and
-descriptions
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8_1_2.jpg)
 
 #### Type conversion
 
@@ -729,43 +704,11 @@ issues can arise when converting between types where the target type
 cannot support the amount of precision required. The following type
 conversions can be done without issue:
 
-  ----------------------- -------------------------------------------
-  **Starting type**       **Compatible types**
-  `ascii`       `text`, `varchar`
-  `bigint`      `timestamp`, `varint`
-  `date`        `timestamp`
-  `int`         `bigint`
-  `text`        `varchar`
-  `time`        `bigint`
-  `timestamp`   `bigint, varint, date`
-  `timeuuid`    `UUID`
-  `varchar`     `text`
-  ----------------------- -------------------------------------------
-
-Table 3.2: A list of valid CQL type conversions
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8_2.jpg)
 
 Some notes about CQL data type conversion:
 
--   `blob` is the only ubiquitous type to convert into. You
-    can convert any column or column value into `blob`.
--   `varint` successfully converts into the new
-    `date` type in Apache Cassandra 2.2.0, but the table is
-    not able to be queried after that. This was later identified as a
-    bug
-    ([https://issues.apache.org/jira/browse/CASSANDRA-10027](https://issues.apache.org/jira/browse/CASSANDRA-10027)) and
-    fixed in Apache Cassandra 2.2.4. If you are running on that version
-    and have a `varint` column in a table, I do not recommend
-    attempting to convert it to `date`.
--   `varchar` and `text` are interchangeable. In
-    fact, describing a table consisting of `varchar` columns
-    displays them as text columns.
--   `timeuuid` can be converted into `UUID`, but the
-    opposite is not true. This is because, while all timeuuids are
-    UUIDs, not all UUIDs are timeuuids (which is a type 1 UUID).
--   Type conversions do not work for collections. A column cannot be
-    changed into a `LIST` or `SET` of its current
-    type, and a `LIST` cannot be converted into a
-    `SET` (of the same type) and vice versa.
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8_3.jpg)
 
 ### The primary key
 
