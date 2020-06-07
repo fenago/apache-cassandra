@@ -94,13 +94,13 @@ engine of Apache Cassandra. Notice that the data is partitioned
 (co-located) by its row key, and then each column is ordered by the
 column keys.
 
-[](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/1.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/1.jpg)
 
 As you can see in the preceding screenshot, data is simply stored by its
 row key (also known as the **partitioning key**). Within each partition,
 data is stored ordered by its column keys, and finally by its (non-key)
 column names. This structure was sometimes referred to as a **map of a
-map**. The innermost section of the map, where the column values were
+map**. The innermost section of the map, where the column values were
 stored, was called a **cell**. Dealing with data like this proved to be
 problematic and required some understanding of the Thrift API to
 complete basic operations.
@@ -121,13 +121,13 @@ On the other hand, the new storage engine changes in Apache Cassandra
 3.0 offer several improvements. With version 3.0 and up, stored data is
 now organized like this:
 
-[](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/2.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/2.jpg)
 
 Figure 3.2: Demonstration of how data is stored in the new storage
 engine used by Apache Cassandra 3.0 and up. While data is still
 partitioned in a similar manner, rows are now first-class citizens.
 
- 
+ 
 
 The preceding figure shows that, while data is still partitioned
 similarly to how it always was, there is a new structure present. The
@@ -171,7 +171,7 @@ from Cassandra 2.x to Cassandra 3.0 and as little as 10% to 15%. Your
 experience may vary, depending on the number of columns in a table, size
 of their names, and primary key definition.
 
- 
+ 
 
 #### Data cells
 
@@ -191,7 +191,7 @@ CREATE TABLE weather_data_by_date (
   PRIMARY KEY ((month,day),station_id,time));
 ```
 
-In this model, the `month` and `day` keys are used
+In this model, the `month` and `day` keys are used
 to make up a composite partition key. The clustering keys are
 `station_id` and `time`. In this way, for each
 partition, the number of cells will be equal to the total unique
@@ -243,7 +243,7 @@ CREATE KEYSPACE [IF NOT EXISTS] <keyspace_name>
  AND durable_writes = <true/false>;
 ```
 
- 
+ 
 
 Here is the detailed explanation of the preceding query:
 
@@ -252,7 +252,7 @@ Here is the detailed explanation of the preceding query:
 -   `replication_strategy`: Either `SimpleStrategy`
     or `NetworkTopologyStrategy`.
 -   `data_center_name`: Valid only
-    for `NetworkTopologyStrategy`, must be the name of a valid
+    for `NetworkTopologyStrategy`, must be the name of a valid
     data center. If using `SimpleStrategy`, specify
     `replication_factor`.
 -   `replication_factor`: A numeric value representing the
@@ -270,9 +270,9 @@ can be used.
 
 #### Single data center example
 
-The following example will create the `fenago_ch3` keyspace.
+The following example will create the `fenago_ch3` keyspace.
 When a write occurs, one replica will be written to the cluster. Writes
-will also be sent to the commit log for extra durability:
+will also be sent to the commit log for extra durability:
 
 ```
 CREATE KEYSPACE IF NOT EXISTS fenago_ch3
@@ -291,18 +291,18 @@ used in production. `SimpleStrategy` offers no advantages over
 `SimpleStrategy` can complicate converting into a multi-data
 center environment later.
 
- 
+ 
 
- 
+ 
 
 #### Multi-data center example
 
-The following example will create the `fenago_ch3b` keyspace,
+The following example will create the `fenago_ch3b` keyspace,
 as long as it does not already exist. When a write occurs, two replicas
 will be written to the `ClockworkAngels` data center, and
-three will be written to the `PermanentWaves` and
+three will be written to the `PermanentWaves` and
 `MovingPictures` data centers. Writes will also be sent to
-the commit log for extra durability:
+the commit log for extra durability:
 
 ```
 CREATE KEYSPACE fenago_ch3_mdc
@@ -350,7 +350,7 @@ CREATE TABLE users (
  PRIMARY KEY (username));
 ```
 
- 
+ 
 
 #### Clustering key example
 
@@ -373,7 +373,7 @@ WITH CLUSTERING ORDER BY (username ASC)
 
 As the preceding table will be read more than it will be written to
 (users queried more often than they are added), we also designate use
-of `LeveledCompactionStrategy`.
+of `LeveledCompactionStrategy`.
 
 ### Note
 
@@ -392,7 +392,7 @@ INSERT INTO users_by_dept(department,username,title,email) VALUES ('Marketing','
 INSERT INTO users_by_dept(department,username,title,email) VALUES ('Finance/HR','Jared','COO','donald@piedpiper.com');
 ```
 
- 
+ 
 
 #### Composite partition key example
 
@@ -433,7 +433,7 @@ seconds).
 There are several options that can be adjusted at table-creation time.
 Most of these options are present on all tables. If they are omitted
 from table creation, their default values are assumed. The following are
-a few of the table options: 
+a few of the table options: 
 
 -   Clustering order specifies the column(s) and direction by which the
     table data (within a partition) should be stored on disk. As
@@ -505,7 +505,7 @@ at least `4` (and no more than `32`) SSTables are
 found to be within a calculated threshold of the average SSTable file
 size.
 
- 
+ 
 
 -   `LeveledCompactionStrategy`: The leveled compaction
     strategy builds out SSTable files as levels, where each level is 10
@@ -546,21 +546,21 @@ data.
 ### Note
 
 `TimeWindowCompactionStrategy` is new as of Apache Cassandra
-3.0, and replaces `DateTieredCompactionStrategy`, which was
+3.0, and replaces `DateTieredCompactionStrategy`, which was
 shipped with Apache Cassandra 2.1 and 2.2.
 
 ```
 compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
 ```
 
- 
+ 
 
 This property is another map structure that allows the compression
 settings for a table to be configured. Apache Cassandra ships with three
 compressor classes: `LZ4Compressor` (default),
-`SnappyCompressor`, and `DeflateCompressor`. Once
-the class has been specified, `chunk_length` can also be
-specified. By default, a table will use `LZ4Compressor`, and
+`SnappyCompressor`, and `DeflateCompressor`. Once
+the class has been specified, `chunk_length` can also be
+specified. By default, a table will use `LZ4Compressor`, and
 will be configured as shown here:
 
 ```
@@ -571,12 +571,12 @@ compression = {'class': 'org.apache.cassandra.io.compress.LZ4Compressor',
 ### Note
 
 To disable compression,
-specify `compression = {'sstable_compression': ''}`.
+specify `compression = {'sstable_compression': ''}`.
 
-It should be noted that the default `chunk_length_in_kb` of
-`64` is intended for write-heavy workloads.  Access patterns
+It should be noted that the default `chunk_length_in_kb` of
+`64` is intended for write-heavy workloads.  Access patterns
 that are more evenly read and write, or read-heavy may see a performance
-benefit from bringing that value down to as low as four. As always, be
+benefit from bringing that value down to as low as four. As always, be
 sure to test significant changes, like this:
 
 ```
@@ -615,9 +615,9 @@ approach.
 gc_grace_seconds = 864000
 ```
 
- 
+ 
 
- 
+ 
 
 This property specifies the amount of time (in seconds) that tombstones
 in the table will persist before they are eligible for collection via
@@ -692,7 +692,7 @@ Java, the Cassandra data types correlate directly to Java data types:
 
   ----------------------- ------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------
   **CQL type**            **Java class**                                    **Description**
-  `ascii`       `String`                                US-ASCII (United States – American Standard Codes for Information Interchange) character string.
+  `ascii`       `String`                                US-ASCII (United States – American Standard Codes for Information Interchange) character string.
   `bigint`      `Long`                                  64-bit signed long.
   `blob`        `java.nio.ByteBuffer`                   Supports storage of BLOBs (binary large objects).
   `date`        `java.time.LocalDate`                   32-bit integer denoting the number of days elapsed since January 1, 1970. Dates can also be specified in CQL queries as strings (such as July 22, 2018).
@@ -752,14 +752,14 @@ Some notes about CQL data type conversion:
     `date` type in Apache Cassandra 2.2.0, but the table is
     not able to be queried after that. This was later identified as a
     bug
-    ([https://issues.apache.org/jira/browse/CASSANDRA-10027](https://issues.apache.org/jira/browse/CASSANDRA-10027)) and
+    ([https://issues.apache.org/jira/browse/CASSANDRA-10027](https://issues.apache.org/jira/browse/CASSANDRA-10027)) and
     fixed in Apache Cassandra 2.2.4. If you are running on that version
     and have a `varint` column in a table, I do not recommend
     attempting to convert it to `date`.
 -   `varchar` and `text` are interchangeable. In
     fact, describing a table consisting of `varchar` columns
     displays them as text columns.
--   `timeuuid` can be converted into `UUID`, but the
+-   `timeuuid` can be converted into `UUID`, but the
     opposite is not true. This is because, while all timeuuids are
     UUIDs, not all UUIDs are timeuuids (which is a type 1 UUID).
 -   Type conversions do not work for collections. A column cannot be
@@ -783,7 +783,7 @@ clustering keys. As previously mentioned, the partition keys determine
 which nodes are responsible for a row and its replicas. The clustering
 keys determine the on-disk sort order within a partition.
 
- 
+ 
 
 #### Designing a primary key
 
@@ -811,7 +811,7 @@ and distribution model, or trouble will quickly ensue.
 
 ##### Selecting a good partition key
 
-So, how do we pick a partition key that distributes well at scale? 
+So, how do we pick a partition key that distributes well at scale? 
 Minding your model’s potential cardinality is the key. The cardinality
 of a partition key represents the number of possible values of the key,
 ranging from one to infinity.
@@ -825,13 +825,13 @@ partition key, as its high cardinality will limit potential query
 patterns.
 
 A bad partition key is easy to spot, with proper knowledge of the
-business or use case.  For instance, if I wanted to be able to query all
+business or use case.  For instance, if I wanted to be able to query all
 products found in a particular store, store would seem like a good
-partition key.  However, if a retailer has 1,000,000 products, all of
+partition key.  However, if a retailer has 1,000,000 products, all of
 which are sold in all 3 of their stores, that's obviously not going to
 distribute well.
 
- 
+ 
 
 Let's think about a time-series model. If I'm going to keep track of
 security logs for a company's employees (with multiple locations), I may
@@ -851,7 +851,7 @@ I want to query by a specific location, this may work for query
 requirements. The problem is that, with each write, the
 `location_id` partition will get bigger and bigger.
 Eventually, too many employees will check in at a certain location, and
-the partition will get too big and become unable to be queried.  This is
+the partition will get too big and become unable to be queried.  This is
 a common Cassandra modeling anti-pattern, known as **unbound row
 growth**.
 
@@ -934,7 +934,7 @@ INSERT INTO security_logs_by_location (location_id,day,time_in,employee_id,mails
 ```
 
 Now, I'll query the table for all employees entering
-the `MPLS2` building between 6 AM and 10 AM, on July 23, 2018:
+the `MPLS2` building between 6 AM and 10 AM, on July 23, 2018:
 
 ```
 SELECT * FROM security_logs_by_location
@@ -963,7 +963,7 @@ Here are some things to note about the preceding result set:
 -   I did not specify the complete PRIMARY KEY, choosing to omit
     `employee_id`
 -   The results are sorted by `time_in`, in ascending order; I
-    did not specify `ORDER BY`
+    did not specify `ORDER BY`
 -   I specified a range on `time_in`, mentioning it twice in
     the `WHERE` clause, instructing Cassandra to return a
     range of data
@@ -971,12 +971,12 @@ Here are some things to note about the preceding result set:
     `time_in` timestamp is shown in UTC time
 
 As per my clustering key definition, my result set was sorted by the
-`time_in` column, with the oldest value at the top.  This is
+`time_in` column, with the oldest value at the top.  This is
 because, while I did clearly specify my clustering keys, I did not
-specify the sort order.  Therefore, it defaulted to ascending order.
+specify the sort order.  Therefore, it defaulted to ascending order.
 
-Additionally, I omitted the `employee_id` key. I can do that
-because I specified the keys that preceded it.  If I opted to skip
+Additionally, I omitted the `employee_id` key. I can do that
+because I specified the keys that preceded it.  If I opted to skip
 `time_in` and specify `employee_id`, this query
 would fail. There's more on that later.
 
@@ -1012,9 +1012,9 @@ CREATE TABLE security_logs_by_location_desc (
 WITH CLUSTERING ORDER BY (time_in DESC, employee_id ASC);
 ```
 
- 
+ 
 
- 
+ 
 
 If I duplicate my data into this table as well, I can run that same
 query and get my result set in descending order:
@@ -1051,7 +1051,7 @@ AND time_in > '2018-07-23 6:00' AND time_in < '2018-07-23 10:00';
 (7 rows)
 ```
 
- 
+ 
 
 In this way, it is clear how picking the right clustering keys (and sort
 direction) also plays a part in designing tables that will perform well
@@ -1089,7 +1089,7 @@ SELECT * FROM query_test WHERE pk1='a';
 InvalidRequest: Error from server: code=2200 [Invalid query] message="Cannot execute this query as it might involve data filtering and thus may have unpredictable performance. If you want to execute this query despite the performance unpredictability, use ALLOW FILTERING"
 ```
 
- 
+ 
 
 So what happened here? Cassandra is essentially informing us that it
 cannot ensure that this query will be served by a single node. This is
@@ -1142,7 +1142,7 @@ WHERE pk1='a' AND pk2='b' AND ck3='c2';
 (3 rows)
 ```
 
- 
+ 
 
 That works. So what if we just want to query for a specific
 `ck4`, but we don't know which `ck3` it's under?
@@ -1155,12 +1155,12 @@ WHERE pk1='a' AND pk2='b' AND ck4='d2';
 InvalidRequest: Error from server: code=2200 [Invalid query] message="PRIMARY KEY column "ck4" cannot be restricted as preceding column "ck3" is not restricted"
 ```
 
-Remember, components of the `PRIMARY KEY` definition can be
+Remember, components of the `PRIMARY KEY` definition can be
 omitted, as long as (some of) the preceding keys are specified. But they
 can only be omitted in order. You can't pick and choose which ones to
 leave out.
 
-So how do we solve this issue? Let's use `ALLOW FILTERING`:
+So how do we solve this issue? Let's use `ALLOW FILTERING`:
 
 ```
 SELECT * FROM query_test
@@ -1211,7 +1211,7 @@ What happened here? The `now()` function was invoked for each
 row in the table. First of all, this is an unbound query and will hit
 multiple nodes for data that it's not even using. Secondly, we just need
 one result. And third, returning the current time
-as `TIMEUUID` isn't very easy to read.
+as `TIMEUUID` isn't very easy to read.
 
 Let's solve problems one and two by changing the table we're querying.
 Let's try that on the `system.local` table:
@@ -1242,7 +1242,7 @@ SELECT dateof(now()) FROM system.local;
 (1 rows)
 ```
 
- 
+ 
 
 Cassandra has other built-in functions that can help to solve other
 problems. We will cover those later.
@@ -1262,11 +1262,11 @@ multiple filters in the `WHERE` clause. Does it also have an
 No, it does not. This is because Apache Cassandra is designed to serve
 sequential reads, not random reads. It works best when its queries give
 it a clear, precise path to the requested data. Allowing filters in the
-`WHERE` clause to be specified on an `OR` basis
+`WHERE` clause to be specified on an `OR` basis
 would force Cassandra to perform random reads, which really works
 against how it was built.
 
-However, queries can be made to perform similarly to `OR`, via
+However, queries can be made to perform similarly to `OR`, via
 the `IN` operator:
 
 ```
@@ -1293,12 +1293,12 @@ request.
 
 Do note that, if you use `IN`, the same restrictions apply as
 for other operators. You cannot skip primary keys, and if you use
-`IN` on a key, you must do the following:
+`IN` on a key, you must do the following:
 
 -   Specify all of the keys prior to it
 -   Use `IN` only on the last key specified in the query
 
- 
+ 
 
 ### Note
 
@@ -1310,7 +1310,7 @@ specified with the `IN` operator to less than 10.
 ### Writing data
 
 Given the ways in which Apache Cassandra has been shown to handle things
-such as `INSERT`, `UPDATE`, and `DELETE`,
+such as `INSERT`, `UPDATE`, and `DELETE`,
 it is important to discuss what they have in common. They all result in
 writes to the database. Let's take a look at how each one behaves in
 certain scenarios. Assume that we need to keep track of statuses for
@@ -1334,10 +1334,10 @@ not recommend building an order-status-tracking system this way.
 
 #### Inserting data
 
-Let's write some data to that table.  To do this, we'll use the
-`INSERT` statement.  With an `INSERT` statement, all
-`PRIMARY KEY` components must be specified; we will
-specify`status` and `order_id`.  Additionally, every
+Let's write some data to that table.  To do this, we'll use the
+`INSERT` statement.  With an `INSERT` statement, all
+`PRIMARY KEY` components must be specified; we will
+specify`status` and `order_id`.  Additionally, every
 column that you wish to provide a value for must be specified in a
 parenthesis list, followed by the`VALUES`in their own
 parenthesis list:
@@ -1357,13 +1357,13 @@ INSERT INTO order_status (status,order_id,total,shipping_weight_kg)
 ### Note
 
 If you're going to need a unique identifier for things such as IDs,
-the `UUID()` and `TIMEUUID()` functions can be
-invoked in-line as a part of `INSERT`.
+the `UUID()` and `TIMEUUID()` functions can be
+invoked in-line as a part of `INSERT`.
 
 As you can see, not all columns need to be specified. In our business
 case, assume that we do not know the shipping weight until the order has
 been `PICKED`. If I query for all orders currently in a
-`PENDING` status, it shows `shipping_weight_kg` as
+`PENDING` status, it shows `shipping_weight_kg` as
 `null`:
 
 ```
@@ -1378,9 +1378,9 @@ SELECT * FROM order_status WHERE status='PENDING';
 (3 rows)
 ```
 
-Remember, Apache Cassandra does not use `null` in the same way
+Remember, Apache Cassandra does not use `null` in the same way
 that other databases may. In the case of Cassandra,
-`null` simply means that the currently-requested column does
+`null` simply means that the currently-requested column does
 not contain a value.
 
 ### Note
@@ -1390,18 +1390,18 @@ treats this as a `DELETE`, and writes a tombstone. It's also
 important to make sure that your application code is also not writing
 nulls for column values that are not set.
 
- 
+ 
 
- 
+ 
 
 #### Updating data
 
-So now let's update one of our `PENDING` orders to a status of
+So now let's update one of our `PENDING` orders to a status of
 `PICKED`, and give it a value for shipping weight. We can
 start by updating our `shipping_weight_kg` for order
 `fcb15fc2-feaa-4ba9-a3c6-899d1107cce9`, and we'll assume that
 it is `1.4` kilograms. This can be done in two different
-ways. Updates and inserts are treated the same in Cassandra, so we could
+ways. Updates and inserts are treated the same in Cassandra, so we could
 actually update our row with the `INSERT` statement:
 
 ```
@@ -1443,13 +1443,13 @@ WHERE order_id='fcb15fc2-feaa-4ba9-a3c6-899d1107cce9';
 InvalidRequest: Error from server: code=2200 [Invalid query] message="PRIMARY KEY part status found in SET part"
 ```
 
- 
+ 
 
 With the `UPDATE` statement in CQL, all
-the `PRIMARY KEY` components are required to be specified in
+the `PRIMARY KEY` components are required to be specified in
 the `WHERE` clause. So how about we try specifying both
-`PRIMARY KEY` components in `WHERE`, and both
-columns with values in `SET`:
+`PRIMARY KEY` components in `WHERE`, and both
+columns with values in `SET`:
 
 ```
 UPDATE order_status SET shipping_weight_kg=1.4,total=114.22
@@ -1488,12 +1488,12 @@ But that also means they cannot be updated. The only way to update a
 To Cassandra, `INSERT` and `UPDATE` are synonymous.
 They behave the same, and can mostly be used interchangeably. They both
 write column values to a specific set of unique keys in the table. You
-can insert new rows with `UPDATE` and you can update existing
+can insert new rows with `UPDATE` and you can update existing
 rows with `INSERT`.
 
- 
+ 
 
- 
+ 
 
 #### Deleting data
 
@@ -1501,7 +1501,7 @@ While deleting data and its associated implications have been discussed,
 there are times when rows or individual column values may need to be
 deleted. In our use case, we discussed the difficulties of trying to
 work with the primary key on something that needs to be dynamic, such
-as `status`. In our case, we have an extra row for our order
+as `status`. In our case, we have an extra row for our order
 that we need to delete:
 
 ```
@@ -1547,7 +1547,7 @@ A lightweight transaction in flight will block other lightweight
 transactions, but will not stop normal reads and writes from querying or
 mutating the same data.
 
- 
+ 
 
 In any case, an `INSERT` statement can only check whether a
 row does not already exist for the specified the `PRIMARY KEY`
@@ -1569,10 +1569,10 @@ which failed to write) is returned. If it succeeds, an applied value of
 
 On the other hand, `UPDATE` allows for more granular control
 in terms of lightweight transactions. It allows for the use of both
-`IF EXISTS` and `IF NOT EXISTS`. Additionally, it
+`IF EXISTS` and `IF NOT EXISTS`. Additionally, it
 can determine whether a write should occur based on arbitrary column
 values. In our previous example, we could make our update
-to `shipping_weight_kg` and order total based on a threshold
+to `shipping_weight_kg` and order total based on a threshold
 for `shipping_weight_kg`:
 
 ```
@@ -1598,7 +1598,7 @@ sparingly. However using them with `DELETE` is probably the
 best use case, as the performance hit is preferable to generating many
 needless tombstones.
 
- 
+ 
 
 ### Executing a BATCH statement
 
@@ -1637,7 +1637,7 @@ node and potentially cause it to crash.
 `BATCH` was just not designed to apply several updates to the
 same table. It was designed to apply one update to several (such as five
 or six) tables. This fundamental misunderstanding of the purpose
-of `BATCH` can potentially affect cluster availability.
+of `BATCH` can potentially affect cluster availability.
 
 ### The expiring cell
 
@@ -1652,7 +1652,7 @@ VALUES ('f','g','c4','d6','e7')
 USING TTL 86400;
 ```
 
- 
+ 
 
 Likewise, TTLs can also be applied with the `UPDATE`
 statement:
@@ -1682,7 +1682,7 @@ CREATE KEYSPACE fenago_test WITH replication = {
 AND durable_writes = true;
 ```
 
-As it is preferable to use `NetworkTopologyStrategy`, we can
+As it is preferable to use `NetworkTopologyStrategy`, we can
 alter that easily:
 
 ```
@@ -1761,7 +1761,7 @@ To remove all data from a table, you can use the
 TRUNCATE TABLE query_test;
 ```
 
- 
+ 
 
 ### Dropping a table
 
@@ -1814,7 +1814,7 @@ CREATE TABLE order_status_by_week (
 ) WITH CLUSTERING ORDER BY (order_datetime DESC, order_id ASC)
 ```
 
- 
+ 
 
 Next, we will add similar rows into this table:
 
@@ -1851,7 +1851,7 @@ week_bucket | order_datetime                  | order_id | shipping_weight_kg | 
 ```
 
 This works, but without status as a part of the primary key definition,
-how can we query for `PENDING` orders? Here is where we will
+how can we query for `PENDING` orders? Here is where we will
 add a secondary index to handle this scenario:
 
 ```
@@ -1903,7 +1903,7 @@ filtered by a partition key) will need to confer with every node in the
 cluster. This can be problematic with large clusters and potentially
 lead to query timeouts.
 
- 
+ 
 
 ### Note
 
@@ -1918,9 +1918,9 @@ had to. In that scenario, the high cardinality of `order_id`
 would essentially mean that we would query every node in the cluster,
 just to end up reading one partition from one node.
 
-Author (and DataStax Cassandra MVP) Richard Low accurately explains this
+Author (and DataStax Cassandra MVP) Richard Low accurately explains this
 in his article *The Sweet Spot for Cassandra Secondary Indexing*,
-when he describes creating an index on a high-cardinality column such as
+when he describes creating an index on a high-cardinality column such as
 an email address:
 
 > **This means only one node (plus replicas) store data for a given
@@ -1985,7 +1985,7 @@ DROP INDEX query_test_c5_idx ;
 
 ### Creating a custom data type
 
-Apache Cassandra allows for the creation of custom **user-defined
+Apache Cassandra allows for the creation of custom **user-defined
 types** (**UDTs**). UDTs allow for further denormalization of data
 within a row. A good example of this is a mailing address for customers.
 Assume a simple table:
@@ -1998,7 +1998,7 @@ CREATE TABLE customer (
  PRIMARY KEY (last_name,first_name));
 ```
 
- 
+ 
 
 Now, our customers have mailing addresses. Corporate customers usually
 have addresses for multiple things, including billing, shipping,
@@ -2079,7 +2079,7 @@ command. If we create a simple UDT:
 CREATE TYPE test_type (value TEXT);
 ```
 
- 
+ 
 
 It can be dropped like this:
 
@@ -2104,7 +2104,7 @@ for the appropriate version.
 
 #### Creating a user and role
 
-This creates a new role called `cassdba` and gives it a password and the ability to log in and
+This creates a new role called `cassdba` and gives it a password and the ability to log in and
 makes it a superuser:
 
 ```
@@ -2135,7 +2135,7 @@ password:
 ALTER ROLE cassandra WITH PASSWORD=dsfawesomethingdfhdfshdlongandindecipherabledfhdfh';
 ```
 
- 
+ 
 
 #### Dropping a user and role
 
@@ -2181,16 +2181,16 @@ CQL has some additional commands and constructs that provide additional
 functionality. A few of them bear a resemblance to their similarly-named
 SQL counterparts, but may behave differently.
 
- 
+ 
 
- 
+ 
 
 #### COUNT
 
 CQL allows you to return a count of the number of rows in the result
 set. Its syntax is quite similar to that of the `COUNT`
 aggregate function in SQL. This query will return the number of rows in
-the customer table with the last name `Washburne`:
+the customer table with the last name `Washburne`:
 
 ```
 SELECT COUNT(*) FROM fenago_ch3.customer WHERE last_name='Washburne';
@@ -2219,7 +2219,7 @@ Aggregation query used without partition key
 This warning is Cassandra's way of informing you that the query was not
 very efficient. As described earlier, unbound queries (queries without
 `WHERE` clauses) must communicate with every node in the
-cluster. `COUNT` queries are no different, and so these
+cluster. `COUNT` queries are no different, and so these
 queries should be avoided.
 
 ### Note
@@ -2227,9 +2227,9 @@ queries should be avoided.
 cqlsh has a hard limit of 10,000 rows per query, so `COUNT`
 queries run from cqlsh on large tables will max out at that number.
 
- 
+ 
 
- 
+ 
 
 #### DISTINCT
 
@@ -2247,7 +2247,7 @@ SELECT DISTINCT last_name FROM customer;
 (2 rows)
 ```
 
-The main difference of `DISTINCT` in CQL is that it only
+The main difference of `DISTINCT` in CQL is that it only
 operates on partition keys and static columns.
 
 ### Note
@@ -2277,7 +2277,7 @@ SELECT * FROM security_logs_by_location LIMIT 1;
 
 Static columns are data that is more dependent on the partition keys
 than on the clustering keys. Specifying a column as
-`STATIC` ensures that its values are only stored once (with
+`STATIC` ensures that its values are only stored once (with
 its partition keys) and not needlessly repeated in storage with the row
 data.
 
@@ -2317,8 +2317,8 @@ SELECT department,username,department_head,title FROM fenago_ch3.users_by_dept ;
 (5 rows)
 ```
 
-As shown, `department_head` only changes as
-per `department`. This is because `department_head`
+As shown, `department_head` only changes as
+per `department`. This is because `department_head`
 is now stored with the partition key.
 
 #### User-defined functions
@@ -2350,7 +2350,7 @@ CREATE OR REPLACE FUNCTION year (input DATE)
  LANGUAGE java AS 'return input.toString().substring(0,4);';
 ```
 
-Now, re-running the preceding query with `todate(now())`
+Now, re-running the preceding query with `todate(now())`
 nested inside my new `year()` UDF returns this result:
 
 ```
@@ -2438,7 +2438,7 @@ CREATE TABLE customer_by_company ( last_name text,
   PRIMARY KEY (company,last_name,first_name));
 ```
 
- 
+ 
 
 Next, I will export the contents of my `customer` table using
 the `COPY TO` command:
@@ -2468,7 +2468,7 @@ Processed: 3 rows; Rate: 5 rows/s; Avg. rate: 7 rows/s
 
 Sometimes exporting larger tables will require additional options to be
 set, in order to eliminate timeouts and errors. For instance, the
-`COPY TO` options of `PAGESIZE` and
+`COPY TO` options of `PAGESIZE` and
 `PAGETIMEOUT` control how many rows are read for export at
 once and how long each read has before it times out. These options can
 help to effectively break up the export operation into smaller chunks,
@@ -2478,16 +2478,16 @@ which may be necessary based on the size and topology of the cluster.
 
 `COPY` has a bit of a bad reputation, as early versions were
 subject to timeouts when exporting large tables. Remember that
-the `COPY` tool itself is also subject to the constraints
-applied by the Apache Cassandra storage model. This means that exporting
+the `COPY` tool itself is also subject to the constraints
+applied by the Apache Cassandra storage model. This means that exporting
 a large table is an expensive operation. That being said, I have managed
 to leverage the `PAGESIZE` and `PAGETIMEOUT` options
 to successfully export 350,000,000 rows from a 40-node cluster without
 timeouts or errors.
 
- 
+ 
 
- 
+ 
 
 #### DESCRIBE
 
@@ -2544,7 +2544,7 @@ Now Tracing is enabled
 TRACING
 Tracing is currently enabled. Use TRACING OFF to disable
 ```
- 
+ 
 
 Tracing is useful in that it can show why particular queries may be
 running slowly. A tracing report allows you to view things about a
