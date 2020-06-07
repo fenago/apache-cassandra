@@ -690,9 +690,9 @@ Apache Cassandra comes with many common types that can help you with
 efficient data storage and representation. As Cassandra is written in
 Java, the Cassandra data types correlate directly to Java data types:
 
-![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8_1_1.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8_1_1.png)
 
-![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8_1_2.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8_1_2.png)
 
 #### Type conversion
 
@@ -704,11 +704,11 @@ issues can arise when converting between types where the target type
 cannot support the amount of precision required. The following type
 conversions can be done without issue:
 
-![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8_2.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8_2.png)
 
 Some notes about CQL data type conversion:
 
-![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8_3.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8_3.png)
 
 ### The primary key
 
