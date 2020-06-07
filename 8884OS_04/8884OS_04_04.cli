@@ -1,1 +1,5 @@
-list dayquote01;
+%sh
+cat > script.cli <<EOL
+describe dayquote01;
+EOL
+cqlsh -f  script.cli --keyspace=fenago

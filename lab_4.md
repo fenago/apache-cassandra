@@ -544,14 +544,10 @@ Secondary indexes should be avoided in the following situations:
 
 **Important points to take note of**
 
-
 -   Don't index on high-cardinality columns
-
 -   Don't use index in tables having a counter
     column
-
 -   Don't index on a frequently updated or deleted column
-
 -   Don't abuse the index to look for a row in a large partition
 
 
