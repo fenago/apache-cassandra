@@ -107,7 +107,7 @@ The conceptual design of the Stock Screener Application is shown in the
 following figure:
 
 
-![](images/8884OS_05_01.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_05_01.jpg)
 
 We will go through the  preceding figure from the
 left to the right. **Data Feed Provider** is the source of
@@ -196,7 +196,7 @@ Finance as the prime Data Feed Provider. The following screenshot is a
 sample of the historical prices of a stock called *GS*:
 
 
-![](images/8884OS_05_02.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_05_02.jpg)
 
 As you scroll to the  bottom of the web page,
 you will see a link *Download to
@@ -206,7 +206,7 @@ stock quote data can be downloaded as a
 file. An excerpt of the CSV file is shown in the following screenshot:
 
 
-![](images/8884OS_05_03.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_05_03.jpg)
 
 Of course, we can manually download the historical
 stock quote data from the website. Nonetheless, it becomes impractical
@@ -256,7 +256,7 @@ model is to imagine the  visual representation of
 the internal storage of a row. The following figure is such an example:
 
 
-![](images/8884OS_05_04.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_05_04.jpg)
 
 Based on the design of the primary key, the row key is
 `symbol` and the clustering column is `price_time`.
@@ -277,7 +277,7 @@ Each of the building blocks is explained starting first from the top, as
 shown in the following screenshot:
 
 
-![](images/8884OS_05_05.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_05_05.jpg)
 
 **Data Feed Provider** consists of
 **Data Feed**, **Data Feed Adapter**, and
@@ -513,7 +513,7 @@ implementation. The following figure depicts the system overview for the
 implementation of the application:
 
 
-![](images/8884OS_05_06.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_05_06.jpg)
 
 It is worth noting that the system will be developed on a single Ubuntu
 machine first and then on a single node Cassandra cluster,
@@ -608,7 +608,7 @@ The following is a screenshot demonstrating the use of Spyder to write
 and test `lab05_001.py` code:
 
 
-![](images/8884OS_05_07.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_05_07.jpg)
 
 The left-hand side of the Spyder IDE is the place where you write Python
 code. The middle panel on the right-hand side is the **IPython
@@ -1189,7 +1189,7 @@ following screenshot. The Alert List should have seven buy-and-hold
 trading signals:
 
 
-![](images/8884OS_05_08.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_05_08.jpg)
 
 
 

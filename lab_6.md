@@ -88,7 +88,7 @@ is  **Query**. It provides two Queries on
 **Alert List** for backtesting purposes:
 
 
-![](images/8884OS_06_01.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_06_01.jpg)
 
 
 #### Watch List
@@ -1001,7 +1001,7 @@ changes to the system one-by-one:
     are shown in the following figure:
 
     
-    ![](images/8884OS_06_02.jpg)
+    ![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_06_02.jpg)
 
 
 Summary

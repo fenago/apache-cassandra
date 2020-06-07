@@ -174,7 +174,7 @@ in four racks across two data centers using
 data center:
 
 
-![](images/8884OS_07_01.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_07_01.jpg)
 
 
 ### Tip
@@ -267,7 +267,7 @@ same data center, `NY1`. The logical architecture of the
 cluster to be set up is depicted in the following diagram:
 
 
-![](images/8884OS_07_02.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_07_02.jpg)
 
 In order to configure a Cassandra cluster, we need to modify a few
 properties in the main configuration file, `cassandra.yaml` ,
@@ -372,7 +372,7 @@ should resemble something similar to the following screenshot, showing
 that both nodes are up and running:
 
 
-![](images/8884OS_07_03.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_07_03.jpg)
 
 
 #### Legacy data migration procedure
@@ -653,14 +653,14 @@ of JMX) in the **Remote Process** textbox, as depicted in the
 following screenshot:
 
 
-![](images/8884OS_07_04.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_07_04.jpg)
 
 After having connected to the local Cassandra instance, we will see a
 well-organized GUI showing six separate tabs placed horizontally on the
 top, as seen in the following screenshot:
 
 
-![](images/8884OS_07_05.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_07_05.jpg)
 
 The tabs of the GUI are explained as follows:
 
@@ -728,7 +728,7 @@ viewed or edited by any text editor. The following screenshot shows an
 extract of `system.log`:
 
 
-![](images/8884OS_07_06.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_07_06.jpg)
 
 This piece log looks long
 and weird. However, if you are a Java developer and you are familiar
@@ -754,7 +754,7 @@ directory. The following screenshot shows the content of
 `log4j-server.properties` in ubtc02:
 
 
-![](images/8884OS_07_07.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_07_07.jpg)
 
 It is important to mention that
 `system.log` and `log4j-server.properties` are only
@@ -790,7 +790,7 @@ file for Cassandra, `cassandra-env.sh` , located in
 screenshot:
 
 
-![](images/8884OS_07_08.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_07_08.jpg)
 
 Basically, it already has the boilerplate options
 calculated to be optimized for the host system. It is also accompanied
@@ -867,7 +867,7 @@ contain the `Row Cache` and `Key Cache` metrics of
 `ubtc02`:
 
 
-![](images/8884OS_07_09.jpg)
+![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_07_09.jpg)
 
 In the of high memory
 consumption, we can consider tuning data caches.
