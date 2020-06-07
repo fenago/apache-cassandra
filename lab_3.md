@@ -39,7 +39,6 @@ is composed of three main types of statements:
 
 -   **Query statements**: These are used
     to look up data
-:::
 
 CQL is case insensitive, unless the word is enclosed in double quotation
 marks. It defines a list of keywords that have a fixed meaning for the
@@ -67,7 +66,6 @@ and type the following:
 -   On Linux, type `./cqlsh`
 
 -   On Windows, type `cqlsh.bat` or `python cqlsh`
-:::
 
 As shown in the following figure, `cqlsh` shows the cluster
 name, Cassandra, CQL, and Thrift protocol versions on startup:
@@ -103,7 +101,6 @@ Create keyspace fenago in cqlsh
 
 
 ### Native data types
-
 
 CQL Version 3 supports many basic data types for
 columns. It also supports collection types and all data types available
@@ -478,41 +475,29 @@ time element.
 
 
 -   Year: YYYY (e.g. 1997)
-
 -   Year and month: YYYY-MM (e.g. 1997-07)
-
 -   Date: YYYY-MM-DD (e.g. 1997-07-16)
-
 -   Date plus hours and minutes: YYYY-MM-DDThh:mmTZD (e.g.
     1997-07-16T19:20+01:00)
-
 -   Date plus hours, minutes and seconds: YYYY-MM-DDThh:mm:ssTZD (e.g.
     1997-07-16T19:20:30+01:00)
-
 -   Date plus hours, minutes, seconds and a decimal
     fraction of a second: YYYY-MM-DDThh:mm:ss.sTZD (e.g.
     1997-07-16T19:20:30.45+01:00)
-:::
+
 
 Where:
 
 
 -   YYYY = four-digit year
-
 -   MM = two-digit month (01=January, etc.)
-
 -   DD = two-digit day of month (01 through 31)
-
 -   hh = two digits of hour (00 through 23) (am/pm NOT allowed)
-
 -   mm = two digits of minute (00 through 59)
-
 -   ss = two digits of second (00 through 59)
-
 -   s = one or more digits representing a decimal fraction of a second
-
 -   TZD = time zone designator (Z or +hh:mm or -hh:mm)
-:::
+
 
 Times are expressed either in **Coordinated
 Universal Time** (**UTC**) with a special UTC
@@ -864,4 +849,4 @@ was also explained to let you know how Cassandra implements its data
 types.
 
 In the next lab, we will learn another important element of a
-Cassandra query---indexes.
+Cassandra query indexes.

@@ -1,0 +1,966 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%sh\nSTATUS=\"$(service cassandra status)\"\n\nif [[ $STATUS == *\"is running\"* ]]; then\n    echo \"Cassandra is running\"\nelse \n    echo \" Cassandra not running .... Starting\"  \n    service cassandra restart > /dev/null 2>&1 &\n    echo \" Started\"  \nfi",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T10:58:09+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/sh"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591527471974_1969285474",
+      "id": "paragraph_1591527471974_1969285474",
+      "dateCreated": "2020-06-07T10:57:51+0000",
+      "dateStarted": "2020-06-07T10:58:09+0000",
+      "dateFinished": "2020-06-07T10:58:09+0000",
+      "status": "FINISHED",
+      "focus": true,
+      "$$hashKey": "object:8617"
+    },
+    {
+      "text": "%md\r\nLab 3. CQL Data Types\r\n----------------------------------\r\n\r\n\r\nIn this lab, we will have an overview of Cassandra Query Language\r\nand take a detailed look into the wealthy set of data types supported by\r\nCassandra. We will walk through the data types to study what their\r\ninternal storage structure looks like.\r\n\r\nIntroduction to CQL\r\n-------------------------------------\r\n\r\nCassandra introduced Cassandra Query Language (CQL) in release 0.8 as a\r\nSQL-like alternative to the traditional Thrift RPC\r\nAPI. As of the time of this writing, the latest CQL version is 3.1.7. I\r\ndo not want to take you through all of its old versions and therefore, I\r\nwill focus on version 3.1.7 only. It should be noted that CQL Version 3\r\nis not backward compatible with CQL Version 2 and differs from it in\r\nmany ways.\r\n\r\n\r\n\r\n### CQL statements\r\n\r\n\r\nCQL Version 3 provides a model very similar to SQL. Conceptually, it\r\nuses a table to store data in rows of columns. It\r\nis composed of three main types of statements:\r\n\r\n\r\n-   **Data definition statements**: These \r\n    are used to set and change how data\r\n    is stored in Cassandra\r\n\r\n-   **Data manipulation statements**: These \r\n    are used to create, delete, and modify data\r\n\r\n-   **Query statements**: These are used\r\n    to look up data\r\n\r\nCQL is case insensitive, unless the word is enclosed in double quotation\r\nmarks. It defines a list of keywords that have a fixed meaning for the\r\nlanguage. It distinguishes between reserved and \r\nnon-reserved keywords. **Reserved** keywords\r\ncannot be used as identifiers. They are\r\ntruly reserved for the language.\r\n**Non-reserved** keywords only have a \r\nspecific meaning in certain contexts but can be used as\r\nidentifiers. The list of CQL keywords is shown in DataStax's\r\n documentation at\r\n<http://www.datastax.com/documentation/cql/3.1/cql/cql_reference/keywords_r.html>.\r\n\r\n\r\n### CQL command-line client -- cqlsh\r\n\r\n\r\nCassandra bundles an interactive terminal\r\nsupporting CQL, known as `cqlsh`. It is  a\r\nPython-based command-line client used to run CQL commands. To start\r\n`cqlsh` , navigate to Cassandra's `bin` directory\r\nand type the following:\r\n\r\n\r\n-   On Linux, type `./cqlsh`\r\n\r\n-   On Windows, type `cqlsh.bat` or `python cqlsh`\r\n\r\nAs shown in the following figure, `cqlsh` shows the cluster\r\nname, Cassandra, CQL, and Thrift protocol versions on startup:\r\n\r\n\r\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_01.jpg)\r\n\r\n:::\r\ncqlsh connected to the Cassandra instance running on the local node\r\n:::\r\n\r\nWe can use `cqlsh` to connect to other nodes by appending the\r\nhost (either hostname or IP address) and port as command-line\r\nparameters.\r\n\r\nIf we want to create a keyspace called `fenago` using\r\n`SimpleStrategy` (which will be explained in,\r\n*Enhancing a Version*) as its replication strategy and\r\nsetting the replication factor as one for a single-node Cassandra\r\ncluster, we can type the CQL statement, shown in the following\r\nscreenshot, in `cqlsh`.\r\n\r\nThis utility will be used extensively in this course to demonstrate how to\r\nuse CQL to define the Cassandra data model:\r\n\r\n\r\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_02.jpg)\r\n\r\n:::\r\nCreate keyspace fenago in cqlsh\r\n:::\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T11:24:28+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591526196295_-354206818",
+      "id": "paragraph_1591526196295_-354206818",
+      "dateCreated": "2020-06-07T10:36:36+0000",
+      "dateStarted": "2020-06-07T11:24:28+0000",
+      "dateFinished": "2020-06-07T11:24:28+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8618",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Lab 3. CQL Data Types</h2>\n<p>In this lab, we will have an overview of Cassandra Query Language<br />\nand take a detailed look into the wealthy set of data types supported by<br />\nCassandra. We will walk through the data types to study what their<br />\ninternal storage structure looks like.</p>\n<h2>Introduction to CQL</h2>\n<p>Cassandra introduced Cassandra Query Language (CQL) in release 0.8 as a<br />\nSQL-like alternative to the traditional Thrift RPC<br />\nAPI. As of the time of this writing, the latest CQL version is 3.1.7. I<br />\ndo not want to take you through all of its old versions and therefore, I<br />\nwill focus on version 3.1.7 only. It should be noted that CQL Version 3<br />\nis not backward compatible with CQL Version 2 and differs from it in<br />\nmany ways.</p>\n<h3>CQL statements</h3>\n<p>CQL Version 3 provides a model very similar to SQL. Conceptually, it<br />\nuses a table to store data in rows of columns. It<br />\nis composed of three main types of statements:</p>\n<ul>\n<li>\n<p><strong>Data definition statements</strong>: These<br />\nare used to set and change how data<br />\nis stored in Cassandra</p>\n</li>\n<li>\n<p><strong>Data manipulation statements</strong>: These<br />\nare used to create, delete, and modify data</p>\n</li>\n<li>\n<p><strong>Query statements</strong>: These are used<br />\nto look up data</p>\n</li>\n</ul>\n<p>CQL is case insensitive, unless the word is enclosed in double quotation<br />\nmarks. It defines a list of keywords that have a fixed meaning for the<br />\nlanguage. It distinguishes between reserved and<br />\nnon-reserved keywords. <strong>Reserved</strong> keywords<br />\ncannot be used as identifiers. They are<br />\ntruly reserved for the language.<br />\n<strong>Non-reserved</strong> keywords only have a<br />\nspecific meaning in certain contexts but can be used as<br />\nidentifiers. The list of CQL keywords is shown in DataStax&rsquo;s<br />\ndocumentation at<br />\n<a href=\"http://www.datastax.com/documentation/cql/3.1/cql/cql_reference/keywords_r.html\">http://www.datastax.com/documentation/cql/3.1/cql/cql_reference/keywords_r.html</a>.</p>\n<h3>CQL command-line client &ndash; cqlsh</h3>\n<p>Cassandra bundles an interactive terminal<br />\nsupporting CQL, known as <code>cqlsh</code>. It is  a<br />\nPython-based command-line client used to run CQL commands. To start<br />\n<code>cqlsh</code> , navigate to Cassandra&rsquo;s <code>bin</code> directory<br />\nand type the following:</p>\n<ul>\n<li>\n<p>On Linux, type <code>./cqlsh</code></p>\n</li>\n<li>\n<p>On Windows, type <code>cqlsh.bat</code> or <code>python cqlsh</code></p>\n</li>\n</ul>\n<p>As shown in the following figure, <code>cqlsh</code> shows the cluster<br />\nname, Cassandra, CQL, and Thrift protocol versions on startup:</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_01.jpg\" alt=\"\" /></p>\n<p>:::<br />\ncqlsh connected to the Cassandra instance running on the local node<br />\n:::</p>\n<p>We can use <code>cqlsh</code> to connect to other nodes by appending the<br />\nhost (either hostname or IP address) and port as command-line<br />\nparameters.</p>\n<p>If we want to create a keyspace called <code>fenago</code> using<br />\n<code>SimpleStrategy</code> (which will be explained in,<br />\n<em>Enhancing a Version</em>) as its replication strategy and<br />\nsetting the replication factor as one for a single-node Cassandra<br />\ncluster, we can type the CQL statement, shown in the following<br />\nscreenshot, in <code>cqlsh</code>.</p>\n<p>This utility will be used extensively in this course to demonstrate how to<br />\nuse CQL to define the Cassandra data model:</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_02.jpg\" alt=\"\" /></p>\n<p>:::<br />\nCreate keyspace fenago in cqlsh<br />\n:::</p>\n\n</div>"
+          }
+        ]
+      }
+    },
+    {
+      "text": "%sh\ncqlsh -h\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T11:24:33+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/sh"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591526248086_-1780902350",
+      "id": "paragraph_1591526248086_-1780902350",
+      "dateCreated": "2020-06-07T10:37:28+0000",
+      "dateStarted": "2020-06-07T11:24:33+0000",
+      "dateFinished": "2020-06-07T11:24:34+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8619"
+    },
+    {
+      "text": "%md\n\n### Native data types\n\nCQL Version 3 supports many basic data types for\ncolumns. It also supports collection types and all data types available\nto Cassandra. The following table lists the supported basic data types\nand their corresponding meanings:\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/table1.png)\n\n### Cassandra implementation\n\n\nIf we look into the Cassandra's Java source code,\nthe CQL Version 3 native data types are declared in\nan `enum` called `Native` in the\n`org.apache.cassandra.cql3.CQL3Type` interface, as shown in\nthe following screenshot:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_03.jpg)\n\n:::\nCassandra source code declaring CQL Version 3 native data types\n:::\n\nIt is interesting to know that `TEXT` and\n`VARCHAR` are indeed both\n`UTF8Type`. The Java classes of `AsciiType` ,\n`LongType` , `BytesType` , `DecimalType` ,\nand so on are declared in the\n`org.apache.cassandra.db.marshal` package.\n\n\n### Note\n\nCassandra source code is available on GitHub at\n<https://github.com/apache/cassandra>.\n\nKnowing the Java implementation of the native data types allows us to\nhave a deeper understanding of how Cassandra handles them. For example,\nCassandra uses the\n`org.apache.cassandra.serializers.InetAddressSerializer` class\nand `java.net.InetAddress` class to handle the\nserialization/deserialization of the `INET` data type.\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T11:24:46+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591526283951_1481240008",
+      "id": "paragraph_1591526283951_1481240008",
+      "dateCreated": "2020-06-07T10:38:03+0000",
+      "dateStarted": "2020-06-07T11:24:46+0000",
+      "dateFinished": "2020-06-07T11:24:46+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8620",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h3>Native data types</h3>\n<p>CQL Version 3 supports many basic data types for<br />\ncolumns. It also supports collection types and all data types available<br />\nto Cassandra. The following table lists the supported basic data types<br />\nand their corresponding meanings:</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/table1.png\" alt=\"\" /></p>\n<h3>Cassandra implementation</h3>\n<p>If we look into the Cassandra&rsquo;s Java source code,<br />\nthe CQL Version 3 native data types are declared in<br />\nan <code>enum</code> called <code>Native</code> in the<br />\n<code>org.apache.cassandra.cql3.CQL3Type</code> interface, as shown in<br />\nthe following screenshot:</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_03.jpg\" alt=\"\" /></p>\n<p>:::<br />\nCassandra source code declaring CQL Version 3 native data types<br />\n:::</p>\n<p>It is interesting to know that <code>TEXT</code> and<br />\n<code>VARCHAR</code> are indeed both<br />\n<code>UTF8Type</code>. The Java classes of <code>AsciiType</code> ,<br />\n<code>LongType</code> , <code>BytesType</code> , <code>DecimalType</code> ,<br />\nand so on are declared in the<br />\n<code>org.apache.cassandra.db.marshal</code> package.</p>\n<h3>Note</h3>\n<p>Cassandra source code is available on GitHub at<br />\n<a href=\"https://github.com/apache/cassandra\">https://github.com/apache/cassandra</a>.</p>\n<p>Knowing the Java implementation of the native data types allows us to<br />\nhave a deeper understanding of how Cassandra handles them. For example,<br />\nCassandra uses the<br />\n<code>org.apache.cassandra.serializers.InetAddressSerializer</code> class<br />\nand <code>java.net.InetAddress</code> class to handle the<br />\nserialization/deserialization of the <code>INET</code> data type.</p>\n\n</div>"
+          }
+        ]
+      }
+    },
+    {
+      "text": "%md\n\n### A not-so-long example\n\n\nThese native data types are used in CQL statements\nto specify the type of data to be stored in a column of a table. Now let\nus create an experimental table with columns of each native data type\n(except counter type since it requires a separate table), and then\ninsert some data into it. We need to specify the keyspace,\n`fenago` in this example, before creating the table called\n`table01` , as shown in the following screenshot:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_04.jpg)\n\n:::\nCreate table01 to illustrate each native data type\n:::\n\nWe create the table using the default values, but, there are other\noptions to configure the new table for optimizations, including\ncompaction, compression, failure handling, and so on. The\n`PRIMARY KEY` clause, which is on only one column, could also\nbe specified along with an attribute, that is,\n`rowkey ascii PRIMARY KEY`. Then insert a sample record into\n`table01`. We make it with an `INSERT` statement, as\nshown in the following screenshot:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_05.jpg)\n\n:::\nInsert a sample record into table01\n:::\n\nWe now have data inside `table01`. We use\n`cqlsh` to query the table. For the sake of comparison, we\nalso use another Cassandra command-line tool called Cassandra CLI to\nhave a low-level view of the row. Let us open Cassandra CLI on a\nterminal.\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T11:24:51+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591526362976_-1019198499",
+      "id": "paragraph_1591526362976_-1019198499",
+      "dateCreated": "2020-06-07T10:39:22+0000",
+      "dateStarted": "2020-06-07T11:24:51+0000",
+      "dateFinished": "2020-06-07T11:24:51+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8621",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h3>A not-so-long example</h3>\n<p>These native data types are used in CQL statements<br />\nto specify the type of data to be stored in a column of a table. Now let<br />\nus create an experimental table with columns of each native data type<br />\n(except counter type since it requires a separate table), and then<br />\ninsert some data into it. We need to specify the keyspace,<br />\n<code>fenago</code> in this example, before creating the table called<br />\n<code>table01</code> , as shown in the following screenshot:</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_04.jpg\" alt=\"\" /></p>\n<p>:::<br />\nCreate table01 to illustrate each native data type<br />\n:::</p>\n<p>We create the table using the default values, but, there are other<br />\noptions to configure the new table for optimizations, including<br />\ncompaction, compression, failure handling, and so on. The<br />\n<code>PRIMARY KEY</code> clause, which is on only one column, could also<br />\nbe specified along with an attribute, that is,<br />\n<code>rowkey ascii PRIMARY KEY</code>. Then insert a sample record into<br />\n<code>table01</code>. We make it with an <code>INSERT</code> statement, as<br />\nshown in the following screenshot:</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_05.jpg\" alt=\"\" /></p>\n<p>:::<br />\nInsert a sample record into table01<br />\n:::</p>\n<p>We now have data inside <code>table01</code>. We use<br />\n<code>cqlsh</code> to query the table. For the sake of comparison, we<br />\nalso use another Cassandra command-line tool called Cassandra CLI to<br />\nhave a low-level view of the row. Let us open Cassandra CLI on a<br />\nterminal.</p>\n\n</div>"
+          }
+        ]
+      }
+    },
+    {
+      "text": "\r\nCREATE KEYSPACE fenago\r\n WITH REPLICATION=\r\n {'class':'SimpleStrategy', 'replication_factor':1};",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T10:58:46+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591526563926_1828601675",
+      "id": "paragraph_1591526563926_1828601675",
+      "dateCreated": "2020-06-07T10:42:43+0000",
+      "dateStarted": "2020-06-07T10:58:46+0000",
+      "dateFinished": "2020-06-07T10:58:47+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8622"
+    },
+    {
+      "text": "USE fenago;\r\n\r\nCREATE TABLE table01 (\r\n  rowkey ascii,\r\n  asciifield ascii,\r\n  bigintfield bigint,\r\n  blobfield blob,\r\n  booleanfield boolean,\r\n  decimalfield decimal,\r\n  doublefield double,\r\n  floatfield float,\r\n  inetfield inet,\r\n  intfield int,\r\n  textfield text,\r\n  timestampfield timestamp,\r\n  timeuuidfield timeuuid,\r\n  uuidfield uuid,\r\n  varcharfield varchar,\r\n  varintfield varint,\r\n  PRIMARY KEY (rowkey)\r\n );\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T10:58:50+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591526563829_355566466",
+      "id": "paragraph_1591526563829_355566466",
+      "dateCreated": "2020-06-07T10:42:43+0000",
+      "dateStarted": "2020-06-07T10:58:50+0000",
+      "dateFinished": "2020-06-07T10:58:51+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8623"
+    },
+    {
+      "text": "USE fenago;\r\n\r\nINSERT INTO table01\r\n ( rowkey, asciifield, bigintfield, blobfield, booleanfield,\r\n   decimalfield, doublefield, floatfield, inetfield, intfield,\r\n   textfield, timestampfield, timeuuidfield, uuidfield,\r\n   varcharfield, varintfield)\r\n VALUES\r\n ( '1', 'ABC', 1000000000, textAsBlob('ABC'), True,\r\n   1.0, 1.123456789, 1.123456, '192.168.0.1', 1,\r\n   'ABC', '2014-05-01 01:02:03', now(), uuid(),\r\n   'ABC', 1);\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T10:58:54+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591526563608_458550595",
+      "id": "paragraph_1591526563608_458550595",
+      "dateCreated": "2020-06-07T10:42:43+0000",
+      "dateStarted": "2020-06-07T10:58:54+0000",
+      "dateFinished": "2020-06-07T10:58:54+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8624"
+    },
+    {
+      "text": "%md\n\n### Note\n\n**Cassandra CLI utility**\n\nCassandra CLI is used to set storage configuration\nattributes on a per-keyspace or per-table basis. To start it up, you\nnavigate to Cassandra bin directory and type the following:\n\n\n-   On Linux, `./cassandra-cli`\n\n-   On Windows, `cassandra.bat`\n:::\n\nNote that it was announced to be deprecated in Cassandra 3.0 and\n`cqlsh` should be used instead.\n\nThe results of the `SELECT` statement in `cqlsh` and\nthe `list` command in Cassandra CLI are shown in the following\nscreenshot. We will then walk through each column one by one:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_06.jpg)\n\n:::\nComparison of the sample row in cqlsh and Cassandra CLI\n:::\n\n### ASCII\n\n\nInternally, a data value `'ABC'` is\nstored as the byte values in hexadecimal\nrepresentation of each individual character, `'A'` ,\n`'B'` , and `'C'` as `0x41` ,\n`0x42` , and `0x43` respectively.\n\n\n### Bigint\n\n\nThis  is simple; the\nhexadecimal representation of the number `1000000000` is\n`0x000000003b9aca00` of 64-bit length stored internally.\n\n\n### BLOB\n\n\nA `BLOB` data type is used to store a\nlarge binary object. In our previous example, we\ninserted a text `'ABC'` as a `BLOB` into the\n`blobfield`. The internal representation is\n`414243` , which is just a stream of bytes in hexadecimal\nrepresentation.\n\nObviously, a `BLOB` field can accept all kinds of data, and\nbecause of this flexibility it cannot have validation on its data value.\nFor example, a data value `2` may be interpreted as either an\ninteger `2` or a text `'2'`. Without knowing the\ninterpretation we want, a `BLOB` field can impose a check on\nthe data value.\n\nAnother interesting point of a `BLOB` field is that, as shown\nin the `SELECT` statement in the previous screenshot in\n`cqlsh` , the data value of `blobfield` returned is\n`0x414243` for `'ABC'` text. We know from the\nprevious section that `0x41` , `0x42` ,\n`0x43` are the byte values of `'A'` ,\n`'B'` , and `'C'` , respectively. However, for a\n`BLOB` field, `cqlsh` prefixes its data value with\n`'0x'` to make it a so-called BLOB constant. A BLOB constant\nis a sequence of bytes in their hexadecimal values prefixed by\n`0[xX](hex)+` where `hex` is a hexadecimal\ncharacter, such as `[0-9a-fA-F]`.\n\nCQL also provides a number of `BLOB` conversion functions to\nconvert native data types into a `BLOB` and vice versa. For\nevery `<native-type>` (except `BLOB` for an obvious\nreason) supported by CQL, the `<native-type>AsBlob` function\ntakes an argument of type `<native-type>` and returns it as a\n`BLOB`. Contrarily, the `blobAs<Native-type>`\nfunction reverses the conversion from a `BLOB` back to a\n`<native-type>`. As demonstrated in the `INSERT`\nstatement, we have used `textAsBlob()` to convert a\n`text` data type into a `BLOB`.\n\n\n### Note\n\n**BLOB constant**\n\nBLOB constants were introduced in CQL version 3.0.2 to allow users to\ninput `BLOB` values. In older versions of\nCQL, inputting `BLOB` as string was\nsupported for convenience. It is now deprecated and\nwill be removed in a future version. It is still supported only to allow\nsmoother transition to a `BLOB` constant. Updating the client\ncode to switch to `BLOB` constants should be done as soon as\npossible.\n\n\n### Boolean\n\n\nA `boolean` data type is also very\nintuitive. It is merely a single byte of either\n`0x00` , which means `False` , or `0x01` ,\nwhich means `True` , in the internal storage.\n\n\n### Decimal\n\n\nA `decimal` data type can store a\nvariable-precision decimal, basically a\n`BigDecimal` data type in Java.\n\n\n### Double\n\n\nThe `double` data type is a\ndouble-precision 64-bit IEEE 754 floating point in\nits internal storage.\n\n\n### Float\n\n\nThe `float` data type is a\nsingle-precision 32-bit IEEE 754 floating point in\nits internal storage.\n\n\n\n### Note\n\n**BigDecimal, double, or float?**\n\nThe difference between `double` and\n`float` is obviously the length of\nprecision in the floating point value. Both `double` and\n`float` use binary representation of decimal numbers with a\nradix which is in many cases an approximation, not an absolute value.\n`double `is a 64-bit value while `float` is an even\nshorter 32-bit value. Therefore, we can say that double is more precise\nthan float. However, in both cases, there is still a possibility of loss\nof precision which can be very noticeable when working with either very\nbig numbers or very small numbers.\n\nOn the contrary, `BigDecimal` is devised to overcome this loss\nof precision discrepancy. It is an exact way of representing numbers.\nIts disadvantage is slower runtime performance.\n\nWhenever you are dealing with money or\nprecision is a must, `BigDecimal` is the\nbest choice (or `decimal` in CQL native data types), otherwise\n`double` or `float` should be\ngood enough.\n\n\n### Inet\n\n\nThe `inet` data type is designed for\nstoring IP address values in **IP Version 4**\n(**IPv4**) and **IP Version 6**\n(**IPv6**) format. The IP address, `192.168.0.1` ,\nin the example record is stored as four bytes\ninternally; `192` is  stored as\n`0xc0` , `168` as `0xa8` , `0` as\n`0x00` , and `1` as `0x01` , respectively.\nIt should be noted that regardless of the IP\naddress being stored is IPv4 or IPv6, the port number is\n*not* stored. We need another column to store it if\nrequired.\n\nWe can also store an IPv6 address value. The following\n`UPDATE` statement changes the `inetfield` to an\nIPv6 address `2001:0db8:85a3:0042:1000:8a2e:0370:7334` , as\nshown in the following screenshot:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_07.jpg)\n\n:::\nComparison of the sample row in cqlsh and Cassandra CLI in inetfield\n:::\n\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T11:24:56+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591526390309_181864225",
+      "id": "paragraph_1591526390309_181864225",
+      "dateCreated": "2020-06-07T10:39:50+0000",
+      "dateStarted": "2020-06-07T11:24:56+0000",
+      "dateFinished": "2020-06-07T11:24:56+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8625",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h3>Note</h3>\n<p><strong>Cassandra CLI utility</strong></p>\n<p>Cassandra CLI is used to set storage configuration<br />\nattributes on a per-keyspace or per-table basis. To start it up, you<br />\nnavigate to Cassandra bin directory and type the following:</p>\n<ul>\n<li>\n<p>On Linux, <code>./cassandra-cli</code></p>\n</li>\n<li>\n<p>On Windows, <code>cassandra.bat</code><br />\n:::</p>\n</li>\n</ul>\n<p>Note that it was announced to be deprecated in Cassandra 3.0 and<br />\n<code>cqlsh</code> should be used instead.</p>\n<p>The results of the <code>SELECT</code> statement in <code>cqlsh</code> and<br />\nthe <code>list</code> command in Cassandra CLI are shown in the following<br />\nscreenshot. We will then walk through each column one by one:</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_06.jpg\" alt=\"\" /></p>\n<p>:::<br />\nComparison of the sample row in cqlsh and Cassandra CLI<br />\n:::</p>\n<h3>ASCII</h3>\n<p>Internally, a data value <code>'ABC'</code> is<br />\nstored as the byte values in hexadecimal<br />\nrepresentation of each individual character, <code>'A'</code> ,<br />\n<code>'B'</code> , and <code>'C'</code> as <code>0x41</code> ,<br />\n<code>0x42</code> , and <code>0x43</code> respectively.</p>\n<h3>Bigint</h3>\n<p>This  is simple; the<br />\nhexadecimal representation of the number <code>1000000000</code> is<br />\n<code>0x000000003b9aca00</code> of 64-bit length stored internally.</p>\n<h3>BLOB</h3>\n<p>A <code>BLOB</code> data type is used to store a<br />\nlarge binary object. In our previous example, we<br />\ninserted a text <code>'ABC'</code> as a <code>BLOB</code> into the<br />\n<code>blobfield</code>. The internal representation is<br />\n<code>414243</code> , which is just a stream of bytes in hexadecimal<br />\nrepresentation.</p>\n<p>Obviously, a <code>BLOB</code> field can accept all kinds of data, and<br />\nbecause of this flexibility it cannot have validation on its data value.<br />\nFor example, a data value <code>2</code> may be interpreted as either an<br />\ninteger <code>2</code> or a text <code>'2'</code>. Without knowing the<br />\ninterpretation we want, a <code>BLOB</code> field can impose a check on<br />\nthe data value.</p>\n<p>Another interesting point of a <code>BLOB</code> field is that, as shown<br />\nin the <code>SELECT</code> statement in the previous screenshot in<br />\n<code>cqlsh</code> , the data value of <code>blobfield</code> returned is<br />\n<code>0x414243</code> for <code>'ABC'</code> text. We know from the<br />\nprevious section that <code>0x41</code> , <code>0x42</code> ,<br />\n<code>0x43</code> are the byte values of <code>'A'</code> ,<br />\n<code>'B'</code> , and <code>'C'</code> , respectively. However, for a<br />\n<code>BLOB</code> field, <code>cqlsh</code> prefixes its data value with<br />\n<code>'0x'</code> to make it a so-called BLOB constant. A BLOB constant<br />\nis a sequence of bytes in their hexadecimal values prefixed by<br />\n<code>0[xX](hex)+</code> where <code>hex</code> is a hexadecimal<br />\ncharacter, such as <code>[0-9a-fA-F]</code>.</p>\n<p>CQL also provides a number of <code>BLOB</code> conversion functions to<br />\nconvert native data types into a <code>BLOB</code> and vice versa. For<br />\nevery <code>&lt;native-type&gt;</code> (except <code>BLOB</code> for an obvious<br />\nreason) supported by CQL, the <code>&lt;native-type&gt;AsBlob</code> function<br />\ntakes an argument of type <code>&lt;native-type&gt;</code> and returns it as a<br />\n<code>BLOB</code>. Contrarily, the <code>blobAs&lt;Native-type&gt;</code><br />\nfunction reverses the conversion from a <code>BLOB</code> back to a<br />\n<code>&lt;native-type&gt;</code>. As demonstrated in the <code>INSERT</code><br />\nstatement, we have used <code>textAsBlob()</code> to convert a<br />\n<code>text</code> data type into a <code>BLOB</code>.</p>\n<h3>Note</h3>\n<p><strong>BLOB constant</strong></p>\n<p>BLOB constants were introduced in CQL version 3.0.2 to allow users to<br />\ninput <code>BLOB</code> values. In older versions of<br />\nCQL, inputting <code>BLOB</code> as string was<br />\nsupported for convenience. It is now deprecated and<br />\nwill be removed in a future version. It is still supported only to allow<br />\nsmoother transition to a <code>BLOB</code> constant. Updating the client<br />\ncode to switch to <code>BLOB</code> constants should be done as soon as<br />\npossible.</p>\n<h3>Boolean</h3>\n<p>A <code>boolean</code> data type is also very<br />\nintuitive. It is merely a single byte of either<br />\n<code>0x00</code> , which means <code>False</code> , or <code>0x01</code> ,<br />\nwhich means <code>True</code> , in the internal storage.</p>\n<h3>Decimal</h3>\n<p>A <code>decimal</code> data type can store a<br />\nvariable-precision decimal, basically a<br />\n<code>BigDecimal</code> data type in Java.</p>\n<h3>Double</h3>\n<p>The <code>double</code> data type is a<br />\ndouble-precision 64-bit IEEE 754 floating point in<br />\nits internal storage.</p>\n<h3>Float</h3>\n<p>The <code>float</code> data type is a<br />\nsingle-precision 32-bit IEEE 754 floating point in<br />\nits internal storage.</p>\n<h3>Note</h3>\n<p><strong>BigDecimal, double, or float?</strong></p>\n<p>The difference between <code>double</code> and<br />\n<code>float</code> is obviously the length of<br />\nprecision in the floating point value. Both <code>double</code> and<br />\n<code>float</code> use binary representation of decimal numbers with a<br />\nradix which is in many cases an approximation, not an absolute value.<br />\n<code>double</code>is a 64-bit value while <code>float</code> is an even<br />\nshorter 32-bit value. Therefore, we can say that double is more precise<br />\nthan float. However, in both cases, there is still a possibility of loss<br />\nof precision which can be very noticeable when working with either very<br />\nbig numbers or very small numbers.</p>\n<p>On the contrary, <code>BigDecimal</code> is devised to overcome this loss<br />\nof precision discrepancy. It is an exact way of representing numbers.<br />\nIts disadvantage is slower runtime performance.</p>\n<p>Whenever you are dealing with money or<br />\nprecision is a must, <code>BigDecimal</code> is the<br />\nbest choice (or <code>decimal</code> in CQL native data types), otherwise<br />\n<code>double</code> or <code>float</code> should be<br />\ngood enough.</p>\n<h3>Inet</h3>\n<p>The <code>inet</code> data type is designed for<br />\nstoring IP address values in <strong>IP Version 4</strong><br />\n(<strong>IPv4</strong>) and <strong>IP Version 6</strong><br />\n(<strong>IPv6</strong>) format. The IP address, <code>192.168.0.1</code> ,<br />\nin the example record is stored as four bytes<br />\ninternally; <code>192</code> is  stored as<br />\n<code>0xc0</code> , <code>168</code> as <code>0xa8</code> , <code>0</code> as<br />\n<code>0x00</code> , and <code>1</code> as <code>0x01</code> , respectively.<br />\nIt should be noted that regardless of the IP<br />\naddress being stored is IPv4 or IPv6, the port number is<br />\n<em>not</em> stored. We need another column to store it if<br />\nrequired.</p>\n<p>We can also store an IPv6 address value. The following<br />\n<code>UPDATE</code> statement changes the <code>inetfield</code> to an<br />\nIPv6 address <code>2001:0db8:85a3:0042:1000:8a2e:0370:7334</code> , as<br />\nshown in the following screenshot:</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_07.jpg\" alt=\"\" /></p>\n<p>:::<br />\nComparison of the sample row in cqlsh and Cassandra CLI in inetfield<br />\n:::</p>\n\n</div>"
+          }
+        ]
+      }
+    },
+    {
+      "text": "USE fenago;\r\n\r\nSELECT * FROM table01;\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T10:58:59+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "rowkey": "string",
+                      "asciifield": "string",
+                      "bigintfield": "string",
+                      "blobfield": "string",
+                      "booleanfield": "string",
+                      "decimalfield": "string",
+                      "doublefield": "string",
+                      "floatfield": "string",
+                      "inetfield": "string",
+                      "intfield": "string",
+                      "textfield": "string",
+                      "timestampfield": "string",
+                      "timeuuidfield": "string",
+                      "uuidfield": "string",
+                      "varcharfield": "string",
+                      "varintfield": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591526563448_1271626958",
+      "id": "paragraph_1591526563448_1271626958",
+      "dateCreated": "2020-06-07T10:42:43+0000",
+      "dateStarted": "2020-06-07T10:58:57+0000",
+      "dateFinished": "2020-06-07T10:58:57+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8626"
+    },
+    {
+      "text": "%sh\r\ncat > script.cli <<EOL\r\ndescribe table01\r\nEOL\r\ncqlsh -f  script.cli --keyspace=fenago\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T11:03:59+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/sh"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591526580015_-263659325",
+      "id": "paragraph_1591526580015_-263659325",
+      "dateCreated": "2020-06-07T10:43:00+0000",
+      "dateStarted": "2020-06-07T11:03:59+0000",
+      "dateFinished": "2020-06-07T11:04:00+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8627"
+    },
+    {
+      "text": "%md\n\n\n### Note\n\n**Internet Protocol Version 6**\n\nInternet Protocol Version 6 (IPv6) is the latest version of the\n**Internet Protocol** (**IP**). It was \ndeveloped by the IETF to deal with the\nlong-anticipated problem of IPv4 address exhaustion.\n\nIPv6 uses a 128-bit address whereas IPv4 uses 32-bit address. The two\nprotocols are not designed to be interoperable, making the transition to\nIPv6 complicated.\n\nIPv6 addresses are usually represented as eight groups of four\nhexadecimal digits separated by colons, such as\n`2001:0db8:85a3:0042:1000:8a2e:0370:7334`.\n\nIn `cqlsh` , the  leading zeros of each\ngroup of four hexadecimal digits are removed. In\nCassandra's internal storage, the IPv6 address value consumes 16 bytes.\n\n\n### Int\n\n\nThe `int` data type\nis a primitive 32-bit signed integer.\n\n\n### Text\n\n\nThe `text` data type is a UTF-8 encoded\nstring accepting Unicode characters. As shown\npreviously, the byte values of \\\"`ABC`\\\", `0x41` ,\n`0x42` , and `0x43` , are stored internally. We can\ntest the `text` field with non-ASCII characters by updating\nthe `textfield` as shown in the following screenshot:\n\nThe `text` data type is a combination of non-ASCII and ASCII\ncharacters. The four non-ASCII characters are represented as their\n3-byte UTF-8 values, `0xe8b584` , `0xe6ba90` ,\n`0xe68f90` , and `0xe4be9b`.\n\nHowever, the ASCII characters are still stored as byte values, as shown\nin the screenshot:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_08.jpg)\n\n:::\nExperiment of the textfield data type\n:::\n\n\n### Timestamp\n\n\nThe value of the `timestampfield` is encoded as a 64-bit\nsigned integer representing a number of\nmilliseconds since the standard base time known as the\n*epoch*: January 1, 1970, at 00:00:00 GMT. A\n`timestamp` data type can be entered as an\n integer for CQL input, or as a string literal in ISO 8601\nformats. As shown in the following screenshot, the internal value of May\n1, 2014, 16:02:03, in the +08:00 timezone is\n`0x00000145b6cdf878` or 1,398,931,323,000 milliseconds since\nthe epoch:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_13.jpg)\n\n:::\nExperiment of the timestamp data type\n:::\n\nA `timestamp` data type contains a date portion and a time\nportion in which the time of the day can be omitted\nif only the value of the date is wanted. Cassandra \nwill use 00:00:00 as the default for the omitted time of day.\n\n\n### Note\n\n**ISO 8601**\n\nISO 8601 is the international standard for\nrepresentation of dates and times. Its full reference number is ISO\n8601:1988 (E), and its title is \\\"Data elements and interchange formats\n-- Information interchange -- Representation of dates and times.\\\"\n\nISO 8601 describes a large number of date/time formats depending on the\ndesired level of granularity. The formats are as follows. Note that the\n\\\"T\\\" appears literally in the string to indicate the beginning of the\ntime element.\n\n\n-   Year: YYYY (e.g. 1997)\n-   Year and month: YYYY-MM (e.g. 1997-07)\n-   Date: YYYY-MM-DD (e.g. 1997-07-16)\n-   Date plus hours and minutes: YYYY-MM-DDThh:mmTZD (e.g.\n    1997-07-16T19:20+01:00)\n-   Date plus hours, minutes and seconds: YYYY-MM-DDThh:mm:ssTZD (e.g.\n    1997-07-16T19:20:30+01:00)\n-   Date plus hours, minutes, seconds and a decimal\n    fraction of a second: YYYY-MM-DDThh:mm:ss.sTZD (e.g.\n    1997-07-16T19:20:30.45+01:00)\n\n\nWhere:\n\n\n-   YYYY = four-digit year\n-   MM = two-digit month (01=January, etc.)\n-   DD = two-digit day of month (01 through 31)\n-   hh = two digits of hour (00 through 23) (am/pm NOT allowed)\n-   mm = two digits of minute (00 through 59)\n-   ss = two digits of second (00 through 59)\n-   s = one or more digits representing a decimal fraction of a second\n-   TZD = time zone designator (Z or +hh:mm or -hh:mm)\n\n\nTimes are expressed either in **Coordinated\nUniversal Time** (**UTC**) with a special UTC\ndesignator \\\"Z\\\" or in local time together with a time zone offset in\nhours and minutes. A time zone offset of \\\"+/-hh:mm\\\" indicates the use\nof a local time zone which is \\\"hh\\\" hours and \\\"mm\\\" minutes\nahead/behind of UTC.\n\nIf no time zone is specified, the time zone of the\nCassandra coordinator node handing the write\nrequest is used. Therefore the best practice is to specify the time zone\nwith the timestamp rather than relying on the time zone configured on\nthe Cassandra nodes to avoid any ambiguities.\n\n\n### Timeuuid\n\n\nA value of the `timeuuid` data type is a\nType 1 UUID which includes the time of its\ngeneration and is sorted by timestamp. It is therefore ideal for use in\napplications requiring conflict-free timestamps. A valid\n`timeuuid` uses the time in 100 intervals since 00:00:00.00\nUTC (60 bits), a clock sequence number for prevention of duplicates (14\nbits), and the IEEE 801 MAC address (48 bits) to generate a unique\nidentifier, for example,\n`74754ac0-e13f-11e3-a8a3-a92bc9056ee6`.\n\nCQL v3 offers a number of functions to make the manipulation of\n`timeuuid` handy:\n\n\n-   **dateOf()**: This  is used in a\n    `SELECT` statement to extract the timestamp portion of a\n    `timeuuid` column\n\n-   **now()**: This is used to generate\n    a new unique `timeuuid`\n\n-   **minTimeuuid() and maxTimeuuid()**: These are used to\n    return a result similar to a UUID given a\n    conditional time component as its argument\n\n-   **unixTimestampOf()**: This is used in a\n    `SELECT` statement to extract the timestamp\n     portion as a raw 64-bit integer timestamp of a\n    `timeuuid` column\n:::\n\nThe following figure uses `timeuuidfield`\nof `table01` to demonstrate the usage of\nthese `timeuuid` functions:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_09.jpg)\n\n:::\nDemonstration of timeuuid functions\n:::\n\n### Note\n\n**Timestamp or Timeuuid?**\n\nTimestamp is  suitable for storing date and time\nvalues. TimeUUID, however, is more suitable in those cases where a\nconflict free, unique timestamp is needed.\n\n\n### UUID\n\n\nThe `UUID` data type is usually used to\navoid collisions in values. It is a \n16-byte value that accepts a type 1 or type 4 UUID. CQL\nv3.1.6 or later versions provide a function called `uuid()` to\neasily generate random type 4 UUID values.\n\n\n### Note\n\n**Type 1 or type 4 UUID?**\n\nType 1 uses the MAC address of the computer that is generating the\n`UUID` data type and the number of\n100-nanosecond intervals since the adoption of the Gregorian calendar,\nto generate UUIDs. Its uniqueness across computers is guaranteed if MAC\naddresses are not duplicated; however, given the speed of modern\nprocessors, successive invocations on the same machine of a naive\nimplementation of a type 1 generator might produce the same\n`UUID` , negating the property of uniqueness.\n\nType 4 uses random or pseudorandom numbers. Therefore, it is the\nrecommended type of `UUID` to be used.\n\n\n### Varchar\n\n\nBasically `varchar` is  identical to\n`text` as evident by the  same\n`UTF8Type` in the source code.\n\n\n### Varint\n\n\nA `varint` data \nis used to store integers of arbitrary precision.\n\n\n### Counter\n\n\nA `counter` data type is a special kind\nof column whose user-visible value is a 64-bit\nsigned integer (though this is more complex internally) used to store a\nnumber that incrementally counts the occurrences of a particular event.\nWhen a new value is written to a given counter column, it is added to\nthe previous value of the counter.\n\nA counter is ideal for counting things quickly in a distributed\nenvironment which makes it invaluable for real time analytical tasks.\nThe `counter` data type was introduced in Cassandra Version\n0.8. Counter column tables must use `counter` data type.\nCounters can be stored in dedicated tables only, and you cannot create\nan index on a counter column.\n\n\n### Tip\n\n**Counter type don'ts**\n\n\n-   Don't assign the `counter` data type to a column that\n    serves as the primary key\n\n-   Don't use the `counter` data type in a table that\n    contains anything other than `counter` data types and\n    primary keys\n\n-   Don't use the `counter` data type to generate sequential\n    numbers for surrogate keys; use the `timeuuid` data type\n    instead\n:::\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T11:25:04+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591528443907_1222030975",
+      "id": "paragraph_1591528443907_1222030975",
+      "dateCreated": "2020-06-07T11:14:03+0000",
+      "dateStarted": "2020-06-07T11:25:04+0000",
+      "dateFinished": "2020-06-07T11:25:04+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8628",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h3>Note</h3>\n<p><strong>Internet Protocol Version 6</strong></p>\n<p>Internet Protocol Version 6 (IPv6) is the latest version of the<br />\n<strong>Internet Protocol</strong> (<strong>IP</strong>). It was<br />\ndeveloped by the IETF to deal with the<br />\nlong-anticipated problem of IPv4 address exhaustion.</p>\n<p>IPv6 uses a 128-bit address whereas IPv4 uses 32-bit address. The two<br />\nprotocols are not designed to be interoperable, making the transition to<br />\nIPv6 complicated.</p>\n<p>IPv6 addresses are usually represented as eight groups of four<br />\nhexadecimal digits separated by colons, such as<br />\n<code>2001:0db8:85a3:0042:1000:8a2e:0370:7334</code>.</p>\n<p>In <code>cqlsh</code> , the  leading zeros of each<br />\ngroup of four hexadecimal digits are removed. In<br />\nCassandra&rsquo;s internal storage, the IPv6 address value consumes 16 bytes.</p>\n<h3>Int</h3>\n<p>The <code>int</code> data type<br />\nis a primitive 32-bit signed integer.</p>\n<h3>Text</h3>\n<p>The <code>text</code> data type is a UTF-8 encoded<br />\nstring accepting Unicode characters. As shown<br />\npreviously, the byte values of &quot;<code>ABC</code>&quot;, <code>0x41</code> ,<br />\n<code>0x42</code> , and <code>0x43</code> , are stored internally. We can<br />\ntest the <code>text</code> field with non-ASCII characters by updating<br />\nthe <code>textfield</code> as shown in the following screenshot:</p>\n<p>The <code>text</code> data type is a combination of non-ASCII and ASCII<br />\ncharacters. The four non-ASCII characters are represented as their<br />\n3-byte UTF-8 values, <code>0xe8b584</code> , <code>0xe6ba90</code> ,<br />\n<code>0xe68f90</code> , and <code>0xe4be9b</code>.</p>\n<p>However, the ASCII characters are still stored as byte values, as shown<br />\nin the screenshot:</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_08.jpg\" alt=\"\" /></p>\n<p>:::<br />\nExperiment of the textfield data type<br />\n:::</p>\n<h3>Timestamp</h3>\n<p>The value of the <code>timestampfield</code> is encoded as a 64-bit<br />\nsigned integer representing a number of<br />\nmilliseconds since the standard base time known as the<br />\n<em>epoch</em>: January 1, 1970, at 00:00:00 GMT. A<br />\n<code>timestamp</code> data type can be entered as an<br />\ninteger for CQL input, or as a string literal in ISO 8601<br />\nformats. As shown in the following screenshot, the internal value of May<br />\n1, 2014, 16:02:03, in the +08:00 timezone is<br />\n<code>0x00000145b6cdf878</code> or 1,398,931,323,000 milliseconds since<br />\nthe epoch:</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_13.jpg\" alt=\"\" /></p>\n<p>:::<br />\nExperiment of the timestamp data type<br />\n:::</p>\n<p>A <code>timestamp</code> data type contains a date portion and a time<br />\nportion in which the time of the day can be omitted<br />\nif only the value of the date is wanted. Cassandra<br />\nwill use 00:00:00 as the default for the omitted time of day.</p>\n<h3>Note</h3>\n<p><strong>ISO 8601</strong></p>\n<p>ISO 8601 is the international standard for<br />\nrepresentation of dates and times. Its full reference number is ISO<br />\n8601:1988 (E), and its title is &quot;Data elements and interchange formats<br />\n&ndash; Information interchange &ndash; Representation of dates and times.&quot;</p>\n<p>ISO 8601 describes a large number of date/time formats depending on the<br />\ndesired level of granularity. The formats are as follows. Note that the<br />\n&quot;T&quot; appears literally in the string to indicate the beginning of the<br />\ntime element.</p>\n<ul>\n<li>Year: YYYY (e.g. 1997)</li>\n<li>Year and month: YYYY-MM (e.g. 1997-07)</li>\n<li>Date: YYYY-MM-DD (e.g. 1997-07-16)</li>\n<li>Date plus hours and minutes: YYYY-MM-DDThh:mmTZD (e.g.<br />\n1997-07-16T19:20+01:00)</li>\n<li>Date plus hours, minutes and seconds: YYYY-MM-DDThh:mm:ssTZD (e.g.<br />\n1997-07-16T19:20:30+01:00)</li>\n<li>Date plus hours, minutes, seconds and a decimal<br />\nfraction of a second: YYYY-MM-DDThh:mm:ss.sTZD (e.g.<br />\n1997-07-16T19:20:30.45+01:00)</li>\n</ul>\n<p>Where:</p>\n<ul>\n<li>YYYY = four-digit year</li>\n<li>MM = two-digit month (01=January, etc.)</li>\n<li>DD = two-digit day of month (01 through 31)</li>\n<li>hh = two digits of hour (00 through 23) (am/pm NOT allowed)</li>\n<li>mm = two digits of minute (00 through 59)</li>\n<li>ss = two digits of second (00 through 59)</li>\n<li>s = one or more digits representing a decimal fraction of a second</li>\n<li>TZD = time zone designator (Z or +hh:mm or -hh:mm)</li>\n</ul>\n<p>Times are expressed either in <strong>Coordinated<br />\nUniversal Time</strong> (<strong>UTC</strong>) with a special UTC<br />\ndesignator &quot;Z&quot; or in local time together with a time zone offset in<br />\nhours and minutes. A time zone offset of &quot;+/-hh:mm&quot; indicates the use<br />\nof a local time zone which is &quot;hh&quot; hours and &quot;mm&quot; minutes<br />\nahead/behind of UTC.</p>\n<p>If no time zone is specified, the time zone of the<br />\nCassandra coordinator node handing the write<br />\nrequest is used. Therefore the best practice is to specify the time zone<br />\nwith the timestamp rather than relying on the time zone configured on<br />\nthe Cassandra nodes to avoid any ambiguities.</p>\n<h3>Timeuuid</h3>\n<p>A value of the <code>timeuuid</code> data type is a<br />\nType 1 UUID which includes the time of its<br />\ngeneration and is sorted by timestamp. It is therefore ideal for use in<br />\napplications requiring conflict-free timestamps. A valid<br />\n<code>timeuuid</code> uses the time in 100 intervals since 00:00:00.00<br />\nUTC (60 bits), a clock sequence number for prevention of duplicates (14<br />\nbits), and the IEEE 801 MAC address (48 bits) to generate a unique<br />\nidentifier, for example,<br />\n<code>74754ac0-e13f-11e3-a8a3-a92bc9056ee6</code>.</p>\n<p>CQL v3 offers a number of functions to make the manipulation of<br />\n<code>timeuuid</code> handy:</p>\n<ul>\n<li>\n<p><strong>dateOf()</strong>: This  is used in a<br />\n<code>SELECT</code> statement to extract the timestamp portion of a<br />\n<code>timeuuid</code> column</p>\n</li>\n<li>\n<p><strong>now()</strong>: This is used to generate<br />\na new unique <code>timeuuid</code></p>\n</li>\n<li>\n<p><strong>minTimeuuid() and maxTimeuuid()</strong>: These are used to<br />\nreturn a result similar to a UUID given a<br />\nconditional time component as its argument</p>\n</li>\n<li>\n<p><strong>unixTimestampOf()</strong>: This is used in a<br />\n<code>SELECT</code> statement to extract the timestamp<br />\nportion as a raw 64-bit integer timestamp of a<br />\n<code>timeuuid</code> column<br />\n:::</p>\n</li>\n</ul>\n<p>The following figure uses <code>timeuuidfield</code><br />\nof <code>table01</code> to demonstrate the usage of<br />\nthese <code>timeuuid</code> functions:</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_09.jpg\" alt=\"\" /></p>\n<p>:::<br />\nDemonstration of timeuuid functions<br />\n:::</p>\n<h3>Note</h3>\n<p><strong>Timestamp or Timeuuid?</strong></p>\n<p>Timestamp is  suitable for storing date and time<br />\nvalues. TimeUUID, however, is more suitable in those cases where a<br />\nconflict free, unique timestamp is needed.</p>\n<h3>UUID</h3>\n<p>The <code>UUID</code> data type is usually used to<br />\navoid collisions in values. It is a<br />\n16-byte value that accepts a type 1 or type 4 UUID. CQL<br />\nv3.1.6 or later versions provide a function called <code>uuid()</code> to<br />\neasily generate random type 4 UUID values.</p>\n<h3>Note</h3>\n<p><strong>Type 1 or type 4 UUID?</strong></p>\n<p>Type 1 uses the MAC address of the computer that is generating the<br />\n<code>UUID</code> data type and the number of<br />\n100-nanosecond intervals since the adoption of the Gregorian calendar,<br />\nto generate UUIDs. Its uniqueness across computers is guaranteed if MAC<br />\naddresses are not duplicated; however, given the speed of modern<br />\nprocessors, successive invocations on the same machine of a naive<br />\nimplementation of a type 1 generator might produce the same<br />\n<code>UUID</code> , negating the property of uniqueness.</p>\n<p>Type 4 uses random or pseudorandom numbers. Therefore, it is the<br />\nrecommended type of <code>UUID</code> to be used.</p>\n<h3>Varchar</h3>\n<p>Basically <code>varchar</code> is  identical to<br />\n<code>text</code> as evident by the  same<br />\n<code>UTF8Type</code> in the source code.</p>\n<h3>Varint</h3>\n<p>A <code>varint</code> data<br />\nis used to store integers of arbitrary precision.</p>\n<h3>Counter</h3>\n<p>A <code>counter</code> data type is a special kind<br />\nof column whose user-visible value is a 64-bit<br />\nsigned integer (though this is more complex internally) used to store a<br />\nnumber that incrementally counts the occurrences of a particular event.<br />\nWhen a new value is written to a given counter column, it is added to<br />\nthe previous value of the counter.</p>\n<p>A counter is ideal for counting things quickly in a distributed<br />\nenvironment which makes it invaluable for real time analytical tasks.<br />\nThe <code>counter</code> data type was introduced in Cassandra Version<br />\n0.8. Counter column tables must use <code>counter</code> data type.<br />\nCounters can be stored in dedicated tables only, and you cannot create<br />\nan index on a counter column.</p>\n<h3>Tip</h3>\n<p><strong>Counter type don&rsquo;ts</strong></p>\n<ul>\n<li>\n<p>Don&rsquo;t assign the <code>counter</code> data type to a column that<br />\nserves as the primary key</p>\n</li>\n<li>\n<p>Don&rsquo;t use the <code>counter</code> data type in a table that<br />\ncontains anything other than <code>counter</code> data types and<br />\nprimary keys</p>\n</li>\n<li>\n<p>Don&rsquo;t use the <code>counter</code> data type to generate sequential<br />\nnumbers for surrogate keys; use the <code>timeuuid</code> data type<br />\ninstead<br />\n:::</p>\n</li>\n</ul>\n\n</div>"
+          }
+        ]
+      }
+    },
+    {
+      "text": "USE fenago;\r\n\r\nUPDATE table01 SET textfield='资源提供ABC'\r\n WHERE rowkey='1';\r\n \r\nSELECT textfield FROM table01;\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T11:04:15+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591526579032_-1245794902",
+      "id": "paragraph_1591526579032_-1245794902",
+      "dateCreated": "2020-06-07T10:42:59+0000",
+      "status": "READY",
+      "$$hashKey": "object:8629"
+    },
+    {
+      "text": "USE fenago;\r\n\r\nUPDATE table01 SET inetfield = '2001:0db8:85a3:0042:1000:8a2e:0370:7334' WHERE rowkey = '1';\r\n\r\nSELECT inetfield FROM table01;\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T11:08:50+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "inetfield": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591526579464_-978506508",
+      "id": "paragraph_1591526579464_-978506508",
+      "dateCreated": "2020-06-07T10:42:59+0000",
+      "dateStarted": "2020-06-07T11:08:48+0000",
+      "dateFinished": "2020-06-07T11:08:48+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8630"
+    },
+    {
+      "text": "USE fenago;\r\n\r\nSELECT now(), timeuuidfield, dateOf(timeuuidfield),\r\n unixTimestampOf(timeuuidfield),\r\n minTimeuuid(dateOf(timeuuidfield)),\r\n maxTimeuuid(dateOf(timeuuidfield))\r\n FROM table01;\r\n ",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T11:08:54+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "system.now()": "string",
+                      "timeuuidfield": "string",
+                      "system.dateof(timeuuidfield)": "string",
+                      "system.unixtimestampof(timeuuidfield)": "string",
+                      "system.mintimeuuid(system.dateof(timeuuidfield))": "string",
+                      "system.maxtimeuuid(system.dateof(timeuuidfield))": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591526578747_-636577373",
+      "id": "paragraph_1591526578747_-636577373",
+      "dateCreated": "2020-06-07T10:42:58+0000",
+      "dateStarted": "2020-06-07T11:08:53+0000",
+      "dateFinished": "2020-06-07T11:08:53+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8631"
+    },
+    {
+      "text": "%md\n\nWe use a `CREATE TABLE` statement to\ncreate a counter table. However, `INSERT` statements are not\nallowed on counter tables and so we must use an `UPDATE`\nstatement to update the counter column as shown in\nthe following screenshot.\n\nCassandra uses `counter` instead of `name` to\nindicate that the column is of a counter data type. The counter value is\nstored in the value of the column.\n\nThis is a very good article that explains the internals of how a counter\nworks in a distributed environment\n<http://www.datastax.com/dev/blog/whats-new-in-cassandra-2-1-a-better-implementation-of-counters>.\n\nThe following screenshot shows that counter value is stored in the value\nof the column:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_10.jpg)\n\n:::\nExperiment of the counter data type\n\n\n\nCollections\n-----------------------------\n\n\n\nCassandra also supports collections in its data\nmodel to store a small amount of data. Collections are a complex type\nthat can provide tremendous flexibility. Three collections are\nsupported: Set, List, and Map. The type of data stored in each of these\ncollections requires to be defined, for example, a set of timestamp is\ndefined as `set<timestamp>` , a list of text is defined as\n`list<text>` , a map containing a text key and a text value is\ndefined as `map<text, text>` , and so on. Also, only native\ndata types can be used in collections.\n\nCassandra reads a collection in its entirety and the collection is not\npaged internally. The maximum number of items of a collection is 64K and\nthe maximum size of an item is 64K.\n\nTo better demonstrate the CQL support on these collections, let us\ncreate a table in the `fenago` keyspace \nwith columns of each collection and insert some data into it,\nas shown in the following screenshot:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_11.jpg)\n\n:::\nExperiment on collections\n:::\n\n### Note\n\n**How to update or delete a collection?**\n\nCQL also supports updation and deletion of elements\nin a collection. You can refer to the relevant\ninformation in DataStax's documentation at\n<http://www.datastax.com/documentation/cql/3.1/cql/cql_using/use_collections_c.html>.\n\nAs in the case of native data types, let us walk through each collection\nbelow.\n\n\n\n### Set\n\n\nCQL uses sets to keep a collection of unique\nelements. The benefit of a set is that Cassandra\nautomatically keeps track of the uniqueness of the elements and we, as\napplication developers, do not need to bother on it.\n\nCQL uses curly braces (`{}`) to represent a set of values\nseparated by commas. An empty set is simply `{}`. In the\nprevious example, although we inserted the set as\n`{'Lemon', 'Orange', 'Apple'}` , the input order was not\npreserved. Why?\n\nThe reason is in the mechanism of how Cassandra stores the set.\nInternally, Cassandra stores each element of the set as a single column\nwhose column name is the original column name suffixed by a colon and\nthe element value. As shown previously, the ASCII values of\n`'Apple'` , `'Lemon'` , and `'Orange'` are\n`0x4170706c65` , `0x4c656d6f6e` , and\n`0x4f72616e6765` , respectively. So they are stored in three\ncolumns with column names, `setfield:4170706c65` ,\n`setfield:4c656d6f6e` , and `setfield:4f72616e6765`.\nBy the built-in order column-name-nature of Cassandra, the elements of a\nset are sorted automatically.\n\n\n### List\n\n\nA list is ordered by the natural order of the type\nselected. Hence it is suitable when uniqueness is\nnot required and maintaining order is required.\n\nCQL uses square brackets (`[]`) to represent a list of values\nseparated by commas. An empty list is `[]`. In contrast to a\nset, the input order of a list is preserved by Cassandra. Cassandra also\nstores each element of the list as a column. But this time, the columns\nhave the same name composed of the original column name\n(`listfield` in our example), a colon, and a\n UUID generated at the time of update. The element value of\nthe list is stored in the value of the column.\n\n\n### Map\n\n\nA map in Cassandra is a dictionary-like data\nstructure with keys and values. It is useful when\nyou want to store table-like data within a single Cassandra row.\n\nCQL also uses curly braces (`{}`) to represent a map of keys\nand values separated by commas. Each key-value pair is separated by a\ncolon. An empty map is simply represented as `{}`.\nConceivably, each key/value pair is stored in a column whose column name\nis composed of the original map column name followed by a colon and the\nkey of that pair. The value of the pair is stored in the value of the\ncolumn. Similar to a set, the map sorts its items automatically. As a\nresult, a map can be imagined as a hybrid of a set and a list.\n\n\n\nUser-defined type and tuple type\n--------------------------------\n\n\nCassandra 2.1 introduces support for **User-Defined Types**\n(**UDT**) and tuple types.\n\nUser-defined types are declared at the keyspace\nlevel. A user-defined type simplifies handling a\ngroup of related properties. We can define a group of related properties\nas a type and access them separately or as a single entity. We can map\nour UDTs to application entities. Another new type for CQL introduced by\nCassandra 2.1 is the tuple type. A tuple is a fixed-length set of typed\npositional fields without labels.\n\nWe can use user-defined and tuple types in tables. However, to support\nfuture capabilities, a column definition of a user-defined or tuple type\nrequires the `frozen` keyword. Cassandra serializes a frozen\nvalue having multiple components into a single value. This means we\ncannot update parts of a UDT value. The entire value must be\noverwritten. Cassandra treats the value of a frozen UDT like a\n`BLOB`.\n\nWe create a UDT called `contact` in the `fenago`\nkeyspace and use it to define `contactfield` in\n`table04`. Moreover, we have another column,\n`tuplefield` , to store a tuple in a row. Pay attention to the\nsyntax of the `INSERT` statement for UDT and tuple. For UDT,\nwe may use a dotted notation to retrieve a component of the UDT column,\nsuch as `contactfield.facebook` in our following example. As\nshown in `cassandra-cli` , `contactfield` is stored\nas a single value,\n`00000001620000000163000000076440642e636f6d`.\n\nThe value concatenates each UDT component in sequence with the format, a\nlength of 4 bytes indicating the length of the component value and the\ncomponent value itself. So, for `contactfield.facebook` ,\n`0x00000001` is the  length and\n`0x62` is the byte value of `'a'`. Cassandra\napplies the same treatment to a tuple:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_12.jpg)\n\n\nExperiment of user-defined and tuple types\n\n\nFurther information can be\nfound at DataStax's documentation, available at the following links:\n<http://www.datastax.com/documentation/cql/3.1/cql/cql_using/cqlUseUDT.html>\n\n\n-   <http://www.datastax.com/documentation/developer/python-driver/2.1/python-driver/reference/tupleTypes.html>\n\n\n\nSummary\n-------------------------\n\n\n\nThis lab is the second part of Cassandra data modeling. We have\nlearned the basics of Cassandra Query Language (CQL), which offers a\nSQL-like language to implement a Cassandra data model and operate the\ndata inside. Then a very detailed walkthrough, with ample examples of\nnative data types, more advanced collections, and new user-defined and\ntuple types, was provided to help you know how to select appropriate\ndata types for your data models. The internal storage of each data type\nwas also explained to let you know how Cassandra implements its data\ntypes.\n\nIn the next lab, we will learn another important element of a\nCassandra query---indexes.\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T11:25:14+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591529032686_-1524052208",
+      "id": "paragraph_1591529032686_-1524052208",
+      "dateCreated": "2020-06-07T11:23:52+0000",
+      "dateStarted": "2020-06-07T11:25:14+0000",
+      "dateFinished": "2020-06-07T11:25:14+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8632",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>We use a <code>CREATE TABLE</code> statement to<br />\ncreate a counter table. However, <code>INSERT</code> statements are not<br />\nallowed on counter tables and so we must use an <code>UPDATE</code><br />\nstatement to update the counter column as shown in<br />\nthe following screenshot.</p>\n<p>Cassandra uses <code>counter</code> instead of <code>name</code> to<br />\nindicate that the column is of a counter data type. The counter value is<br />\nstored in the value of the column.</p>\n<p>This is a very good article that explains the internals of how a counter<br />\nworks in a distributed environment<br />\n<a href=\"http://www.datastax.com/dev/blog/whats-new-in-cassandra-2-1-a-better-implementation-of-counters\">http://www.datastax.com/dev/blog/whats-new-in-cassandra-2-1-a-better-implementation-of-counters</a>.</p>\n<p>The following screenshot shows that counter value is stored in the value<br />\nof the column:</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_10.jpg\" alt=\"\" /></p>\n<p>:::<br />\nExperiment of the counter data type</p>\n<h2>Collections</h2>\n<p>Cassandra also supports collections in its data<br />\nmodel to store a small amount of data. Collections are a complex type<br />\nthat can provide tremendous flexibility. Three collections are<br />\nsupported: Set, List, and Map. The type of data stored in each of these<br />\ncollections requires to be defined, for example, a set of timestamp is<br />\ndefined as <code>set&lt;timestamp&gt;</code> , a list of text is defined as<br />\n<code>list&lt;text&gt;</code> , a map containing a text key and a text value is<br />\ndefined as <code>map&lt;text, text&gt;</code> , and so on. Also, only native<br />\ndata types can be used in collections.</p>\n<p>Cassandra reads a collection in its entirety and the collection is not<br />\npaged internally. The maximum number of items of a collection is 64K and<br />\nthe maximum size of an item is 64K.</p>\n<p>To better demonstrate the CQL support on these collections, let us<br />\ncreate a table in the <code>fenago</code> keyspace<br />\nwith columns of each collection and insert some data into it,<br />\nas shown in the following screenshot:</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_11.jpg\" alt=\"\" /></p>\n<p>:::<br />\nExperiment on collections<br />\n:::</p>\n<h3>Note</h3>\n<p><strong>How to update or delete a collection?</strong></p>\n<p>CQL also supports updation and deletion of elements<br />\nin a collection. You can refer to the relevant<br />\ninformation in DataStax&rsquo;s documentation at<br />\n<a href=\"http://www.datastax.com/documentation/cql/3.1/cql/cql_using/use_collections_c.html\">http://www.datastax.com/documentation/cql/3.1/cql/cql_using/use_collections_c.html</a>.</p>\n<p>As in the case of native data types, let us walk through each collection<br />\nbelow.</p>\n<h3>Set</h3>\n<p>CQL uses sets to keep a collection of unique<br />\nelements. The benefit of a set is that Cassandra<br />\nautomatically keeps track of the uniqueness of the elements and we, as<br />\napplication developers, do not need to bother on it.</p>\n<p>CQL uses curly braces (<code>{}</code>) to represent a set of values<br />\nseparated by commas. An empty set is simply <code>{}</code>. In the<br />\nprevious example, although we inserted the set as<br />\n<code>{'Lemon', 'Orange', 'Apple'}</code> , the input order was not<br />\npreserved. Why?</p>\n<p>The reason is in the mechanism of how Cassandra stores the set.<br />\nInternally, Cassandra stores each element of the set as a single column<br />\nwhose column name is the original column name suffixed by a colon and<br />\nthe element value. As shown previously, the ASCII values of<br />\n<code>'Apple'</code> , <code>'Lemon'</code> , and <code>'Orange'</code> are<br />\n<code>0x4170706c65</code> , <code>0x4c656d6f6e</code> , and<br />\n<code>0x4f72616e6765</code> , respectively. So they are stored in three<br />\ncolumns with column names, <code>setfield:4170706c65</code> ,<br />\n<code>setfield:4c656d6f6e</code> , and <code>setfield:4f72616e6765</code>.<br />\nBy the built-in order column-name-nature of Cassandra, the elements of a<br />\nset are sorted automatically.</p>\n<h3>List</h3>\n<p>A list is ordered by the natural order of the type<br />\nselected. Hence it is suitable when uniqueness is<br />\nnot required and maintaining order is required.</p>\n<p>CQL uses square brackets (<code>[]</code>) to represent a list of values<br />\nseparated by commas. An empty list is <code>[]</code>. In contrast to a<br />\nset, the input order of a list is preserved by Cassandra. Cassandra also<br />\nstores each element of the list as a column. But this time, the columns<br />\nhave the same name composed of the original column name<br />\n(<code>listfield</code> in our example), a colon, and a<br />\nUUID generated at the time of update. The element value of<br />\nthe list is stored in the value of the column.</p>\n<h3>Map</h3>\n<p>A map in Cassandra is a dictionary-like data<br />\nstructure with keys and values. It is useful when<br />\nyou want to store table-like data within a single Cassandra row.</p>\n<p>CQL also uses curly braces (<code>{}</code>) to represent a map of keys<br />\nand values separated by commas. Each key-value pair is separated by a<br />\ncolon. An empty map is simply represented as <code>{}</code>.<br />\nConceivably, each key/value pair is stored in a column whose column name<br />\nis composed of the original map column name followed by a colon and the<br />\nkey of that pair. The value of the pair is stored in the value of the<br />\ncolumn. Similar to a set, the map sorts its items automatically. As a<br />\nresult, a map can be imagined as a hybrid of a set and a list.</p>\n<h2>User-defined type and tuple type</h2>\n<p>Cassandra 2.1 introduces support for <strong>User-Defined Types</strong><br />\n(<strong>UDT</strong>) and tuple types.</p>\n<p>User-defined types are declared at the keyspace<br />\nlevel. A user-defined type simplifies handling a<br />\ngroup of related properties. We can define a group of related properties<br />\nas a type and access them separately or as a single entity. We can map<br />\nour UDTs to application entities. Another new type for CQL introduced by<br />\nCassandra 2.1 is the tuple type. A tuple is a fixed-length set of typed<br />\npositional fields without labels.</p>\n<p>We can use user-defined and tuple types in tables. However, to support<br />\nfuture capabilities, a column definition of a user-defined or tuple type<br />\nrequires the <code>frozen</code> keyword. Cassandra serializes a frozen<br />\nvalue having multiple components into a single value. This means we<br />\ncannot update parts of a UDT value. The entire value must be<br />\noverwritten. Cassandra treats the value of a frozen UDT like a<br />\n<code>BLOB</code>.</p>\n<p>We create a UDT called <code>contact</code> in the <code>fenago</code><br />\nkeyspace and use it to define <code>contactfield</code> in<br />\n<code>table04</code>. Moreover, we have another column,<br />\n<code>tuplefield</code> , to store a tuple in a row. Pay attention to the<br />\nsyntax of the <code>INSERT</code> statement for UDT and tuple. For UDT,<br />\nwe may use a dotted notation to retrieve a component of the UDT column,<br />\nsuch as <code>contactfield.facebook</code> in our following example. As<br />\nshown in <code>cassandra-cli</code> , <code>contactfield</code> is stored<br />\nas a single value,<br />\n<code>00000001620000000163000000076440642e636f6d</code>.</p>\n<p>The value concatenates each UDT component in sequence with the format, a<br />\nlength of 4 bytes indicating the length of the component value and the<br />\ncomponent value itself. So, for <code>contactfield.facebook</code> ,<br />\n<code>0x00000001</code> is the  length and<br />\n<code>0x62</code> is the byte value of <code>'a'</code>. Cassandra<br />\napplies the same treatment to a tuple:</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_03_12.jpg\" alt=\"\" /></p>\n<p>Experiment of user-defined and tuple types</p>\n<p>Further information can be<br />\nfound at DataStax&rsquo;s documentation, available at the following links:<br />\n<a href=\"http://www.datastax.com/documentation/cql/3.1/cql/cql_using/cqlUseUDT.html\">http://www.datastax.com/documentation/cql/3.1/cql/cql_using/cqlUseUDT.html</a></p>\n<ul>\n<li><a href=\"http://www.datastax.com/documentation/developer/python-driver/2.1/python-driver/reference/tupleTypes.html\">http://www.datastax.com/documentation/developer/python-driver/2.1/python-driver/reference/tupleTypes.html</a></li>\n</ul>\n<h2>Summary</h2>\n<p>This lab is the second part of Cassandra data modeling. We have<br />\nlearned the basics of Cassandra Query Language (CQL), which offers a<br />\nSQL-like language to implement a Cassandra data model and operate the<br />\ndata inside. Then a very detailed walkthrough, with ample examples of<br />\nnative data types, more advanced collections, and new user-defined and<br />\ntuple types, was provided to help you know how to select appropriate<br />\ndata types for your data models. The internal storage of each data type<br />\nwas also explained to let you know how Cassandra implements its data<br />\ntypes.</p>\n<p>In the next lab, we will learn another important element of a<br />\nCassandra query&mdash;indexes.</p>\n\n</div>"
+          }
+        ]
+      }
+    },
+    {
+      "text": "USE fenago;\r\n\r\nCREATE TABLE table02 (\r\n  rowkey ascii,\r\n  counterfield counter,\r\n  PRIMARY KEY (rowkey)\r\n);\r\n\r\nUPDATE table02 SET counterfield = counterfield + 1\r\n  WHERE rowkey = '1';\r\n\r\nSELECT * FROM table02;\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T11:09:00+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "rowkey": "string",
+                      "counterfield": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591526578227_-1465809115",
+      "id": "paragraph_1591526578227_-1465809115",
+      "dateCreated": "2020-06-07T10:42:58+0000",
+      "dateStarted": "2020-06-07T11:08:57+0000",
+      "dateFinished": "2020-06-07T11:08:58+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8633"
+    },
+    {
+      "text": "%sh\r\ncat > script.cli <<EOL\r\ndescribe table02;\r\nEOL\r\ncqlsh -f  script.cli --keyspace=fenago\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T11:09:08+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/sh"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591526562554_-1918695697",
+      "id": "paragraph_1591526562554_-1918695697",
+      "dateCreated": "2020-06-07T10:42:42+0000",
+      "dateStarted": "2020-06-07T11:09:08+0000",
+      "dateFinished": "2020-06-07T11:09:09+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8634"
+    },
+    {
+      "text": "USE fenago;\r\n\r\nCREATE TABLE table03 (\r\n rowkey ascii,\r\n setfield set<text>,\r\n listfield list<text>,\r\n mapfield map<text, text>,\r\n PRIMARY KEY (rowkey)\r\n);\r\n\r\nINSERT INTO table03\r\n (rowkey, setfield, listfield, mapfield)\r\n VALUES\r\n ('1', {'Lemon','Orange','Apple'},\r\n  ['Lemon','Orange','Apple'],\r\n  {'fruit1':'Apple','fruit3':'Orange','fruit2':'Lemon'});\r\n  \r\nSELECT * FROM table03;\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T11:09:17+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "rowkey": "string",
+                      "listfield": "string",
+                      "mapfield": "string",
+                      "setfield": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591526382310_1003145409",
+      "id": "paragraph_1591526382310_1003145409",
+      "dateCreated": "2020-06-07T10:39:42+0000",
+      "dateStarted": "2020-06-07T11:09:13+0000",
+      "dateFinished": "2020-06-07T11:09:15+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8635"
+    },
+    {
+      "text": "%sh\r\ncat > script.cli <<EOL\r\ndescribe table03;\r\nEOL\r\ncqlsh -f  script.cli --keyspace=fenago\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T11:09:20+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/sh"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591527905528_-1843027375",
+      "id": "paragraph_1591527905528_-1843027375",
+      "dateCreated": "2020-06-07T11:05:05+0000",
+      "dateStarted": "2020-06-07T11:09:20+0000",
+      "dateFinished": "2020-06-07T11:09:20+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8636"
+    },
+    {
+      "text": "USE fenago;\r\n\r\nCREATE TYPE contact (\r\n facebook text,\r\n twitter text,\r\n email text\r\n);\r\n\r\nCREATE TABLE table04 (\r\n rowkey ascii PRIMARY KEY,\r\n contactfield frozen<contact>,\r\n tuplefield frozen<tuple<int, text>>\r\n);\r\n\r\nINSERT INTO table04 (rowkey, contactfield, tuplefield)\r\n VALUES ('a', {facebook:'b',twitter:'c',email:'d@d.com'},\r\n (1,'e'));\r\n \r\nSELECT contactfield, contactfield.facebook, tuplefield FROM table04;\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T11:09:27+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {
+          "0": {
+            "graph": {
+              "mode": "table",
+              "height": 300,
+              "optionOpen": false,
+              "setting": {
+                "table": {
+                  "tableGridState": {},
+                  "tableColumnTypeState": {
+                    "names": {
+                      "contactfield": "string",
+                      "contactfield.facebook": "string",
+                      "tuplefield": "string"
+                    },
+                    "updated": false
+                  },
+                  "tableOptionSpecHash": "[{\"name\":\"useFilter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable filter for columns\"},{\"name\":\"showPagination\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable pagination for better navigation\"},{\"name\":\"showAggregationFooter\",\"valueType\":\"boolean\",\"defaultValue\":false,\"widget\":\"checkbox\",\"description\":\"Enable a footer for displaying aggregated values\"}]",
+                  "tableOptionValue": {
+                    "useFilter": false,
+                    "showPagination": false,
+                    "showAggregationFooter": false
+                  },
+                  "updated": false,
+                  "initialized": false
+                }
+              },
+              "commonSetting": {}
+            }
+          }
+        },
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591527921337_1084308029",
+      "id": "paragraph_1591527921337_1084308029",
+      "dateCreated": "2020-06-07T11:05:21+0000",
+      "dateStarted": "2020-06-07T11:09:24+0000",
+      "dateFinished": "2020-06-07T11:09:26+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8637"
+    },
+    {
+      "text": "%sh\r\ncat > script.cli <<EOL\r\ndescribe table04;\r\nEOL\r\ncqlsh -f  script.cli --keyspace=fenago\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T11:09:31+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/sh"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591527921110_854731607",
+      "id": "paragraph_1591527921110_854731607",
+      "dateCreated": "2020-06-07T11:05:21+0000",
+      "dateStarted": "2020-06-07T11:09:31+0000",
+      "dateFinished": "2020-06-07T11:09:32+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8638"
+    },
+    {
+      "text": "\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T11:25:35+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/text"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591528171910_1093915095",
+      "id": "paragraph_1591528171910_1093915095",
+      "dateCreated": "2020-06-07T11:09:31+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:8639"
+    }
+  ],
+  "name": "lab_3",
+  "id": "2FCDVUP2E",
+  "defaultInterpreterGroup": "cassandra",
+  "version": "0.9.0-preview1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/lab_3"
+}
