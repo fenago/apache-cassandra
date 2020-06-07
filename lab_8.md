@@ -1,7 +1,7 @@
 Effective CQL
 ------------------------
 
-In this chapter, we will examine common approaches to data modeling and
+In this lab, we will examine common approaches to data modeling and
 interacting with data stored in Apache Cassandra. This will involve us
 taking a close look at the Cassandra Query Language, otherwise known as
 **CQL**. Specifically, we will cover and discuss the following topics:
@@ -14,13 +14,13 @@ taking a close look at the Cassandra Query Language, otherwise known as
 -   How CQL differs from SQL
 -   CQL syntax and how to solve different types of problems using it
 
-Once you have completed this chapter, you should have an understanding
+Once you have completed this lab, you should have an understanding
 of why data models need to be built in a certain way. You should also
 begin to understand known Cassandra anti-patterns and be able to spot
 certain types of bad queries. This should help you to build scalable,
 query-based tables and write successful CQL to interact with them.
 
-In the parts of this chapter that cover data modeling, be sure to pay
+In the parts of this lab that cover data modeling, be sure to pay
 extra attention. The data model is the most important part of a
 successful, high-performing Apache Cassandra cluster. It is also
 extremely difficult to change your data model later on, so test early,
@@ -42,7 +42,7 @@ Cassandra you are working with. Apache Cassandra 3.0 represents a
 significant shift in the way data is both stored and accessed, which
 warrants a discussion on the evolution of CQL.
 
-Before we get started, let's create a keyspace for this chapter's work:
+Before we get started, let's create a keyspace for this lab's work:
 
 ```
 CREATE KEYSPACE fenago_ch3 WITH replication =
@@ -94,7 +94,7 @@ engine of Apache Cassandra. Notice that the data is partitioned
 (co-located) by its row key, and then each column is ordered by the
 column keys.
 
-[](/images/1.jpg)
+[](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/1.jpg)
 
 As you can see in the preceding screenshot, data is simply stored by its
 row key (also known as the **partitioning key**). Within each partition,
@@ -121,7 +121,7 @@ On the other hand, the new storage engine changes in Apache Cassandra
 3.0 offer several improvements. With version 3.0 and up, stored data is
 now organized like this:
 
-[](/images/2.jpg)
+[](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/2.jpg)
 
 Figure 3.2: Demonstration of how data is stored in the new storage
 engine used by Apache Cassandra 3.0 and up. While data is still
@@ -770,7 +770,7 @@ Some notes about CQL data type conversion:
 ### The primary key
 
 The most important part of designing your data model is how you define
-the primary key of your tables. As mentioned previously in this chapter,
+the primary key of your tables. As mentioned previously in this lab,
 primary keys are built at table-creation time, and have the following
 options:
 

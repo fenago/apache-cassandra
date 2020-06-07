@@ -3,6 +3,7 @@
 Lab 7. Deployment and Monitoring
 ---------------------------------------------
 
+**Note:** We will run this example on single node like previous labs. This lab contains information regarding casssandra on multiple nodes instead.
 
 We have explored the development of the Stock Screener Application in
 previous labs; it is now time to consider how to deploy it in the
@@ -27,7 +28,6 @@ the highest application coding techniques. We will focus on the **Java
 Virtual Machine** (**JVM**)
 level, because Cassandra heavily relies on its underlying performance.
 In addition, we will touch on how to tune caches for a table.
-
 
 
 Replication strategies
@@ -252,7 +252,7 @@ configuration of the two nodes is identical and shown as follows:
 -   Memory: 2 GB
 
 -   Disk: 20 GB
-:::
+
 
 
 #### Global settings

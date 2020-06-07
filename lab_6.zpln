@@ -1,20 +1,22 @@
 ﻿{
   "paragraphs": [
     {
-      "text": "# -*- coding: utf-8 -*-\r\n# program: lab06_001.py\r\n\r\n## import Cassandra driver library\r\nfrom cassandra.cluster import Cluster\r\n\r\n## function to create watchlist\r\ndef create_watchlist(ss):\r\n    ## create watchlist table if not exists\r\n    ss.execute('CREATE TABLE IF NOT EXISTS watchlist (' + \\\r\n               'watch_list_code varchar,' + \\\r\n               'symbol varchar,' + \\\r\n               'PRIMARY KEY (watch_list_code, symbol))')\r\n    \r\n    ## insert AAPL, AMZN, and GS into watchlist\r\n    ss.execute(\"INSERT INTO watchlist (watch_list_code, \" + \\\r\n               \"symbol) VALUES ('WS01', 'AAPL')\")\r\n    ss.execute(\"INSERT INTO watchlist (watch_list_code, \" + \\\r\n               \"symbol) VALUES ('WS01', 'AMZN')\")\r\n    ss.execute(\"INSERT INTO watchlist (watch_list_code, \" + \\\r\n               \"symbol) VALUES ('WS01', 'GS')\")\r\n\r\n## create Cassandra instance\r\ncluster = Cluster()\r\n\r\n## establish Cassandra connection, using local default\r\nsession = cluster.connect()\r\n\r\n## use fenagocdma keyspace\r\nsession.set_keyspace('fenagocdma')\r\n\r\n## create watchlist table\r\ncreate_watchlist(session)\r\n\r\n## close Cassandra connection\r\ncluster.shutdown()\r\n",
+      "text": "%md\n\n\n\nLab 6. Enhancing a Version\n---------------------------------------\n\n\nTraditionally, changes are usually not welcomed and are avoided as much\nas possible by a relational database developer. However, business\nchanges every day, especially in the present fast-paced era. The\ndelayed response to business changes of a system\nusing a relational database deteriorates the agility and even threatens\nthe survival of the enterprise. With the advancement of NoSQL and other\nrelated technologies, we now have alternatives to embrace such business\nchanges.\n\nBy continuing with the enhancements of the Stock Screener Application\ndeveloped in lab 5,\n*First-cut Design and Implementation*, the techniques of\nhow to evolve an existing Cassandra data model will be explained in\ndetail. Meanwhile, the techniques of modeling by query will be\ndemonstrated as well. The source code of the Stock Screener Application\nwill then be modified accordingly. By the end of this lab, a\ncomplete technical analysis application on stocks will be developed. You\ncan use it as a foundation to quickly develop your own.\n\n\n\nEvolving the data model\n-----------------------------------------\n\nThe Stock Screener Application created in,\n*First-cut Design and Implementation*, is good enough to\nretrieve and analyze a single stock at one time.\nHowever, scanning just a single stock looks very limited in practical\nuse. A slight improvement can be made here; it can handle a bunch of\nstocks instead of one. This bunch of stocks will be stored as Watch List\nin the Cassandra database.\n\nAccordingly, the Stock Screener Application will be modified to analyze\nthe stocks in the Watch List, and therefore it will produce alerts for\neach of the stocks being watched based on the same screening rule.\n\nFor the produced alerts, saving them in Cassandra will be beneficial for\nbacktesting trading strategies and continuous improvement of the Stock\nScreener Application. They can be reviewed from time to time without\nhaving to review them on the fly.\n\n\n### Note\n\nBacktesting is a jargon used to refer to testing a trading strategy,\ninvestment strategy, or a predictive model using existing historical\ndata. It is also a special type of cross-validation applied to time\nseries data.\n\nIn addition, when the number of the stocks in the\nWatch List grows to a few hundred, it will be difficult for a user of\nthe Stock Screener Application to recall what the stocks are by simply\nreferring to their stock codes. Hence, it would be nice to have the name\nof the stocks added to the produced alerts to make them more descriptive\nand user-friendly.\n\nFinally, we might have an interest in finding out\nhow many alerts were generated on a particular stock over a specified\nperiod of time and how many alerts were generated on a particular date.\nWe will use CQL to write queries to answer these two questions. By doing\nso, the modeling by query technique can be demonstrated.\n\n\n\n### The enhancement approach\n\n\nThe enhancement approach consists of four change\nrequests in total. First, we will conduct changes in the data model and\nthen the code will be enhanced to provide the new\nfeatures. Afterwards, we will test run the enhanced Stock Screener\nApplication again. The parts of the Stock Screener Application that\nrequire modifications are highlighted in the following figure.\n\nIt is remarkable that two new components are added\nto the Stock Screener Application. The first component, **Watch\nList**, governs **Data Mapper and\nArchiver** to collect stock quote data of\nthose stocks in the Watch List from Yahoo! Finance. The second component\nis  **Query**. It provides two Queries on\n**Alert List** for backtesting purposes:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_06_01.jpg)\n\n\n#### Watch List\n\n\n**Watch List** is a very simple table that merely stores the stock code of its\nconstituents. It is rather intuitive for a relational database developer\nto define the stock code as the primary key, isn't it? Nevertheless,\nremember that in Cassandra, the primary key is used to determine the\nnode that stores the row. As Watch List is expected to not be a very\nlong list, it would be more appropriate to put all of its rows on the\nsame node for faster retrieval. But how can we do that?\n\nWe can create an additional column, say `watch_list_code` , for\nthis particular purpose. The new table is called\n`watchlist` and will be created in the\n`fenagocdma` keyspace. The CQL statement is shown in\n`lab06_001.py`:\n\n\n``` {.programlisting .language-markup}\n# -*- coding: utf-8 -*-\n# program: lab06_001.py\n\n## import Cassandra driver library\nfrom cassandra.cluster import Cluster\n\n## function to create watchlist\ndef create_watchlist(ss):\n    ## create watchlist table if not exists\n    ss.execute('CREATE TABLE IF NOT EXISTS watchlist (' + \\\n               'watch_list_code varchar,' + \\\n               'symbol varchar,' + \\\n               'PRIMARY KEY (watch_list_code, symbol))')\n    \n    ## insert AAPL, AMZN, and GS into watchlist\n    ss.execute(\"INSERT INTO watchlist (watch_list_code, \" + \\\n               \"symbol) VALUES ('WS01', 'AAPL')\")\n    ss.execute(\"INSERT INTO watchlist (watch_list_code, \" + \\\n               \"symbol) VALUES ('WS01', 'AMZN')\")\n    ss.execute(\"INSERT INTO watchlist (watch_list_code, \" + \\\n               \"symbol) VALUES ('WS01', 'GS')\")\n\n## create Cassandra instance\ncluster = Cluster()\n\n## establish Cassandra connection, using local default\nsession = cluster.connect()\n\n## use fenagocdma keyspace\nsession.set_keyspace('fenagocdma')\n\n## create watchlist table\ncreate_watchlist(session)\n\n## close Cassandra connection\ncluster.shutdown()\n```\n\nThe `create_watchlist` function creates the table. Note that\nthe `watchlist` table has a compound primary key made of `watch_list_code` and\n`symbol`. A Watch List called `WS01` is also\ncreated, which contains three stocks, `AAPL` ,\n`AMZN` , and `GS`.\n\n\n",
       "user": "anonymous",
-      "dateUpdated": "2020-05-18T13:47:31+0000",
+      "dateUpdated": "2020-06-07T12:25:08+0000",
       "config": {
         "colWidth": 12,
         "fontSize": 9,
         "enabled": true,
         "results": {},
         "editorSetting": {
-          "language": "python",
+          "language": "text",
           "editOnDblClick": false,
+          "completionKey": "TAB",
           "completionSupport": true
         },
-        "editorMode": "ace/mode/python"
+        "editorMode": "ace/mode/text",
+        "editorHide": true
       },
       "settings": {
         "params": {},
@@ -23,30 +25,112 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1589809552313_729213886",
-      "id": "paragraph_1589809552313_729213886",
-      "dateCreated": "2020-05-18T13:45:52+0000",
-      "dateStarted": "2020-05-18T13:47:31+0000",
-      "dateFinished": "2020-05-18T13:47:31+0000",
+      "jobName": "paragraph_1591532144987_1262448393",
+      "id": "paragraph_1591532144987_1262448393",
+      "dateCreated": "2020-06-07T12:15:44+0000",
       "status": "FINISHED",
       "focus": true,
-      "$$hashKey": "object:5963"
+      "$$hashKey": "object:3969",
+      "dateFinished": "2020-06-07T12:25:08+0000",
+      "dateStarted": "2020-06-07T12:25:08+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Lab 6. Enhancing a Version</h2>\n<p>Traditionally, changes are usually not welcomed and are avoided as much<br />\nas possible by a relational database developer. However, business<br />\nchanges every day, especially in the present fast-paced era. The<br />\ndelayed response to business changes of a system<br />\nusing a relational database deteriorates the agility and even threatens<br />\nthe survival of the enterprise. With the advancement of NoSQL and other<br />\nrelated technologies, we now have alternatives to embrace such business<br />\nchanges.</p>\n<p>By continuing with the enhancements of the Stock Screener Application<br />\ndeveloped in lab 5,<br />\n<em>First-cut Design and Implementation</em>, the techniques of<br />\nhow to evolve an existing Cassandra data model will be explained in<br />\ndetail. Meanwhile, the techniques of modeling by query will be<br />\ndemonstrated as well. The source code of the Stock Screener Application<br />\nwill then be modified accordingly. By the end of this lab, a<br />\ncomplete technical analysis application on stocks will be developed. You<br />\ncan use it as a foundation to quickly develop your own.</p>\n<h2>Evolving the data model</h2>\n<p>The Stock Screener Application created in,<br />\n<em>First-cut Design and Implementation</em>, is good enough to<br />\nretrieve and analyze a single stock at one time.<br />\nHowever, scanning just a single stock looks very limited in practical<br />\nuse. A slight improvement can be made here; it can handle a bunch of<br />\nstocks instead of one. This bunch of stocks will be stored as Watch List<br />\nin the Cassandra database.</p>\n<p>Accordingly, the Stock Screener Application will be modified to analyze<br />\nthe stocks in the Watch List, and therefore it will produce alerts for<br />\neach of the stocks being watched based on the same screening rule.</p>\n<p>For the produced alerts, saving them in Cassandra will be beneficial for<br />\nbacktesting trading strategies and continuous improvement of the Stock<br />\nScreener Application. They can be reviewed from time to time without<br />\nhaving to review them on the fly.</p>\n<h3>Note</h3>\n<p>Backtesting is a jargon used to refer to testing a trading strategy,<br />\ninvestment strategy, or a predictive model using existing historical<br />\ndata. It is also a special type of cross-validation applied to time<br />\nseries data.</p>\n<p>In addition, when the number of the stocks in the<br />\nWatch List grows to a few hundred, it will be difficult for a user of<br />\nthe Stock Screener Application to recall what the stocks are by simply<br />\nreferring to their stock codes. Hence, it would be nice to have the name<br />\nof the stocks added to the produced alerts to make them more descriptive<br />\nand user-friendly.</p>\n<p>Finally, we might have an interest in finding out<br />\nhow many alerts were generated on a particular stock over a specified<br />\nperiod of time and how many alerts were generated on a particular date.<br />\nWe will use CQL to write queries to answer these two questions. By doing<br />\nso, the modeling by query technique can be demonstrated.</p>\n<h3>The enhancement approach</h3>\n<p>The enhancement approach consists of four change<br />\nrequests in total. First, we will conduct changes in the data model and<br />\nthen the code will be enhanced to provide the new<br />\nfeatures. Afterwards, we will test run the enhanced Stock Screener<br />\nApplication again. The parts of the Stock Screener Application that<br />\nrequire modifications are highlighted in the following figure.</p>\n<p>It is remarkable that two new components are added<br />\nto the Stock Screener Application. The first component, <strong>Watch<br />\nList</strong>, governs <strong>Data Mapper and<br />\nArchiver</strong> to collect stock quote data of<br />\nthose stocks in the Watch List from Yahoo! Finance. The second component<br />\nis  <strong>Query</strong>. It provides two Queries on<br />\n<strong>Alert List</strong> for backtesting purposes:</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_06_01.jpg\" alt=\"\" /></p>\n<h4>Watch List</h4>\n<p><strong>Watch List</strong> is a very simple table that merely stores the stock code of its<br />\nconstituents. It is rather intuitive for a relational database developer<br />\nto define the stock code as the primary key, isn&rsquo;t it? Nevertheless,<br />\nremember that in Cassandra, the primary key is used to determine the<br />\nnode that stores the row. As Watch List is expected to not be a very<br />\nlong list, it would be more appropriate to put all of its rows on the<br />\nsame node for faster retrieval. But how can we do that?</p>\n<p>We can create an additional column, say <code>watch_list_code</code> , for<br />\nthis particular purpose. The new table is called<br />\n<code>watchlist</code> and will be created in the<br />\n<code>fenagocdma</code> keyspace. The CQL statement is shown in<br />\n<code>lab06_001.py</code>:</p>\n<pre><code class=\"language-{.programlisting\"># -*- coding: utf-8 -*-\n# program: lab06_001.py\n\n## import Cassandra driver library\nfrom cassandra.cluster import Cluster\n\n## function to create watchlist\ndef create_watchlist(ss):\n    ## create watchlist table if not exists\n    ss.execute('CREATE TABLE IF NOT EXISTS watchlist (' + \\\n               'watch_list_code varchar,' + \\\n               'symbol varchar,' + \\\n               'PRIMARY KEY (watch_list_code, symbol))')\n    \n    ## insert AAPL, AMZN, and GS into watchlist\n    ss.execute(&quot;INSERT INTO watchlist (watch_list_code, &quot; + \\\n               &quot;symbol) VALUES ('WS01', 'AAPL')&quot;)\n    ss.execute(&quot;INSERT INTO watchlist (watch_list_code, &quot; + \\\n               &quot;symbol) VALUES ('WS01', 'AMZN')&quot;)\n    ss.execute(&quot;INSERT INTO watchlist (watch_list_code, &quot; + \\\n               &quot;symbol) VALUES ('WS01', 'GS')&quot;)\n\n## create Cassandra instance\ncluster = Cluster()\n\n## establish Cassandra connection, using local default\nsession = cluster.connect()\n\n## use fenagocdma keyspace\nsession.set_keyspace('fenagocdma')\n\n## create watchlist table\ncreate_watchlist(session)\n\n## close Cassandra connection\ncluster.shutdown()\n</code></pre>\n<p>The <code>create_watchlist</code> function creates the table. Note that<br />\nthe <code>watchlist</code> table has a compound primary key made of <code>watch_list_code</code> and<br />\n<code>symbol</code>. A Watch List called <code>WS01</code> is also<br />\ncreated, which contains three stocks, <code>AAPL</code> ,<br />\n<code>AMZN</code> , and <code>GS</code>.</p>\n\n</div>"
+          }
+        ]
+      }
+    },
+    {
+      "text": "# -*- coding: utf-8 -*-\r\n# program: lab06_001.py\r\n\r\n## import Cassandra driver library\r\nfrom cassandra.cluster import Cluster\r\n\r\n## function to create watchlist\r\ndef create_watchlist(ss):\r\n    ## create watchlist table if not exists\r\n    ss.execute('CREATE TABLE IF NOT EXISTS watchlist (' + \\\r\n               'watch_list_code varchar,' + \\\r\n               'symbol varchar,' + \\\r\n               'PRIMARY KEY (watch_list_code, symbol))')\r\n    \r\n    ## insert AAPL, AMZN, and GS into watchlist\r\n    ss.execute(\"INSERT INTO watchlist (watch_list_code, \" + \\\r\n               \"symbol) VALUES ('WS01', 'AAPL')\")\r\n    ss.execute(\"INSERT INTO watchlist (watch_list_code, \" + \\\r\n               \"symbol) VALUES ('WS01', 'AMZN')\")\r\n    ss.execute(\"INSERT INTO watchlist (watch_list_code, \" + \\\r\n               \"symbol) VALUES ('WS01', 'GS')\")\r\n\r\n## create Cassandra instance\r\ncluster = Cluster()\r\n\r\n## establish Cassandra connection, using local default\r\nsession = cluster.connect()\r\n\r\n## use fenagocdma keyspace\r\nsession.set_keyspace('fenagocdma')\r\n\r\n## create watchlist table\r\ncreate_watchlist(session)\r\n\r\n## close Cassandra connection\r\ncluster.shutdown()\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T12:06:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591531618342_773784535",
+      "id": "paragraph_1589809552313_729213886",
+      "dateCreated": "2020-06-07T12:06:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:3970"
+    },
+    {
+      "text": "%md\n\n#### Alert List\n\n\nIn\n*First-cut Design and Implementation*, **Alert\nList** is very rudimentary. It is\nproduced by a Python program and enumerates the\ndate when the close price was above its 10-day SMA, that is, the signal\nand the close price at that time. Note that there were no stock code and\nstock name.\n\nWe will create a table called `alertlist` to store the alerts\nwith the code and name of the stock. The inclusion of the stock name is\nto meet the requirement of making the Stock Screener Application more\nuser-friendly. Also, remember that joins are not allowed and\ndenormalization is really the best practice in Cassandra. This means\nthat we do not mind repeatedly storing (duplicating) the stock name in\nthe tables that will be queried. A rule of thumb is *one table for one\nquery*; as simple as that.\n\nThe `alertlist` table is created by the CQL statement, as\nshown in `lab06_002.py`:\n\n\n``` {.programlisting .language-markup}\n# -*- coding: utf-8 -*-\n# program: lab06_002.py\n\n## import Cassandra driver library\nfrom cassandra.cluster import Cluster\n\n## function to create alertlist\ndef create_alertlist(ss):\n    ## execute CQL statement to create alertlist table if not exists\n    ss.execute('CREATE TABLE IF NOT EXISTS alertlist (' + \\\n               'symbol varchar,' + \\\n               'price_time timestamp,' + \\\n               'stock_name varchar,' + \\\n               'signal_price float,' + \\\n               'PRIMARY KEY (symbol, price_time))')\n\n## create Cassandra instance\ncluster = Cluster()\n\n## establish Cassandra connection, using local default\nsession = cluster.connect()\n\n## use fenagocdma keyspace\nsession.set_keyspace('fenagocdma')\n\n## create alertlist table\ncreate_alertlist(session)\n\n## close Cassandra connection\ncluster.shutdown()\n```\n\nThe primary key is also a compound primary key that\nconsists of `symbol` and `price_time`.\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T12:25:15+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/text",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591532687987_-1159832978",
+      "id": "paragraph_1591532687987_-1159832978",
+      "dateCreated": "2020-06-07T12:24:47+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:3971",
+      "dateFinished": "2020-06-07T12:25:15+0000",
+      "dateStarted": "2020-06-07T12:25:15+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4>Alert List</h4>\n<p>In<br />\n<em>First-cut Design and Implementation</em>, <strong>Alert<br />\nList</strong> is very rudimentary. It is<br />\nproduced by a Python program and enumerates the<br />\ndate when the close price was above its 10-day SMA, that is, the signal<br />\nand the close price at that time. Note that there were no stock code and<br />\nstock name.</p>\n<p>We will create a table called <code>alertlist</code> to store the alerts<br />\nwith the code and name of the stock. The inclusion of the stock name is<br />\nto meet the requirement of making the Stock Screener Application more<br />\nuser-friendly. Also, remember that joins are not allowed and<br />\ndenormalization is really the best practice in Cassandra. This means<br />\nthat we do not mind repeatedly storing (duplicating) the stock name in<br />\nthe tables that will be queried. A rule of thumb is <em>one table for one<br />\nquery</em>; as simple as that.</p>\n<p>The <code>alertlist</code> table is created by the CQL statement, as<br />\nshown in <code>lab06_002.py</code>:</p>\n<pre><code class=\"language-{.programlisting\"># -*- coding: utf-8 -*-\n# program: lab06_002.py\n\n## import Cassandra driver library\nfrom cassandra.cluster import Cluster\n\n## function to create alertlist\ndef create_alertlist(ss):\n    ## execute CQL statement to create alertlist table if not exists\n    ss.execute('CREATE TABLE IF NOT EXISTS alertlist (' + \\\n               'symbol varchar,' + \\\n               'price_time timestamp,' + \\\n               'stock_name varchar,' + \\\n               'signal_price float,' + \\\n               'PRIMARY KEY (symbol, price_time))')\n\n## create Cassandra instance\ncluster = Cluster()\n\n## establish Cassandra connection, using local default\nsession = cluster.connect()\n\n## use fenagocdma keyspace\nsession.set_keyspace('fenagocdma')\n\n## create alertlist table\ncreate_alertlist(session)\n\n## close Cassandra connection\ncluster.shutdown()\n</code></pre>\n<p>The primary key is also a compound primary key that<br />\nconsists of <code>symbol</code> and <code>price_time</code>.</p>\n\n</div>"
+          }
+        ]
+      }
     },
     {
       "text": "# -*- coding: utf-8 -*-\r\n# program: lab06_002.py\r\n\r\n## import Cassandra driver library\r\nfrom cassandra.cluster import Cluster\r\n\r\n## function to create alertlist\r\ndef create_alertlist(ss):\r\n    ## execute CQL statement to create alertlist table if not exists\r\n    ss.execute('CREATE TABLE IF NOT EXISTS alertlist (' + \\\r\n               'symbol varchar,' + \\\r\n               'price_time timestamp,' + \\\r\n               'stock_name varchar,' + \\\r\n               'signal_price float,' + \\\r\n               'PRIMARY KEY (symbol, price_time))')\r\n\r\n## create Cassandra instance\r\ncluster = Cluster()\r\n\r\n## establish Cassandra connection, using local default\r\nsession = cluster.connect()\r\n\r\n## use fenagocdma keyspace\r\nsession.set_keyspace('fenagocdma')\r\n\r\n## create alertlist table\r\ncreate_alertlist(session)\r\n\r\n## close Cassandra connection\r\ncluster.shutdown()\r\n",
       "user": "anonymous",
-      "dateUpdated": "2020-05-18T13:47:37+0000",
+      "dateUpdated": "2020-06-07T12:06:58+0000",
       "config": {
-        "colWidth": 12,
-        "fontSize": 9,
-        "enabled": true,
-        "results": {},
         "editorSetting": {
-          "language": "python",
+          "language": "scala",
           "editOnDblClick": false,
-          "completionSupport": true
+          "completionSupport": true,
+          "completionKey": "TAB"
         },
-        "editorMode": "ace/mode/python"
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
       },
       "settings": {
         "params": {},
@@ -55,29 +139,70 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1589809651074_-1497851852",
+      "jobName": "paragraph_1591531618342_238264846",
       "id": "paragraph_1589809651074_-1497851852",
-      "dateCreated": "2020-05-18T13:47:31+0000",
-      "dateStarted": "2020-05-18T13:47:37+0000",
-      "dateFinished": "2020-05-18T13:47:37+0000",
+      "dateCreated": "2020-06-07T12:06:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:3972"
+    },
+    {
+      "text": "%md\n\n\n#### Adding the descriptive stock name\n\nUntil now, the `fenagocdma` keyspace has\nthree tables, which are `alertlist` , `quote` , and\n`watchlist`. To add the descriptive stock name, one can think\nof only adding a column of stock name to `alertlist` only. As\nseen in the previous section, this has been done. So, do we need to add\na column for `quote` and `watchlist`?\n\nIt is, in fact, a design decision that depends on whether these two\ntables will be serving user queries. What a user query means is that the\ntable will be used to retrieve rows for a query raised by a user. If a\nuser wants to know the close price of Apple Inc. on June 30, 2014, it is\na user query. On the other hand, if the Stock Screener Application uses\na query to retrieve rows for its internal processing, it is not a user\nquery. Therefore, if we want `quote` and `watchlist`\nto return rows for user queries, they need the stock name column;\notherwise, they do not need it.\n\nThe `watchlist` table is only for internal use by the current\ndesign, and so it need not have the stock name column. Of course, if in\nfuture, the Stock Screener Application allows a user to maintain Watch\nList, the stock name should also be added to the `watchlist`\ntable.\n\nHowever, for `quote` , it is a bit tricky. As the stock name\nshould be retrieved from the Data Feed Provider, which is Yahoo! Finance\nin our case, the most suitable time to get it is when the corresponding\nstock quote data is retrieved. Hence, a new column called\n`stock_name` is added to `quote` , as shown in\n`lab06_003.py`:\n\n\n``` {.programlisting .language-markup}\n# -*- coding: utf-8 -*-\n# program: lab06_003.py\n\n## import Cassandra driver library\nfrom cassandra.cluster import Cluster\n\n## function to add stock_name column\ndef add_stockname_to_quote(ss):\n    ## add stock_name to quote\n    ss.execute('ALTER TABLE quote ' + \\\n               'ADD stock_name varchar')\n\n## create Cassandra instance\ncluster = Cluster()\n\n## establish Cassandra connection, using local default\nsession = cluster.connect()\n\n## use fenagocdma keyspace\nsession.set_keyspace('fenagocdma')\n\n## add stock_name column\nadd_stockname_to_quote(session)\n\n## close Cassandra connection\ncluster.shutdown()\n```\n\nIt is quite self-explanatory. Here, we use the\n`ALTER TABLE` statement to add the `stock_name`\ncolumn of the `varchar` data type to `quote`.\n\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T12:25:19+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/text",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591532123495_-1431627777",
+      "id": "paragraph_1591532123495_-1431627777",
+      "dateCreated": "2020-06-07T12:15:23+0000",
       "status": "FINISHED",
-      "$$hashKey": "object:5964"
+      "$$hashKey": "object:3973",
+      "dateFinished": "2020-06-07T12:25:19+0000",
+      "dateStarted": "2020-06-07T12:25:19+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4>Adding the descriptive stock name</h4>\n<p>Until now, the <code>fenagocdma</code> keyspace has<br />\nthree tables, which are <code>alertlist</code> , <code>quote</code> , and<br />\n<code>watchlist</code>. To add the descriptive stock name, one can think<br />\nof only adding a column of stock name to <code>alertlist</code> only. As<br />\nseen in the previous section, this has been done. So, do we need to add<br />\na column for <code>quote</code> and <code>watchlist</code>?</p>\n<p>It is, in fact, a design decision that depends on whether these two<br />\ntables will be serving user queries. What a user query means is that the<br />\ntable will be used to retrieve rows for a query raised by a user. If a<br />\nuser wants to know the close price of Apple Inc. on June 30, 2014, it is<br />\na user query. On the other hand, if the Stock Screener Application uses<br />\na query to retrieve rows for its internal processing, it is not a user<br />\nquery. Therefore, if we want <code>quote</code> and <code>watchlist</code><br />\nto return rows for user queries, they need the stock name column;<br />\notherwise, they do not need it.</p>\n<p>The <code>watchlist</code> table is only for internal use by the current<br />\ndesign, and so it need not have the stock name column. Of course, if in<br />\nfuture, the Stock Screener Application allows a user to maintain Watch<br />\nList, the stock name should also be added to the <code>watchlist</code><br />\ntable.</p>\n<p>However, for <code>quote</code> , it is a bit tricky. As the stock name<br />\nshould be retrieved from the Data Feed Provider, which is Yahoo! Finance<br />\nin our case, the most suitable time to get it is when the corresponding<br />\nstock quote data is retrieved. Hence, a new column called<br />\n<code>stock_name</code> is added to <code>quote</code> , as shown in<br />\n<code>lab06_003.py</code>:</p>\n<pre><code class=\"language-{.programlisting\"># -*- coding: utf-8 -*-\n# program: lab06_003.py\n\n## import Cassandra driver library\nfrom cassandra.cluster import Cluster\n\n## function to add stock_name column\ndef add_stockname_to_quote(ss):\n    ## add stock_name to quote\n    ss.execute('ALTER TABLE quote ' + \\\n               'ADD stock_name varchar')\n\n## create Cassandra instance\ncluster = Cluster()\n\n## establish Cassandra connection, using local default\nsession = cluster.connect()\n\n## use fenagocdma keyspace\nsession.set_keyspace('fenagocdma')\n\n## add stock_name column\nadd_stockname_to_quote(session)\n\n## close Cassandra connection\ncluster.shutdown()\n</code></pre>\n<p>It is quite self-explanatory. Here, we use the<br />\n<code>ALTER TABLE</code> statement to add the <code>stock_name</code><br />\ncolumn of the <code>varchar</code> data type to <code>quote</code>.</p>\n\n</div>"
+          }
+        ]
+      }
     },
     {
       "text": "# -*- coding: utf-8 -*-\r\n# program: lab06_003.py\r\n\r\n## import Cassandra driver library\r\nfrom cassandra.cluster import Cluster\r\n\r\n## function to add stock_name column\r\ndef add_stockname_to_quote(ss):\r\n    ## add stock_name to quote\r\n    ss.execute('ALTER TABLE quote ' + \\\r\n               'ADD stock_name varchar')\r\n\r\n## create Cassandra instance\r\ncluster = Cluster()\r\n\r\n## establish Cassandra connection, using local default\r\nsession = cluster.connect()\r\n\r\n## use fenagocdma keyspace\r\nsession.set_keyspace('fenagocdma')\r\n\r\n## add stock_name column\r\nadd_stockname_to_quote(session)\r\n\r\n## close Cassandra connection\r\ncluster.shutdown()\r\n",
       "user": "anonymous",
-      "dateUpdated": "2020-05-18T13:47:45+0000",
+      "dateUpdated": "2020-06-07T12:06:58+0000",
       "config": {
-        "colWidth": 12,
-        "fontSize": 9,
-        "enabled": true,
-        "results": {},
         "editorSetting": {
-          "language": "python",
+          "language": "scala",
           "editOnDblClick": false,
-          "completionSupport": true
+          "completionSupport": true,
+          "completionKey": "TAB"
         },
-        "editorMode": "ace/mode/python"
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
       },
       "settings": {
         "params": {},
@@ -86,29 +211,70 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1589809657337_1884058497",
+      "jobName": "paragraph_1591531618342_356636305",
       "id": "paragraph_1589809657337_1884058497",
-      "dateCreated": "2020-05-18T13:47:37+0000",
-      "dateStarted": "2020-05-18T13:47:45+0000",
-      "dateFinished": "2020-05-18T13:47:46+0000",
+      "dateCreated": "2020-06-07T12:06:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:3974"
+    },
+    {
+      "text": "%md\n\n\n#### Queries on alerts\n\n\nAs previously, we\nare interested in two questions:\n\n\n-   How many alerts were generated on a stock over a specified period of\n    time?\n\n-   How many alerts were generated on a particular date?\n:::\n\nFor the first question, `alertlist` is sufficient to provide\nan answer. However, `alertlist` cannot answer the second\nquestion because its primary key is composed of `symbol` and\n`price_time`. We need to create another table specifically for\nthat question. This is an example of modeling by query.\n\nBasically, the structure of the new table for the second question should\nresemble the structure of `alertlist`. We give that table a name,\n`alert_by_date` , and create it as shown in\n`lab06_004.py`:\n\n\n``` {.programlisting .language-markup}\n# -*- coding: utf-8 -*-\n# program: lab06_004.py\n\n## import Cassandra driver library\nfrom cassandra.cluster import Cluster\n\n## function to create alert_by_date table\ndef create_alertbydate(ss):\n    ## create alert_by_date table if not exists\n    ss.execute('CREATE TABLE IF NOT EXISTS alert_by_date (' + \\\n               'symbol varchar,' + \\\n               'price_time timestamp,' + \\\n               'stock_name varchar,' + \\\n               'signal_price float,' + \\\n               'PRIMARY KEY (price_time, symbol))')\n\n## create Cassandra instance\ncluster = Cluster()\n\n## establish Cassandra connection, using local default\nsession = cluster.connect()\n\n## use fenagocdma keyspace\nsession.set_keyspace('fenagocdma')\n\n## create alert_by_date table\ncreate_alertbydate(session)\n\n## close Cassandra connection\ncluster.shutdown()\n```\n\nWhen compared to `alertlist` in `lab06_002.py` ,\n`alert_by_date` only swaps the order of the columns in the\ncompound primary key. One might think that a secondary index can be\ncreated on `alertlist` to achieve the same effect.\nNonetheless, in Cassandra, a secondary index cannot be created on\ncolumns that are already engaged in the primary key. Always be aware of\nthis constraint.\n\nWe now finish the modifications on the data model. It is time for us to\nenhance the application logic in the next section.\n\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T12:25:24+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/text",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591532130946_-556111352",
+      "id": "paragraph_1591532130946_-556111352",
+      "dateCreated": "2020-06-07T12:15:30+0000",
       "status": "FINISHED",
-      "$$hashKey": "object:5965"
+      "$$hashKey": "object:3975",
+      "dateFinished": "2020-06-07T12:25:24+0000",
+      "dateStarted": "2020-06-07T12:25:24+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4>Queries on alerts</h4>\n<p>As previously, we<br />\nare interested in two questions:</p>\n<ul>\n<li>\n<p>How many alerts were generated on a stock over a specified period of<br />\ntime?</p>\n</li>\n<li>\n<p>How many alerts were generated on a particular date?<br />\n:::</p>\n</li>\n</ul>\n<p>For the first question, <code>alertlist</code> is sufficient to provide<br />\nan answer. However, <code>alertlist</code> cannot answer the second<br />\nquestion because its primary key is composed of <code>symbol</code> and<br />\n<code>price_time</code>. We need to create another table specifically for<br />\nthat question. This is an example of modeling by query.</p>\n<p>Basically, the structure of the new table for the second question should<br />\nresemble the structure of <code>alertlist</code>. We give that table a name,<br />\n<code>alert_by_date</code> , and create it as shown in<br />\n<code>lab06_004.py</code>:</p>\n<pre><code class=\"language-{.programlisting\"># -*- coding: utf-8 -*-\n# program: lab06_004.py\n\n## import Cassandra driver library\nfrom cassandra.cluster import Cluster\n\n## function to create alert_by_date table\ndef create_alertbydate(ss):\n    ## create alert_by_date table if not exists\n    ss.execute('CREATE TABLE IF NOT EXISTS alert_by_date (' + \\\n               'symbol varchar,' + \\\n               'price_time timestamp,' + \\\n               'stock_name varchar,' + \\\n               'signal_price float,' + \\\n               'PRIMARY KEY (price_time, symbol))')\n\n## create Cassandra instance\ncluster = Cluster()\n\n## establish Cassandra connection, using local default\nsession = cluster.connect()\n\n## use fenagocdma keyspace\nsession.set_keyspace('fenagocdma')\n\n## create alert_by_date table\ncreate_alertbydate(session)\n\n## close Cassandra connection\ncluster.shutdown()\n</code></pre>\n<p>When compared to <code>alertlist</code> in <code>lab06_002.py</code> ,<br />\n<code>alert_by_date</code> only swaps the order of the columns in the<br />\ncompound primary key. One might think that a secondary index can be<br />\ncreated on <code>alertlist</code> to achieve the same effect.<br />\nNonetheless, in Cassandra, a secondary index cannot be created on<br />\ncolumns that are already engaged in the primary key. Always be aware of<br />\nthis constraint.</p>\n<p>We now finish the modifications on the data model. It is time for us to<br />\nenhance the application logic in the next section.</p>\n\n</div>"
+          }
+        ]
+      }
     },
     {
       "text": "# -*- coding: utf-8 -*-\r\n# program: lab06_004.py\r\n\r\n## import Cassandra driver library\r\nfrom cassandra.cluster import Cluster\r\n\r\n## function to create alert_by_date table\r\ndef create_alertbydate(ss):\r\n    ## create alert_by_date table if not exists\r\n    ss.execute('CREATE TABLE IF NOT EXISTS alert_by_date (' + \\\r\n               'symbol varchar,' + \\\r\n               'price_time timestamp,' + \\\r\n               'stock_name varchar,' + \\\r\n               'signal_price float,' + \\\r\n               'PRIMARY KEY (price_time, symbol))')\r\n\r\n## create Cassandra instance\r\ncluster = Cluster()\r\n\r\n## establish Cassandra connection, using local default\r\nsession = cluster.connect()\r\n\r\n## use fenagocdma keyspace\r\nsession.set_keyspace('fenagocdma')\r\n\r\n## create alert_by_date table\r\ncreate_alertbydate(session)\r\n\r\n## close Cassandra connection\r\ncluster.shutdown()\r\n",
       "user": "anonymous",
-      "dateUpdated": "2020-05-18T13:47:55+0000",
+      "dateUpdated": "2020-06-07T12:06:58+0000",
       "config": {
-        "colWidth": 12,
-        "fontSize": 9,
-        "enabled": true,
-        "results": {},
         "editorSetting": {
-          "language": "python",
+          "language": "scala",
           "editOnDblClick": false,
-          "completionSupport": true
+          "completionSupport": true,
+          "completionKey": "TAB"
         },
-        "editorMode": "ace/mode/python"
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
       },
       "settings": {
         "params": {},
@@ -117,29 +283,70 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1589809665399_822452100",
+      "jobName": "paragraph_1591531618342_-242343024",
       "id": "paragraph_1589809665399_822452100",
-      "dateCreated": "2020-05-18T13:47:45+0000",
-      "dateStarted": "2020-05-18T13:47:55+0000",
-      "dateFinished": "2020-05-18T13:47:55+0000",
+      "dateCreated": "2020-06-07T12:06:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:3976"
+    },
+    {
+      "text": "%md\n\nEnhancing the code\n------------------------------------\n\nRegarding the new requirements to be incorporated into the Stock Screener Application, Watch List\nis created, and we will continue to implement the code for the remaining\nchanges in this section.\n\n\n\n### Data Mapper and Archiver\n\n\nData Mapper and Archiver are components of the Data\nFeed Provider module, and its source code file is\n`lab05_005.py`. Most of the source code can be left\nintact; we only need to add code to:\n\n\n1.  Load Watch List for a Watch List code and retrieve data feed based\n    on that\n\n2.  Retrieve the name of the stocks and store it in the quote table\n:::\n\nThe modified source code is shown in `lab06_005.py`:\n\n\n``` {.programlisting .language-markup}\n# -*- coding: utf-8 -*-\n# program: lab06_005.py\n\n## import Cassandra driver library\nfrom cassandra.cluster import Cluster\nfrom decimal import *\n\n## web is the shorthand alias of pandas_datareader\nimport pandas_datareader as web\nimport datetime\n\n## import BeautifulSoup and requests\nfrom bs4 import BeautifulSoup\nimport requests\n\n## function to insert historical data into table quote\n## ss: Cassandra session\n## sym: stock symbol\n## d: standardized DataFrame containing historical data\n## sn: stock name\ndef insert_quote(ss, sym, d, sn):\n    ## CQL to insert data, ? is the placeholder for parameters\n    insert_cql = \"INSERT INTO quote (\" + \\\n                 \"symbol, price_time, open_price, high_price,\" + \\\n                 \"low_price, close_price, volume, stock_name\" + \\\n                 \") VALUES (?, ?, ?, ?, ?, ?, ?, ?)\"\n    ## prepare the insert CQL as it will run repeatedly\n    insert_stmt = ss.prepare(insert_cql)\n\n    ## set decimal places to 4 digits\n    getcontext().prec = 4\n\n    ## loop thru the DataFrame and insert records\n    for index, row in d.iterrows():\n        ss.execute(insert_stmt, \\\n                   [sym, index, \\\n                   Decimal(row['open_price']), \\\n                   Decimal(row['high_price']), \\\n                   Decimal(row['low_price']), \\\n                   Decimal(row['close_price']), \\\n                   Decimal(row['volume']), \\\n                   sn])\n```\n\nHere, we changed the `INSERT` statement\nto store the stock name into `quote` in the\n`insert_quote` function. We then add a function called\n`load_watchlist`:\n\n\nHere, the  new function, `load_watchlist` ,\nsubmits a `SELECT` query on `watch_list` to retrieve\nthe stocks to be watched of a particular Watch List\ncode; it then returns a list of `symbol`:\n\n\n``` {.programlisting .language-markup}\n## function to retrieve stock name from Yahoo!Finance\n## sym: stock symbol\ndef get_stock_name(sym):\n  url = 'http://finance.yahoo.com/q/hp?s=' + sym + \\\n  '+Historical+Prices'\n  r = requests.get(url)\n  soup = BeautifulSoup(r.text)\n  data = soup.findAll('h2')\n  return data[2].text\n\ndef testcase001():\n    ## create Cassandra instance\n    cluster = Cluster()\n    \n    ## establish Cassandra connection, using local default\n    session = cluster.connect('fenagocdma')\n    \n    start_date = datetime.datetime(2012, 1, 1)\n    end_date = datetime.datetime(2014, 6, 28)\n    \n    ## load the watchlist\n    stocks_watched = load_watchlist(session, \"WS01\")\n    \n    ## iterate the watchlist\n    for symbol in stocks_watched:\n        ## get stock name\n        stock_name = get_stock_name(symbol)\n    \n        ## collect data\n        data = collect_data(symbol, start_date, end_date)\n    \n        ## transform Yahoo! Finance data\n        data = transform_yahoo(data)\n    \n        ## insert historical data\n        insert_quote(session, symbol, data, stock_name)\n    \n    ## close Cassandra connection\n    cluster.shutdown()\n\ntestcase001()\n```\n\nThe change here is a new function named\n`get_stock_name` , which sends a web service request to Yahoo!\nFinance and extracts the name of the stock from the returned HTML page.\nWe use a Python package called `BeautifulSoup` to make the\nextraction of an element from a HTML page very convenient. The\n`get_stock_name` function then returns the stock name.\n\n\n### Note\n\n`BeautifulSoup` is a library designed for\nquick turnaround projects such as screen scraping. It primarily parses\nany text given to it and finds anything wanted through the tree\ntraversal of the parsed text. More information can be found at\n<http://www.crummy.com/software/BeautifulSoup/>.\n\nA `for` loop is used to iterate through the Watch List to\nretrieve the stock name and the stock quote data. In addition, as we\nneed to store the stock name in the `quote` table, the\n`insert_quote` function accepts the stock name as a new\nparameter and requires a little modification on the `INSERT`\nstatement and the `for` loop accordingly.\n\nThat is all about the changes on Data Mapper and Archiver.\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T12:25:29+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/text",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591532419590_461395119",
+      "id": "paragraph_1591532419590_461395119",
+      "dateCreated": "2020-06-07T12:20:19+0000",
       "status": "FINISHED",
-      "$$hashKey": "object:5966"
+      "$$hashKey": "object:3977",
+      "dateFinished": "2020-06-07T12:25:29+0000",
+      "dateStarted": "2020-06-07T12:25:29+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Enhancing the code</h2>\n<p>Regarding the new requirements to be incorporated into the Stock Screener Application, Watch List<br />\nis created, and we will continue to implement the code for the remaining<br />\nchanges in this section.</p>\n<h3>Data Mapper and Archiver</h3>\n<p>Data Mapper and Archiver are components of the Data<br />\nFeed Provider module, and its source code file is<br />\n<code>lab05_005.py</code>. Most of the source code can be left<br />\nintact; we only need to add code to:</p>\n<ol>\n<li>\n<p>Load Watch List for a Watch List code and retrieve data feed based<br />\non that</p>\n</li>\n<li>\n<p>Retrieve the name of the stocks and store it in the quote table<br />\n:::</p>\n</li>\n</ol>\n<p>The modified source code is shown in <code>lab06_005.py</code>:</p>\n<pre><code class=\"language-{.programlisting\"># -*- coding: utf-8 -*-\n# program: lab06_005.py\n\n## import Cassandra driver library\nfrom cassandra.cluster import Cluster\nfrom decimal import *\n\n## web is the shorthand alias of pandas_datareader\nimport pandas_datareader as web\nimport datetime\n\n## import BeautifulSoup and requests\nfrom bs4 import BeautifulSoup\nimport requests\n\n## function to insert historical data into table quote\n## ss: Cassandra session\n## sym: stock symbol\n## d: standardized DataFrame containing historical data\n## sn: stock name\ndef insert_quote(ss, sym, d, sn):\n    ## CQL to insert data, ? is the placeholder for parameters\n    insert_cql = &quot;INSERT INTO quote (&quot; + \\\n                 &quot;symbol, price_time, open_price, high_price,&quot; + \\\n                 &quot;low_price, close_price, volume, stock_name&quot; + \\\n                 &quot;) VALUES (?, ?, ?, ?, ?, ?, ?, ?)&quot;\n    ## prepare the insert CQL as it will run repeatedly\n    insert_stmt = ss.prepare(insert_cql)\n\n    ## set decimal places to 4 digits\n    getcontext().prec = 4\n\n    ## loop thru the DataFrame and insert records\n    for index, row in d.iterrows():\n        ss.execute(insert_stmt, \\\n                   [sym, index, \\\n                   Decimal(row['open_price']), \\\n                   Decimal(row['high_price']), \\\n                   Decimal(row['low_price']), \\\n                   Decimal(row['close_price']), \\\n                   Decimal(row['volume']), \\\n                   sn])\n</code></pre>\n<p>Here, we changed the <code>INSERT</code> statement<br />\nto store the stock name into <code>quote</code> in the<br />\n<code>insert_quote</code> function. We then add a function called<br />\n<code>load_watchlist</code>:</p>\n<p>Here, the  new function, <code>load_watchlist</code> ,<br />\nsubmits a <code>SELECT</code> query on <code>watch_list</code> to retrieve<br />\nthe stocks to be watched of a particular Watch List<br />\ncode; it then returns a list of <code>symbol</code>:</p>\n<pre><code class=\"language-{.programlisting\">## function to retrieve stock name from Yahoo!Finance\n## sym: stock symbol\ndef get_stock_name(sym):\n  url = 'http://finance.yahoo.com/q/hp?s=' + sym + \\\n  '+Historical+Prices'\n  r = requests.get(url)\n  soup = BeautifulSoup(r.text)\n  data = soup.findAll('h2')\n  return data[2].text\n\ndef testcase001():\n    ## create Cassandra instance\n    cluster = Cluster()\n    \n    ## establish Cassandra connection, using local default\n    session = cluster.connect('fenagocdma')\n    \n    start_date = datetime.datetime(2012, 1, 1)\n    end_date = datetime.datetime(2014, 6, 28)\n    \n    ## load the watchlist\n    stocks_watched = load_watchlist(session, &quot;WS01&quot;)\n    \n    ## iterate the watchlist\n    for symbol in stocks_watched:\n        ## get stock name\n        stock_name = get_stock_name(symbol)\n    \n        ## collect data\n        data = collect_data(symbol, start_date, end_date)\n    \n        ## transform Yahoo! Finance data\n        data = transform_yahoo(data)\n    \n        ## insert historical data\n        insert_quote(session, symbol, data, stock_name)\n    \n    ## close Cassandra connection\n    cluster.shutdown()\n\ntestcase001()\n</code></pre>\n<p>The change here is a new function named<br />\n<code>get_stock_name</code> , which sends a web service request to Yahoo!<br />\nFinance and extracts the name of the stock from the returned HTML page.<br />\nWe use a Python package called <code>BeautifulSoup</code> to make the<br />\nextraction of an element from a HTML page very convenient. The<br />\n<code>get_stock_name</code> function then returns the stock name.</p>\n<h3>Note</h3>\n<p><code>BeautifulSoup</code> is a library designed for<br />\nquick turnaround projects such as screen scraping. It primarily parses<br />\nany text given to it and finds anything wanted through the tree<br />\ntraversal of the parsed text. More information can be found at<br />\n<a href=\"http://www.crummy.com/software/BeautifulSoup/\">http://www.crummy.com/software/BeautifulSoup/</a>.</p>\n<p>A <code>for</code> loop is used to iterate through the Watch List to<br />\nretrieve the stock name and the stock quote data. In addition, as we<br />\nneed to store the stock name in the <code>quote</code> table, the<br />\n<code>insert_quote</code> function accepts the stock name as a new<br />\nparameter and requires a little modification on the <code>INSERT</code><br />\nstatement and the <code>for</code> loop accordingly.</p>\n<p>That is all about the changes on Data Mapper and Archiver.</p>\n\n</div>"
+          }
+        ]
+      }
     },
     {
       "text": "# -*- coding: utf-8 -*-\r\n# program: lab06_005.py\r\n\r\n## import Cassandra driver library\r\nfrom cassandra.cluster import Cluster\r\nfrom decimal import *\r\n\r\n## web is the shorthand alias of pandas_datareader\r\nimport pandas_datareader as web\r\nimport datetime\r\n\r\n## import BeautifulSoup and requests\r\nfrom bs4 import BeautifulSoup\r\nimport requests\r\n\r\n## function to insert historical data into table quote\r\n## ss: Cassandra session\r\n## sym: stock symbol\r\n## d: standardized DataFrame containing historical data\r\n## sn: stock name\r\ndef insert_quote(ss, sym, d, sn):\r\n    ## CQL to insert data, ? is the placeholder for parameters\r\n    insert_cql = \"INSERT INTO quote (\" + \\\r\n                 \"symbol, price_time, open_price, high_price,\" + \\\r\n                 \"low_price, close_price, volume, stock_name\" + \\\r\n                 \") VALUES (?, ?, ?, ?, ?, ?, ?, ?)\"\r\n    ## prepare the insert CQL as it will run repeatedly\r\n    insert_stmt = ss.prepare(insert_cql)\r\n\r\n    ## set decimal places to 4 digits\r\n    getcontext().prec = 4\r\n\r\n    ## loop thru the DataFrame and insert records\r\n    for index, row in d.iterrows():\r\n        ss.execute(insert_stmt, \\\r\n                   [sym, index, \\\r\n                   Decimal(row['open_price']), \\\r\n                   Decimal(row['high_price']), \\\r\n                   Decimal(row['low_price']), \\\r\n                   Decimal(row['close_price']), \\\r\n                   Decimal(row['volume']), \\\r\n                   sn])\r\n\r\n## retrieve the historical daily stock quote from Yahoo! Finance\r\n## Parameters\r\n## sym: stock symbol\r\n## sd: start date\r\n## ed: end date\r\ndef collect_data(sym, sd, ed):\r\n    ## data is a DataFrame holding the daily stock quote\r\n    data = web.DataReader(sym, 'yahoo', sd, ed)\r\n    return data\r\n\r\n## transform received data into standardized format\r\n## Parameter\r\n## d: DataFrame containing Yahoo! Finance stock quote\r\ndef transform_yahoo(d):\r\n    ## drop extra column 'Adj Close'\r\n    d1 = d.drop(['Adj Close'], axis=1)\r\n\r\n    ## standardize the column names\r\n    ## rename index column to price_date\r\n    d1.index.names=['price_date']\r\n\r\n    ## rename the columns to match the respective columns\r\n    d1 = d1.rename(columns={'Open':'open_price', \\\r\n                            'High':'high_price', \\\r\n                            'Low':'low_price', \\\r\n                            'Close':'close_price', \\\r\n                            'Volume':'volume'})\r\n    return d1\r\n\r\n## function to retrieve watchlist\r\n## ss: Cassandra session\r\n## ws: watchlist code\r\ndef load_watchlist(ss, ws):\r\n    ## CQL to select data, ? is the placeholder for parameters\r\n    select_cql = \"SELECT symbol FROM watchlist \" + \\\r\n                 \"WHERE watch_list_code=?\"\r\n\r\n    ## prepare select CQL\r\n    select_stmt = ss.prepare(select_cql)\r\n\r\n    ## execute the select CQL\r\n    result = ss.execute(select_stmt, [ws])\r\n\r\n    ## initialize the stock array\r\n    stw = []\r\n\r\n    ## loop thru the query resultset to make up the DataFrame\r\n    for r in result:\r\n        stw.append(r.symbol)\r\n\r\n    return stw\r\n\r\n## function to retrieve stock name from Yahoo!Finance\r\n## sym: stock symbol\r\ndef get_stock_name(sym):\r\n\turl = 'http://finance.yahoo.com/q/hp?s=' + sym + \\\r\n          '+Historical+Prices'\r\n\tr = requests.get(url)\r\n\tsoup = BeautifulSoup(r.text)\r\n\tdata = soup.findAll('h1')\r\n\tprint('****************')\r\n\tprint(data[0].text)\r\n\tprint('****************')\r\n\treturn data[0].text\r\n\r\ndef testcase001():\r\n    ## create Cassandra instance\r\n    cluster = Cluster()\r\n    \r\n    ## establish Cassandra connection, using local default\r\n    session = cluster.connect('fenagocdma')\r\n    \r\n    start_date = datetime.datetime(2012, 1, 1)\r\n    end_date = datetime.datetime(2014, 6, 28)\r\n    \r\n    ## load the watchlist\r\n    stocks_watched = load_watchlist(session, \"WS01\")\r\n    \r\n    ## iterate the watchlist\r\n    for symbol in stocks_watched:\r\n        ## get stock name\r\n        stock_name = get_stock_name(symbol)\r\n    \r\n        ## collect data\r\n        data = collect_data(symbol, start_date, end_date)\r\n    \r\n        ## transform Yahoo! Finance data\r\n        data = transform_yahoo(data)\r\n    \r\n        ## insert historical data\r\n        insert_quote(session, symbol, data, stock_name)\r\n    \r\n    ## close Cassandra connection\r\n    cluster.shutdown()\r\n\r\ntestcase001()\r\n",
       "user": "anonymous",
-      "dateUpdated": "2020-05-18T13:48:33+0000",
+      "dateUpdated": "2020-06-07T12:06:58+0000",
       "config": {
-        "colWidth": 12,
-        "fontSize": 9,
-        "enabled": true,
-        "results": {},
         "editorSetting": {
-          "language": "python",
+          "language": "scala",
           "editOnDblClick": false,
-          "completionSupport": true
+          "completionSupport": true,
+          "completionKey": "TAB"
         },
-        "editorMode": "ace/mode/python"
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
       },
       "settings": {
         "params": {},
@@ -148,29 +355,70 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1589809675518_-1388675255",
+      "jobName": "paragraph_1591531618342_105998649",
       "id": "paragraph_1589809675518_-1388675255",
-      "dateCreated": "2020-05-18T13:47:55+0000",
-      "dateStarted": "2020-05-18T13:48:33+0000",
-      "dateFinished": "2020-05-18T13:48:40+0000",
+      "dateCreated": "2020-06-07T12:06:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:3978"
+    },
+    {
+      "text": "%md\n\n\n\n\n#### Stock Screener Engine\n\nWe will use the  source code of Stock Screener\nEngine in\n*First-cut Design and Implementation* to include the\nenhancements; to do so, we will perform the following:\n\n\n1.  Similar to Data Mapper and Archiver, we will load Watch List for a\n    Watch List code and scan for alerts on each stock.\n\n2.  Retrieve stock quote data with the stock name column from the quote\n    table.\n\n3.  Save the alerts into `alertlist`.\n\nThe modified source code is shown in `lab06_006.py`:\n\n\n``` {.programlisting .language-markup}\n# -*- coding: utf-8 -*-\n# program: lab06_006.py\n\n## import Cassandra driver library\nfrom cassandra.cluster import Cluster\n\nimport pandas as pd\nimport numpy as np\nimport datetime\n\n## import Cassandra BatchStatement library\nfrom cassandra.query import BatchStatement\nfrom decimal import *\n\n## function to insert historical data into table quote\n## ss: Cassandra session\n## sym: stock symbol\n## sd: start date\n## ed: end date\n## return a DataFrame of stock quote\ndef retrieve_data(ss, sym, sd, ed):\n    ## CQL to select data, ? is the placeholder for parameters\n    select_cql = \"SELECT * FROM quote WHERE symbol=? \" + \\\n                 \"AND price_time >= ? AND price_time <= ?\"\n\n    ## prepare select CQL\n    select_stmt = ss.prepare(select_cql)\n\n    ## execute the select CQL\n    result = ss.execute(select_stmt, [sym, sd, ed])\n\n    ## initialize an index array\n    idx = np.asarray([])\n\n    ## initialize an array for columns\n    cols = np.asarray([])\n\n    ## loop thru the query resultset to make up the DataFrame\n    for r in result:\n        idx = np.append(idx, [r.price_time])\n        cols = np.append(cols, [r.open_price, r.high_price, \\\n                         r.low_price, r.close_price, \\\n                         r.volume, r.stock_name])\n\n    ## reshape the 1-D array into a 2-D array for each day\n    cols = cols.reshape(idx.shape[0], 6)\n\n    ## convert the arrays into a pandas DataFrame\n    df = pd.DataFrame(cols, index=idx, \\\n                      columns=['open_price', 'high_price', \\\n                      'low_price', 'close_price', \\\n                      'volume', 'stock_name'])\n    return df\n```\n\nAs we have included the stock name in the query\nresultset, we need to modify the `SELECT` statement in the\n`retrieve_data` function:\n\n\n``` {.programlisting .language-markup}\n## function to compute a Simple Moving Average on a DataFrame\n## d: DataFrame\n## prd: period of SMA\n## return a DataFrame with an additional column of SMA\ndef sma(d, prd):\n    d['sma'] = d['close_price'].rolling(window=prd).mean()\n    return d\n\n## function to apply screening rule to generate buy signals\n## screening rule, Close > 10-Day SMA\n## d: DataFrame\n## return a DataFrame containing buy signals\ndef signal_close_higher_than_sma10(d):\n    return d[d.close_price > d.sma]\n\n## function to retrieve watchlist\n## ss: Cassandra session\n## ws: watchlist code\ndef load_watchlist(ss, ws):\n    ## CQL to select data, ? is the placeholder for parameters\n    select_cql = \"SELECT symbol FROM watchlist \" + \\\n                 \"WHERE watch_list_code=?\"\n\n    ## prepare select CQL\n    select_stmt = ss.prepare(select_cql)\n\n    ## execute the select CQL\n    result = ss.execute(select_stmt, [ws])\n\n    ## initialize the stock array\n    stw = []\n\n    ## loop thru the query resultset to make up the DataFrame\n    for r in result:\n        stw.append(r.symbol)\n\n    return stw\n\n## function to insert historical data into table quote\n## ss: Cassandra session\n## sym: stock symbol\n## d: standardized DataFrame containing historical data\n## sn: stock name\ndef insert_alert(ss, sym, sd, cp, sn):\n    ## CQL to insert data, ? is the placeholder for parameters\n    insert_cql1 = \"INSERT INTO alertlist (\" + \\\n                 \"symbol, price_time, signal_price, stock_name\" +\\\n                 \") VALUES (?, ?, ?, ?)\"\n\n    ## CQL to insert data, ? is the placeholder for parameters\n    insert_cql2 = \"INSERT INTO alert_by_date (\" + \\\n                 \"symbol, price_time, signal_price, stock_name\" +\\\n                 \") VALUES (?, ?, ?, ?)\"\n\n    ## prepare the insert CQL as it will run repeatedly\n    insert_stmt1 = ss.prepare(insert_cql1)\n    insert_stmt2 = ss.prepare(insert_cql2)\n\n    ## set decimal places to 4 digits\n    getcontext().prec = 4\n\n    ## begin a batch\n    batch = BatchStatement()\n    \n    ## add insert statements into the batch\n    batch.add(insert_stmt1, [sym, sd, cp, sn])\n    batch.add(insert_stmt2, [sym, sd, cp, sn])\n    \n    ## execute the batch\n    ss.execute(batch)\n\ndef testcase002():\n    ## create Cassandra instance\n    cluster = Cluster()\n    \n    ## establish Cassandra connection, using local default\n    session = cluster.connect('fenagocdma')\n    \n    start_date = datetime.datetime(2012, 6, 28)\n    end_date = datetime.datetime(2012, 7, 28)\n    \n    ## load the watch list\n    stocks_watched = load_watchlist(session, \"WS01\")\n    \n    for symbol in stocks_watched:\n        ## retrieve data\n        data = retrieve_data(session, symbol, start_date, end_date)\n        \n        ## compute 10-Day SMA\n        data = sma(data, 10)\n        \n        ## generate the buy-and-hold signals\n        alerts = signal_close_higher_than_sma10(data)\n        \n        ## save the alert list\n        for index, r in alerts.iterrows():\n            insert_alert(session, symbol, index, \\\n                         Decimal(r['close_price']), \\\n                         r['stock_name'])\n    \n    ## close Cassandra connection\n    cluster.shutdown()\n\ntestcase002()\n```\n\nAt the bottom of `lab06_006.py` , the\n`for` loop is responsible for iterating `watchlist`\nloaded by the new `load_watchlist` function, which is the same\nfunction as in `lab06_005.py` and does not require further\nexplanation. Another `for` loop inside saves the scanned\nalerts into `alertlist` by calling the new\n`insert_alert` function.\n\nBefore explaining the `insert_alert` function, let us jump to\nthe `retrieve_data` function at the top. The\n`retrieve_data` function is modified to return the name of the\nstock as well and hence the `cols` variable now contains six\ncolumns. Scroll down a bit to `insert_alert`.\n\nThe `insert_alert` function, as its name suggests, saves the\nalert into `alertlist` and `alert_by_date`. It has\ntwo `INSERT` statements for these two tables, respectively.\nThe `INSERT` statements are almost\nidentical except for the name of the table. Obviously, they are\nrepeated, and this is what denormalization means. We also apply a new\nfeature of Cassandra 2.0 here, known as *batch*. A batch\ncombines multiple **data modification language**\n(**DML**) statements into a single\nlogical, atomic operation. The Cassandra Python driver from DataStax\nsupports this feature by the `BatchStatement` package. We\ncreate a batch by calling the `BatchStatement()` function,\nthen add the prepared `INSERT` statements into the batch, and\nfinally execute it. If either `INSERT` statement comes across\nan error during commit, all DML statements in the batch will not be\nexecuted. Therefore, it is analogous to a transaction in a relational\ndatabase.\n\n\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T12:25:40+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/text",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591532356428_-961153274",
+      "id": "paragraph_1591532356428_-961153274",
+      "dateCreated": "2020-06-07T12:19:16+0000",
       "status": "FINISHED",
-      "$$hashKey": "object:5967"
+      "$$hashKey": "object:3979",
+      "dateFinished": "2020-06-07T12:25:40+0000",
+      "dateStarted": "2020-06-07T12:25:40+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4>Stock Screener Engine</h4>\n<p>We will use the  source code of Stock Screener<br />\nEngine in<br />\n<em>First-cut Design and Implementation</em> to include the<br />\nenhancements; to do so, we will perform the following:</p>\n<ol>\n<li>\n<p>Similar to Data Mapper and Archiver, we will load Watch List for a<br />\nWatch List code and scan for alerts on each stock.</p>\n</li>\n<li>\n<p>Retrieve stock quote data with the stock name column from the quote<br />\ntable.</p>\n</li>\n<li>\n<p>Save the alerts into <code>alertlist</code>.</p>\n</li>\n</ol>\n<p>The modified source code is shown in <code>lab06_006.py</code>:</p>\n<pre><code class=\"language-{.programlisting\"># -*- coding: utf-8 -*-\n# program: lab06_006.py\n\n## import Cassandra driver library\nfrom cassandra.cluster import Cluster\n\nimport pandas as pd\nimport numpy as np\nimport datetime\n\n## import Cassandra BatchStatement library\nfrom cassandra.query import BatchStatement\nfrom decimal import *\n\n## function to insert historical data into table quote\n## ss: Cassandra session\n## sym: stock symbol\n## sd: start date\n## ed: end date\n## return a DataFrame of stock quote\ndef retrieve_data(ss, sym, sd, ed):\n    ## CQL to select data, ? is the placeholder for parameters\n    select_cql = &quot;SELECT * FROM quote WHERE symbol=? &quot; + \\\n                 &quot;AND price_time &gt;= ? AND price_time &lt;= ?&quot;\n\n    ## prepare select CQL\n    select_stmt = ss.prepare(select_cql)\n\n    ## execute the select CQL\n    result = ss.execute(select_stmt, [sym, sd, ed])\n\n    ## initialize an index array\n    idx = np.asarray([])\n\n    ## initialize an array for columns\n    cols = np.asarray([])\n\n    ## loop thru the query resultset to make up the DataFrame\n    for r in result:\n        idx = np.append(idx, [r.price_time])\n        cols = np.append(cols, [r.open_price, r.high_price, \\\n                         r.low_price, r.close_price, \\\n                         r.volume, r.stock_name])\n\n    ## reshape the 1-D array into a 2-D array for each day\n    cols = cols.reshape(idx.shape[0], 6)\n\n    ## convert the arrays into a pandas DataFrame\n    df = pd.DataFrame(cols, index=idx, \\\n                      columns=['open_price', 'high_price', \\\n                      'low_price', 'close_price', \\\n                      'volume', 'stock_name'])\n    return df\n</code></pre>\n<p>As we have included the stock name in the query<br />\nresultset, we need to modify the <code>SELECT</code> statement in the<br />\n<code>retrieve_data</code> function:</p>\n<pre><code class=\"language-{.programlisting\">## function to compute a Simple Moving Average on a DataFrame\n## d: DataFrame\n## prd: period of SMA\n## return a DataFrame with an additional column of SMA\ndef sma(d, prd):\n    d['sma'] = d['close_price'].rolling(window=prd).mean()\n    return d\n\n## function to apply screening rule to generate buy signals\n## screening rule, Close &gt; 10-Day SMA\n## d: DataFrame\n## return a DataFrame containing buy signals\ndef signal_close_higher_than_sma10(d):\n    return d[d.close_price &gt; d.sma]\n\n## function to retrieve watchlist\n## ss: Cassandra session\n## ws: watchlist code\ndef load_watchlist(ss, ws):\n    ## CQL to select data, ? is the placeholder for parameters\n    select_cql = &quot;SELECT symbol FROM watchlist &quot; + \\\n                 &quot;WHERE watch_list_code=?&quot;\n\n    ## prepare select CQL\n    select_stmt = ss.prepare(select_cql)\n\n    ## execute the select CQL\n    result = ss.execute(select_stmt, [ws])\n\n    ## initialize the stock array\n    stw = []\n\n    ## loop thru the query resultset to make up the DataFrame\n    for r in result:\n        stw.append(r.symbol)\n\n    return stw\n\n## function to insert historical data into table quote\n## ss: Cassandra session\n## sym: stock symbol\n## d: standardized DataFrame containing historical data\n## sn: stock name\ndef insert_alert(ss, sym, sd, cp, sn):\n    ## CQL to insert data, ? is the placeholder for parameters\n    insert_cql1 = &quot;INSERT INTO alertlist (&quot; + \\\n                 &quot;symbol, price_time, signal_price, stock_name&quot; +\\\n                 &quot;) VALUES (?, ?, ?, ?)&quot;\n\n    ## CQL to insert data, ? is the placeholder for parameters\n    insert_cql2 = &quot;INSERT INTO alert_by_date (&quot; + \\\n                 &quot;symbol, price_time, signal_price, stock_name&quot; +\\\n                 &quot;) VALUES (?, ?, ?, ?)&quot;\n\n    ## prepare the insert CQL as it will run repeatedly\n    insert_stmt1 = ss.prepare(insert_cql1)\n    insert_stmt2 = ss.prepare(insert_cql2)\n\n    ## set decimal places to 4 digits\n    getcontext().prec = 4\n\n    ## begin a batch\n    batch = BatchStatement()\n    \n    ## add insert statements into the batch\n    batch.add(insert_stmt1, [sym, sd, cp, sn])\n    batch.add(insert_stmt2, [sym, sd, cp, sn])\n    \n    ## execute the batch\n    ss.execute(batch)\n\ndef testcase002():\n    ## create Cassandra instance\n    cluster = Cluster()\n    \n    ## establish Cassandra connection, using local default\n    session = cluster.connect('fenagocdma')\n    \n    start_date = datetime.datetime(2012, 6, 28)\n    end_date = datetime.datetime(2012, 7, 28)\n    \n    ## load the watch list\n    stocks_watched = load_watchlist(session, &quot;WS01&quot;)\n    \n    for symbol in stocks_watched:\n        ## retrieve data\n        data = retrieve_data(session, symbol, start_date, end_date)\n        \n        ## compute 10-Day SMA\n        data = sma(data, 10)\n        \n        ## generate the buy-and-hold signals\n        alerts = signal_close_higher_than_sma10(data)\n        \n        ## save the alert list\n        for index, r in alerts.iterrows():\n            insert_alert(session, symbol, index, \\\n                         Decimal(r['close_price']), \\\n                         r['stock_name'])\n    \n    ## close Cassandra connection\n    cluster.shutdown()\n\ntestcase002()\n</code></pre>\n<p>At the bottom of <code>lab06_006.py</code> , the<br />\n<code>for</code> loop is responsible for iterating <code>watchlist</code><br />\nloaded by the new <code>load_watchlist</code> function, which is the same<br />\nfunction as in <code>lab06_005.py</code> and does not require further<br />\nexplanation. Another <code>for</code> loop inside saves the scanned<br />\nalerts into <code>alertlist</code> by calling the new<br />\n<code>insert_alert</code> function.</p>\n<p>Before explaining the <code>insert_alert</code> function, let us jump to<br />\nthe <code>retrieve_data</code> function at the top. The<br />\n<code>retrieve_data</code> function is modified to return the name of the<br />\nstock as well and hence the <code>cols</code> variable now contains six<br />\ncolumns. Scroll down a bit to <code>insert_alert</code>.</p>\n<p>The <code>insert_alert</code> function, as its name suggests, saves the<br />\nalert into <code>alertlist</code> and <code>alert_by_date</code>. It has<br />\ntwo <code>INSERT</code> statements for these two tables, respectively.<br />\nThe <code>INSERT</code> statements are almost<br />\nidentical except for the name of the table. Obviously, they are<br />\nrepeated, and this is what denormalization means. We also apply a new<br />\nfeature of Cassandra 2.0 here, known as <em>batch</em>. A batch<br />\ncombines multiple <strong>data modification language</strong><br />\n(<strong>DML</strong>) statements into a single<br />\nlogical, atomic operation. The Cassandra Python driver from DataStax<br />\nsupports this feature by the <code>BatchStatement</code> package. We<br />\ncreate a batch by calling the <code>BatchStatement()</code> function,<br />\nthen add the prepared <code>INSERT</code> statements into the batch, and<br />\nfinally execute it. If either <code>INSERT</code> statement comes across<br />\nan error during commit, all DML statements in the batch will not be<br />\nexecuted. Therefore, it is analogous to a transaction in a relational<br />\ndatabase.</p>\n\n</div>"
+          }
+        ]
+      }
     },
     {
       "text": "# -*- coding: utf-8 -*-\r\n# program: lab06_006.py\r\n\r\n## import Cassandra driver library\r\nfrom cassandra.cluster import Cluster\r\n\r\nimport pandas as pd\r\nimport numpy as np\r\nimport datetime\r\n\r\n## import Cassandra BatchStatement library\r\nfrom cassandra.query import BatchStatement\r\nfrom decimal import *\r\n\r\n## function to insert historical data into table quote\r\n## ss: Cassandra session\r\n## sym: stock symbol\r\n## sd: start date\r\n## ed: end date\r\n## return a DataFrame of stock quote\r\ndef retrieve_data(ss, sym, sd, ed):\r\n    ## CQL to select data, ? is the placeholder for parameters\r\n    select_cql = \"SELECT * FROM quote WHERE symbol=? \" + \\\r\n                 \"AND price_time >= ? AND price_time <= ?\"\r\n\r\n    ## prepare select CQL\r\n    select_stmt = ss.prepare(select_cql)\r\n\r\n    ## execute the select CQL\r\n    result = ss.execute(select_stmt, [sym, sd, ed])\r\n\r\n    ## initialize an index array\r\n    idx = np.asarray([])\r\n\r\n    ## initialize an array for columns\r\n    cols = np.asarray([])\r\n\r\n    ## loop thru the query resultset to make up the DataFrame\r\n    for r in result:\r\n        idx = np.append(idx, [r.price_time])\r\n        cols = np.append(cols, [r.open_price, r.high_price, \\\r\n                         r.low_price, r.close_price, \\\r\n                         r.volume, r.stock_name])\r\n\r\n    ## reshape the 1-D array into a 2-D array for each day\r\n    cols = cols.reshape(idx.shape[0], 6)\r\n\r\n    ## convert the arrays into a pandas DataFrame\r\n    df = pd.DataFrame(cols, index=idx, \\\r\n                      columns=['open_price', 'high_price', \\\r\n                      'low_price', 'close_price', \\\r\n                      'volume', 'stock_name'])\r\n    return df\r\n\r\n## function to compute a Simple Moving Average on a DataFrame\r\n## d: DataFrame\r\n## prd: period of SMA\r\n## return a DataFrame with an additional column of SMA\r\ndef sma(d, prd):\r\n    d['sma'] = d['close_price'].rolling(window=prd).mean()\r\n    return d\r\n\r\n## function to apply screening rule to generate buy signals\r\n## screening rule, Close > 10-Day SMA\r\n## d: DataFrame\r\n## return a DataFrame containing buy signals\r\ndef signal_close_higher_than_sma10(d):\r\n    return d[d.close_price.eq(d.sma)]\r\n\r\n## function to retrieve watchlist\r\n## ss: Cassandra session\r\n## ws: watchlist code\r\ndef load_watchlist(ss, ws):\r\n    ## CQL to select data, ? is the placeholder for parameters\r\n    select_cql = \"SELECT symbol FROM watchlist \" + \\\r\n                 \"WHERE watch_list_code=?\"\r\n\r\n    ## prepare select CQL\r\n    select_stmt = ss.prepare(select_cql)\r\n\r\n    ## execute the select CQL\r\n    result = ss.execute(select_stmt, [ws])\r\n\r\n    ## initialize the stock array\r\n    stw = []\r\n\r\n    ## loop thru the query resultset to make up the DataFrame\r\n    for r in result:\r\n        stw.append(r.symbol)\r\n\r\n    return stw\r\n\r\n## function to insert historical data into table quote\r\n## ss: Cassandra session\r\n## sym: stock symbol\r\n## d: standardized DataFrame containing historical data\r\n## sn: stock name\r\ndef insert_alert(ss, sym, sd, cp, sn):\r\n    ## CQL to insert data, ? is the placeholder for parameters\r\n    insert_cql1 = \"INSERT INTO alertlist (\" + \\\r\n                 \"symbol, price_time, signal_price, stock_name\" +\\\r\n                 \") VALUES (?, ?, ?, ?)\"\r\n\r\n    ## CQL to insert data, ? is the placeholder for parameters\r\n    insert_cql2 = \"INSERT INTO alert_by_date (\" + \\\r\n                 \"symbol, price_time, signal_price, stock_name\" +\\\r\n                 \") VALUES (?, ?, ?, ?)\"\r\n\r\n    ## prepare the insert CQL as it will run repeatedly\r\n    insert_stmt1 = ss.prepare(insert_cql1)\r\n    insert_stmt2 = ss.prepare(insert_cql2)\r\n\r\n    ## set decimal places to 4 digits\r\n    getcontext().prec = 4\r\n\r\n    ## begin a batch\r\n    batch = BatchStatement()\r\n    \r\n    ## add insert statements into the batch\r\n    batch.add(insert_stmt1, [sym, sd, cp, sn])\r\n    batch.add(insert_stmt2, [sym, sd, cp, sn])\r\n    \r\n    ## execute the batch\r\n    ss.execute(batch)\r\n\r\ndef testcase002():\r\n    ## create Cassandra instance\r\n    cluster = Cluster()\r\n    \r\n    ## establish Cassandra connection, using local default\r\n    session = cluster.connect('fenagocdma')\r\n    \r\n    start_date = datetime.datetime(2012, 6, 28)\r\n    end_date = datetime.datetime(2012, 7, 28)\r\n    \r\n    ## load the watch list\r\n    stocks_watched = load_watchlist(session, \"WS01\")\r\n    \r\n    for symbol in stocks_watched:\r\n        ## retrieve data\r\n        data = retrieve_data(session, symbol, start_date, end_date)\r\n        \r\n        ## compute 10-Day SMA\r\n        data = sma(data, 10)\r\n        \r\n        ## generate the buy-and-hold signals\r\n        alerts = signal_close_higher_than_sma10(data)\r\n        \r\n        ## save the alert list\r\n        for index, r in alerts.iterrows():\r\n            insert_alert(session, symbol, index, \\\r\n                         Decimal(r['close_price']), \\\r\n                         r['stock_name'])\r\n    \r\n    ## close Cassandra connection\r\n    cluster.shutdown()\r\n\r\ntestcase002()\r\n",
       "user": "anonymous",
-      "dateUpdated": "2020-05-18T13:53:59+0000",
+      "dateUpdated": "2020-06-07T12:06:58+0000",
       "config": {
-        "colWidth": 12,
-        "fontSize": 9,
-        "enabled": true,
-        "results": {},
         "editorSetting": {
-          "language": "python",
+          "language": "scala",
           "editOnDblClick": false,
-          "completionSupport": true
+          "completionSupport": true,
+          "completionKey": "TAB"
         },
-        "editorMode": "ace/mode/python"
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
       },
       "settings": {
         "params": {},
@@ -179,29 +427,70 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1589809713674_-1451387047",
+      "jobName": "paragraph_1591531618342_-725653037",
       "id": "paragraph_1589809713674_-1451387047",
-      "dateCreated": "2020-05-18T13:48:33+0000",
-      "dateStarted": "2020-05-18T13:53:59+0000",
-      "dateFinished": "2020-05-18T13:53:59+0000",
+      "dateCreated": "2020-06-07T12:06:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:3980"
+    },
+    {
+      "text": "%md\n\n#### Queries on Alerts\n\n\nThe last modification to the Stock Screener\nApplication is the enquiry functions on alerts that are useful for\nbacktesting and performance measurement. We write two queries to answer\nthe two questions, which are as follows:\n\n\n-   How many alerts were generated on a stock over a specified period of\n    time?\n\n-   How many alerts were generated on a particular date?\n:::\n\nAs we have used denormalization on the data model, it is very easy to\nexecute. For the first query, see `lab06_007.py`:\n\nA function named `alert_over_daterange` is defined to retrieve\nthe rows relevant to the first question. Then it transforms the CQL\nresultset to a pandas DataFrame.\n\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T12:25:48+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/text",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591532229607_-313058864",
+      "id": "paragraph_1591532229607_-313058864",
+      "dateCreated": "2020-06-07T12:17:09+0000",
       "status": "FINISHED",
-      "$$hashKey": "object:5968"
+      "$$hashKey": "object:3981",
+      "dateFinished": "2020-06-07T12:25:48+0000",
+      "dateStarted": "2020-06-07T12:25:48+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4>Queries on Alerts</h4>\n<p>The last modification to the Stock Screener<br />\nApplication is the enquiry functions on alerts that are useful for<br />\nbacktesting and performance measurement. We write two queries to answer<br />\nthe two questions, which are as follows:</p>\n<ul>\n<li>\n<p>How many alerts were generated on a stock over a specified period of<br />\ntime?</p>\n</li>\n<li>\n<p>How many alerts were generated on a particular date?<br />\n:::</p>\n</li>\n</ul>\n<p>As we have used denormalization on the data model, it is very easy to<br />\nexecute. For the first query, see <code>lab06_007.py</code>:</p>\n<p>A function named <code>alert_over_daterange</code> is defined to retrieve<br />\nthe rows relevant to the first question. Then it transforms the CQL<br />\nresultset to a pandas DataFrame.</p>\n\n</div>"
+          }
+        ]
+      }
     },
     {
       "text": "# -*- coding: utf-8 -*-\r\n# program: lab06_007.py\r\n\r\n## import Cassandra driver library\r\nfrom cassandra.cluster import Cluster\r\n\r\nimport pandas as pd\r\nimport numpy as np\r\nimport datetime\r\n\r\n## execute CQL statement to retrieve rows of\r\n## How many alerts were generated on a particular stock over\r\n## a specified period of time?\r\ndef alert_over_daterange(ss, sym, sd, ed):\r\n    ## CQL to select data, ? is the placeholder for parameters\r\n    select_cql = \"SELECT * FROM alertlist WHERE symbol=? \" + \\\r\n                 \"AND price_time >= ? AND price_time <= ?\"\r\n\r\n    ## prepare select CQL\r\n    select_stmt = ss.prepare(select_cql)\r\n\r\n    ## execute the select CQL\r\n    result = ss.execute(select_stmt, [sym, sd, ed])\r\n\r\n     ## initialize an index array\r\n    idx = np.asarray([])\r\n\r\n    ## initialize an array for columns\r\n    cols = np.asarray([])\r\n\r\n    ## loop thru the query resultset to make up the DataFrame\r\n    for r in result:\r\n        idx = np.append(idx, [r.price_time])\r\n        cols = np.append(cols, [r.symbol, r.stock_name, \\\r\n                         r.signal_price])\r\n\r\n    ## reshape the 1-D array into a 2-D array for each day\r\n    cols = cols.reshape(idx.shape[0], 3)\r\n\r\n    ## convert the arrays into a pandas DataFrame\r\n    df = pd.DataFrame(cols, index=idx, \\\r\n                      columns=['symbol', 'stock_name', \\\r\n                      'signal_price'])\r\n    return df\r\n\r\ndef testcase001():\r\n    ## create Cassandra instance\r\n    cluster = Cluster()\r\n    \r\n    ## establish Cassandra connection, using local default\r\n    session = cluster.connect()\r\n    \r\n    ## use fenagocdma keyspace\r\n    session.set_keyspace('fenagocdma')\r\n\r\n    ## scan buy-and-hold signals for GS\r\n    ## over 1 month since 28-Jun-2012\r\n    symbol = 'GS'\r\n    start_date = datetime.datetime(2012, 6, 28)\r\n    end_date = datetime.datetime(2012, 7, 28)\r\n    \r\n    ## retrieve alerts\r\n    alerts = alert_over_daterange(session, symbol, \\\r\n                                  start_date, end_date)\r\n    \r\n    for index, r in alerts.iterrows():\r\n        print (index.date(), '\\t', \\\r\n            r['symbol'], '\\t', \\\r\n            r['stock_name'], '\\t', \\\r\n            r['signal_price'])\r\n    \r\n    ## close Cassandra connection\r\n    cluster.shutdown()\r\n\r\ntestcase001()\r\n",
       "user": "anonymous",
-      "dateUpdated": "2020-05-18T13:54:16+0000",
+      "dateUpdated": "2020-06-07T12:06:58+0000",
       "config": {
-        "colWidth": 12,
-        "fontSize": 9,
-        "enabled": true,
-        "results": {},
         "editorSetting": {
-          "language": "python",
+          "language": "scala",
           "editOnDblClick": false,
-          "completionSupport": true
+          "completionSupport": true,
+          "completionKey": "TAB"
         },
-        "editorMode": "ace/mode/python"
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
       },
       "settings": {
         "params": {},
@@ -210,29 +499,70 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1589810039859_-1991013975",
+      "jobName": "paragraph_1591531618342_611939030",
       "id": "paragraph_1589810039859_-1991013975",
-      "dateCreated": "2020-05-18T13:53:59+0000",
-      "dateStarted": "2020-05-18T13:54:16+0000",
-      "dateFinished": "2020-05-18T13:54:16+0000",
+      "dateCreated": "2020-06-07T12:06:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:3982"
+    },
+    {
+      "text": "%md\n\nThen we can come up with a query for the second\nquestion with reference to the same logic in\n`lab06_007.py`. The source code is shown in\n`lab06_008.py`:\n\n\n``` {.programlisting .language-markup}\n# -*- coding: utf-8 -*-\n# program: lab06_008.py\n\n## import Cassandra driver library\nfrom cassandra.cluster import Cluster\n\nimport pandas as pd\nimport numpy as np\nimport datetime\n\n## execute CQL statement to retrieve rows of\n## How many alerts were generated on a particular stock over\n## a specified period of time?\ndef alert_on_date(ss, dd):\n    ## CQL to select data, ? is the placeholder for parameters\n    select_cql = \"SELECT * FROM alert_by_date WHERE \" + \\\n                 \"price_time=?\"\n\n    ## prepare select CQL\n    select_stmt = ss.prepare(select_cql)\n\n    ## execute the select CQL\n    result = ss.execute(select_stmt, [dd])\n\n     ## initialize an index array\n    idx = np.asarray([])\n\n    ## initialize an array for columns\n    cols = np.asarray([])\n\n    ## loop thru the query resultset to make up the DataFrame\n    for r in result:\n        idx = np.append(idx, [r.symbol])\n        cols = np.append(cols, [r.stock_name, r.price_time, \\\n                         r.signal_price])\n\n    ## reshape the 1-D array into a 2-D array for each day\n    cols = cols.reshape(idx.shape[0], 3)\n\n    ## convert the arrays into a pandas DataFrame\n    df = pd.DataFrame(cols, index=idx, \\\n                      columns=['stock_name', 'price_time', \\\n                      'signal_price'])\n    return df\n\ndef testcase001():\n    ## create Cassandra instance\n    cluster = Cluster()\n    \n    ## establish Cassandra connection, using local default\n    session = cluster.connect()\n    \n    ## use fenagocdma keyspace\n    session.set_keyspace('fenagocdma')\n    \n    ## scan buy-and-hold signals for GS over 1 month since 28-Jun-2012\n    on_date = datetime.datetime(2012, 7, 13)\n    \n    ## retrieve alerts\n    alerts = alert_on_date(session, on_date)\n    \n    ## print out alerts\n    for index, r in alerts.iterrows():\n        print index, '\\t', \\\n              r['stock_name'], '\\t', \\\n              r['signal_price']\n    \n    ## close Cassandra connection\n    cluster.shutdown()\n\ntestcase001()\n```\n\nOnce again, denormalization is a friend of\nCassandra. It does not require a foreign key, referential integrity, or\ntable join.\n\n\n\nImplementing system changes\n---------------------------------------------\n\n\n\nWe can now the\nchanges to the system one-by-one:\n\n\n1.  First we run `lab06_001.py` through to\n    `lab06_004.py` in sequence to make changes to the data\n    model.\n\n2.  Then we execute `lab06_005.py` to retrieve stock quote\n    data for the Watch List. It is worth mentioning that UPSERT is a\n    very nice feature of Cassandra. We do not encounter a duplicate\n    primary key while we insert the same row into a table. It simply\n    updates the row if the row already exists or inserts the row\n    otherwise. It makes the data manipulation logic neat and clean.\n\n3.  Further, we run `chatper06_006.py` to store the alerts by\n    scanning over the stock quote data of each stock in the Watch List.\n\n4.  Finally, we execute\n    `lab06_007.py` and `lab06_008.py` to\n    enquire `alertlist` and\n    `alert_by_date` , respectively. Their sample test results\n    are shown in the following figure:\n\n    \n    ![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_06_02.jpg)\n\n\nSummary\n--------\n\nThis lab extends the Stock Screener Application by a number of\nenhancements. We made changes to the data model to demonstrate the\nmodeling by query techniques and how denormalization can help us achieve\na high-performance application. We also tried the batch feature provided\nby Cassandra 2.0.\n\nNote that the source code in this lab is not housekept and can be\nrefactored somehow. However, because of the limit on the number of\npages, it is left as an exercise for the reader.\n\nThe Stock Screener Application is now running on a single node cluster.\n\nIn the next lab, we will delve into the considerations and\nprocedures of expanding it to a larger cluster, which is quite common in\nreal-life production systems.\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-06-07T12:25:52+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/text",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591532221726_-215770066",
+      "id": "paragraph_1591532221726_-215770066",
+      "dateCreated": "2020-06-07T12:17:01+0000",
       "status": "FINISHED",
-      "$$hashKey": "object:5969"
+      "$$hashKey": "object:3983",
+      "dateFinished": "2020-06-07T12:25:52+0000",
+      "dateStarted": "2020-06-07T12:25:52+0000",
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Then we can come up with a query for the second<br />\nquestion with reference to the same logic in<br />\n<code>lab06_007.py</code>. The source code is shown in<br />\n<code>lab06_008.py</code>:</p>\n<pre><code class=\"language-{.programlisting\"># -*- coding: utf-8 -*-\n# program: lab06_008.py\n\n## import Cassandra driver library\nfrom cassandra.cluster import Cluster\n\nimport pandas as pd\nimport numpy as np\nimport datetime\n\n## execute CQL statement to retrieve rows of\n## How many alerts were generated on a particular stock over\n## a specified period of time?\ndef alert_on_date(ss, dd):\n    ## CQL to select data, ? is the placeholder for parameters\n    select_cql = &quot;SELECT * FROM alert_by_date WHERE &quot; + \\\n                 &quot;price_time=?&quot;\n\n    ## prepare select CQL\n    select_stmt = ss.prepare(select_cql)\n\n    ## execute the select CQL\n    result = ss.execute(select_stmt, [dd])\n\n     ## initialize an index array\n    idx = np.asarray([])\n\n    ## initialize an array for columns\n    cols = np.asarray([])\n\n    ## loop thru the query resultset to make up the DataFrame\n    for r in result:\n        idx = np.append(idx, [r.symbol])\n        cols = np.append(cols, [r.stock_name, r.price_time, \\\n                         r.signal_price])\n\n    ## reshape the 1-D array into a 2-D array for each day\n    cols = cols.reshape(idx.shape[0], 3)\n\n    ## convert the arrays into a pandas DataFrame\n    df = pd.DataFrame(cols, index=idx, \\\n                      columns=['stock_name', 'price_time', \\\n                      'signal_price'])\n    return df\n\ndef testcase001():\n    ## create Cassandra instance\n    cluster = Cluster()\n    \n    ## establish Cassandra connection, using local default\n    session = cluster.connect()\n    \n    ## use fenagocdma keyspace\n    session.set_keyspace('fenagocdma')\n    \n    ## scan buy-and-hold signals for GS over 1 month since 28-Jun-2012\n    on_date = datetime.datetime(2012, 7, 13)\n    \n    ## retrieve alerts\n    alerts = alert_on_date(session, on_date)\n    \n    ## print out alerts\n    for index, r in alerts.iterrows():\n        print index, '\\t', \\\n              r['stock_name'], '\\t', \\\n              r['signal_price']\n    \n    ## close Cassandra connection\n    cluster.shutdown()\n\ntestcase001()\n</code></pre>\n<p>Once again, denormalization is a friend of<br />\nCassandra. It does not require a foreign key, referential integrity, or<br />\ntable join.</p>\n<h2>Implementing system changes</h2>\n<p>We can now the<br />\nchanges to the system one-by-one:</p>\n<ol>\n<li>\n<p>First we run <code>lab06_001.py</code> through to<br />\n<code>lab06_004.py</code> in sequence to make changes to the data<br />\nmodel.</p>\n</li>\n<li>\n<p>Then we execute <code>lab06_005.py</code> to retrieve stock quote<br />\ndata for the Watch List. It is worth mentioning that UPSERT is a<br />\nvery nice feature of Cassandra. We do not encounter a duplicate<br />\nprimary key while we insert the same row into a table. It simply<br />\nupdates the row if the row already exists or inserts the row<br />\notherwise. It makes the data manipulation logic neat and clean.</p>\n</li>\n<li>\n<p>Further, we run <code>chatper06_006.py</code> to store the alerts by<br />\nscanning over the stock quote data of each stock in the Watch List.</p>\n</li>\n<li>\n<p>Finally, we execute<br />\n<code>lab06_007.py</code> and <code>lab06_008.py</code> to<br />\nenquire <code>alertlist</code> and<br />\n<code>alert_by_date</code> , respectively. Their sample test results<br />\nare shown in the following figure:</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_06_02.jpg\" alt=\"\" /></p>\n</li>\n</ol>\n<h2>Summary</h2>\n<p>This lab extends the Stock Screener Application by a number of<br />\nenhancements. We made changes to the data model to demonstrate the<br />\nmodeling by query techniques and how denormalization can help us achieve<br />\na high-performance application. We also tried the batch feature provided<br />\nby Cassandra 2.0.</p>\n<p>Note that the source code in this lab is not housekept and can be<br />\nrefactored somehow. However, because of the limit on the number of<br />\npages, it is left as an exercise for the reader.</p>\n<p>The Stock Screener Application is now running on a single node cluster.</p>\n<p>In the next lab, we will delve into the considerations and<br />\nprocedures of expanding it to a larger cluster, which is quite common in<br />\nreal-life production systems.</p>\n\n</div>"
+          }
+        ]
+      }
     },
     {
       "text": "# -*- coding: utf-8 -*-\r\n# program: lab06_008.py\r\n\r\n## import Cassandra driver library\r\nfrom cassandra.cluster import Cluster\r\n\r\nimport pandas as pd\r\nimport numpy as np\r\nimport datetime\r\n\r\n## execute CQL statement to retrieve rows of\r\n## How many alerts were generated on a particular stock over\r\n## a specified period of time?\r\ndef alert_on_date(ss, dd):\r\n    ## CQL to select data, ? is the placeholder for parameters\r\n    select_cql = \"SELECT * FROM alert_by_date WHERE \" + \\\r\n                 \"price_time=?\"\r\n\r\n    ## prepare select CQL\r\n    select_stmt = ss.prepare(select_cql)\r\n\r\n    ## execute the select CQL\r\n    result = ss.execute(select_stmt, [dd])\r\n\r\n     ## initialize an index array\r\n    idx = np.asarray([])\r\n\r\n    ## initialize an array for columns\r\n    cols = np.asarray([])\r\n\r\n    ## loop thru the query resultset to make up the DataFrame\r\n    for r in result:\r\n        idx = np.append(idx, [r.symbol])\r\n        cols = np.append(cols, [r.stock_name, r.price_time, \\\r\n                         r.signal_price])\r\n\r\n    ## reshape the 1-D array into a 2-D array for each day\r\n    cols = cols.reshape(idx.shape[0], 3)\r\n\r\n    ## convert the arrays into a pandas DataFrame\r\n    df = pd.DataFrame(cols, index=idx, \\\r\n                      columns=['stock_name', 'price_time', \\\r\n                      'signal_price'])\r\n    return df\r\n\r\ndef testcase001():\r\n    ## create Cassandra instance\r\n    cluster = Cluster()\r\n    \r\n    ## establish Cassandra connection, using local default\r\n    session = cluster.connect()\r\n    \r\n        \r\n    session.execute(\"CREATE KEYSPACE IF NOT EXISTS fenagocdma \" + \\\r\n                \"WITH replication\" + \\\r\n                \"={'class':'SimpleStrategy', \" + \\\r\n                \"'replication_factor':1}\")\r\n                \r\n    ## use fenagocdma keyspace\r\n    session.set_keyspace('fenagocdma')\r\n\r\n\r\n    ## scan buy-and-hold signals for GS over 1 month since 28-Jun-2012\r\n    on_date = datetime.datetime(2012, 7, 13)\r\n    \r\n    ## retrieve alerts\r\n    alerts = alert_on_date(session, on_date)\r\n    \r\n    ## print out alerts\r\n    for index, r in alerts.iterrows():\r\n        print (index, '\\t', \\\r\n              r['stock_name'], '\\t', \\\r\n              r['signal_price'])\r\n    \r\n    ## close Cassandra connection\r\n    cluster.shutdown()\r\n\r\ntestcase001()\r\n",
       "user": "anonymous",
-      "dateUpdated": "2020-05-18T13:54:28+0000",
+      "dateUpdated": "2020-06-07T12:06:58+0000",
       "config": {
-        "colWidth": 12,
-        "fontSize": 9,
-        "enabled": true,
-        "results": {},
         "editorSetting": {
-          "language": "python",
+          "language": "scala",
           "editOnDblClick": false,
-          "completionSupport": true
+          "completionSupport": true,
+          "completionKey": "TAB"
         },
-        "editorMode": "ace/mode/python"
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
       },
       "settings": {
         "params": {},
@@ -241,27 +571,27 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1589810056438_-232217619",
+      "jobName": "paragraph_1591531618343_2139671748",
       "id": "paragraph_1589810056438_-232217619",
-      "dateCreated": "2020-05-18T13:54:16+0000",
-      "dateStarted": "2020-05-18T13:54:28+0000",
-      "dateFinished": "2020-05-18T13:54:28+0000",
-      "status": "FINISHED",
-      "$$hashKey": "object:5970"
+      "dateCreated": "2020-06-07T12:06:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:3984"
     },
     {
       "user": "anonymous",
+      "dateUpdated": "2020-06-07T12:06:58+0000",
       "config": {
-        "colWidth": 12,
-        "fontSize": 9,
-        "enabled": true,
-        "results": {},
         "editorSetting": {
-          "language": "python",
+          "language": "scala",
           "editOnDblClick": false,
-          "completionSupport": true
+          "completionSupport": true,
+          "completionKey": "TAB"
         },
-        "editorMode": "ace/mode/python"
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
       },
       "settings": {
         "params": {},
@@ -270,16 +600,16 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1589810068107_-1994929930",
+      "jobName": "paragraph_1591531618343_-196840567",
       "id": "paragraph_1589810068107_-1994929930",
-      "dateCreated": "2020-05-18T13:54:28+0000",
+      "dateCreated": "2020-06-07T12:06:58+0000",
       "status": "READY",
-      "$$hashKey": "object:5971"
+      "$$hashKey": "object:3985"
     }
   ],
   "name": "lab_6",
-  "id": "2F95WH6MF",
-  "defaultInterpreterGroup": "python",
+  "id": "2F99PJC24",
+  "defaultInterpreterGroup": "spark",
   "version": "0.9.0-preview1",
   "noteParams": {},
   "noteForms": {},
