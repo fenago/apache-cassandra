@@ -3,7 +3,7 @@
     {
       "text": "%md\n\n\nLab 5. First-cut Design and Implementation\n-------------------------------------------------------\n\n\nRiding on the ingredients of a Cassandra data model that were explained\nin the previous labs, now it is time to put them into a working\napplication. We will begin defining what we really want to store and\ninquire in the data model, setting up the environment, writing the\nprogram code, and finally testing the application.\n\nThe application to be built is a Stock Screener\nApplication, which stores the historical stock quotes in a Cassandra\ndatabase for technical analysis. The application collects the stock\nquote data from a free source on the Internet and then applies some\ntechnical analysis indicators to find out the buy and sell reference\nsignals. A brief and quick introduction of technical analysis is given\nin order to enable you to easily understand what the application does.\nAlthough it is oversimplified in architecture and not complete in\nfeatures, it does provide a good foundation for further improvement on\nmore advanced features to be made by you.\n\n\n### Note\n\n**Disclaimer**\n\nIt should be assumed that the methods, techniques, or indicators\ndiscussed in this course will be profitable and will not result in losses.\nThere is no assurance that the strategies and methods presented will be\nsuccessful, or that you will become a profitable trader. The past\nperformance and results of any trading system or trading methodology are\nnot necessarily indicative of future results. You should not trade with\nmoney that you cannot afford to lose. The examples discussed and\npresented in this course are for educational purposes only. These are not\nsolicitations of any order to buy or sell. I assume no responsibility\nfor your trading results. No representation is being made that any\naccount will, or is likely to, achieve profits or losses similar to\nthose discussed in this course. There is a very high degree of risk in\ntrading. You are encouraged to consult a certified financial advisor\nbefore making any investment or trading decisions.\n\n\n\nStock Screener Application\n--------------------------------------------\n\n\n\nIn this section, we will learn some background\ninformation of the sample application. Then, we will discuss the data\nsource, the initial data model, and the high-level processing logic of\nthe application.\n\n\n\n### An introduction to financial analysis\n\n\nA stock screener is a utility program that uses a\ncertain set of criteria to screen a large number of stocks that match\nyour preferences. It is akin to a search engine on stocks but not on\nwebsites. The screening criteria might be based on\nfundamental and/or technical analysis methods.\n\nFirstly, let us look at what fundamental analysis is.\n\n\n### Note\n\n**Fundamental analysis**\n\nFundamental analysis  involves analyzing a\ncompany's historical and present financial statements and health, its\nmanagement and competitive advantages, and its competitors and markets,\nin order to assess and calculate the value of a company stock and\npredict its probable price evolution. The goal is to make financial\nforecasts and find out the undervalued stock (stock that is cheap, in\nother words) for buy-and-hold.\n\nIn contrast, technical analysis is a totally different approach.\n\n\n### Note\n\n**Technical analysis**\n\nTechnical analysis is  a stock analysis methodology\nused to forecast the direction of prices through the study of past\nmarket data, primarily price and volume. The fundamental principle of\ntechnical analysis is that the market price reflects all the relevant\ninformation, so the analysis looks at the history of the trading\npatterns rather than external drivers such as economic, fundamental, and\nnews events.\n\nIn this course, technical analysis is solely used for the Stock Screener\nApplication. As technical analysis focuses on price actions, the Stock\nScreener Application requires stock price data as its input and then it\napplies technical analysis techniques to determine whether the stock\nfulfills the buy or sell conditions. Whenever such a condition is\nfulfilled, we can say that a trading signal is triggered.\n\nThe conceptual design of the Stock Screener Application is shown in the\nfollowing figure:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_05_01.jpg)\n\nWe will go through the  preceding figure from the\nleft to the right. **Data Feed Provider** is the source of\nstock quote data that is collected from a free Data Feed\n Provider on the Internet, such as Yahoo! Finance. It should\nbe noted that Yahoo! Finance provides free-of-charge\n**end-of-day** (**EOD**) \nstock quote data, thus providing the daily stock quote. If\nyou want the  **Stock Screener** to\nproduce intraday signals, you need to look for other Data Feed Providers\nwho typically have a wide range of paid service offers available.\n**Historical Data** is a repository to\nstore the historical stock quote data. **Stock Screener** is\nthe application to be developed in this lab. Lastly, **Alert\nList** is  a list of trading signals found\nby the **Stock Screener**.\n\nBefore we proceed to the high-level design of the **Stock\nScreener**, I would like to highlight the reasons of\nestablishing the **Historical Data** repository. There are\nthree major reasons. First, it can save tremendous network bandwidth\nfrom repeatedly downloading historical stock quote data from the Data\nFeed Provider (actually, Yahoo! Finance provides as many as 10 years of\nhistorical price data.) Second, it serves as a canonical data model so\nthat the **Stock Screener** does not need to cater for the\ndifferent data formats of different Data Feed Providers. Finally, the\n**Stock Screener** can still perform technical analysis on\nthe historical data even though it is disconnected from the Internet.\n\n\n### Stock quote data\n\n\nTechnical analysis only focuses on price action. So\nwhat is price action? Price action is simply the movement of a stock's\nprice. It is encompassed in technical and chart\npattern analysis in an attempt to discover the order in the seemingly\nrandom movement of price.\n\nOn a single day, the price action of a stock can be summarized by four\nimportant prices:\n\n\n-   **Open price**: This is the starting\n    price for that day\n\n-   **High price**: This is the highest \n    price for that day\n\n-   **Low price**: This is the lowest price\n     for that day\n\n-   **Close price**: This is the  closing\n    price for that day\n:::\n\nThese four prices are usually abbreviated as OHLC. In addition to OHLC,\nanother measure of how much of a given stock has been traded in a given\nperiod of time is known as Volume. For a complete\ntrading day, the volume is called daily volume.\n\nOnly five attributes such as **open price**, **high\nprice**, **low price**, **close price**,\nand **volume** (**OHLCV**), provide all the\nnecessary and sufficient data for technical\nanalysis of stock. Now we know the input for technical analysis, but how\ndo we get them?\n\nMany websites provide free-of-charge stock quote\ndata that are very easy to obtain, and are especially suitable for\namateur or retail traders. The following websites\nare just a few of them listed for your reference:\n\n\n-   Yahoo! Finance:\n    [http://finance.yahoo.com](http://finance.yahoo.com/)\n\n-   Google Finance:\n    <https://www.google.com/finance>\n\n-   EODData: [http://eoddata.com](http://eoddata.com/)\n\nHowever, there is a caveat that stock quote data might have errors, for\nexample, incorrect high and low prices. In this course, I selected Yahoo!\nFinance as the prime Data Feed Provider. The following screenshot is a\nsample of the historical prices of a stock called *GS*:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_05_02.jpg)\n\nAs you scroll to the  bottom of the web page,\nyou will see a link *Download to\nSpreadsheet*. When you click on this link, the historical\nstock quote data can be downloaded as a \n **Comma Separated Values** (**CSV**)\nfile. An excerpt of the CSV file is shown in the following screenshot:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_05_03.jpg)\n\nOf course, we can manually download the historical\nstock quote data from the website. Nonetheless, it becomes impractical\nwhen we want to download the data of many different\nstocks on a daily basis. Thus, we will develop a program to \nautomatically collect the data feed.\n\n\n### Initial data model\n\n\nWe now know that a single daily price action consists of a stock symbol,\ntrading date, open price, high price, low price, close price, and\nvolume. Obviously, a sequence of price action measured\ntypically at successive trading days is of a\ntime-series nature and Cassandra is very suitable for storing\ntime-series type data.\n\nAs mentioned previously, it is beneficial to store\nthe collected stock quote data locally in a\nrepository. Therefore, we will implement the repository as a table in a\nCassandra database.\n\nWe can use CQL to define a table called `quote` to store the\nhistorical prices:\n\n\n``` {.programlisting .language-markup}\n// table to store historical stock quote data\nCREATE TABLE quote (\n  symbol varchar, // stock symbol\n  price_time timestamp, // timestamp of quote\n  open_price float, // open price\n  high_price float, // high price\n  low_price float, // low price\n  close_price float, // close price\n  volume double, // volume\n  PRIMARY KEY (symbol, price_time) // primary key\n);\n```\n\nThe column data types and names are\nself-explanatory.\n\nOne useful technique of designing a Cassandra data\nmodel is to imagine the  visual representation of\nthe internal storage of a row. The following figure is such an example:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_05_04.jpg)\n\nBased on the design of the primary key, the row key is\n`symbol` and the clustering column is `price_time`.\nIt is expected that a row will become a wide row, as more historical\nstock quote data gets added to it. Without the internal storage picture,\nthis might not be easy to spot in the initial data model design stage.\nFor the time being, we just take note of the potential wide row problem\nand leave it as is (one possible solution is the date bucket pattern).\n\n\n### Processing flow\n\n\nThe following figure shows the processing\nflow of the **Stock Screener**, which\nelaborates the conceptual design with a more detailed sequence of steps.\nEach of the building blocks is explained starting first from the top, as\nshown in the following screenshot:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_05_05.jpg)\n\n**Data Feed Provider** consists of\n**Data Feed**, **Data Feed Adapter**, and\n **Data Mapper and Archiver**. Yahoo!\nFinance is chosen as the data feed. **Data Feed\nAdapter** is used to deal with the\ndifferent connectivity and interfacing methods if\nwe switch to other Data Feed\nProviders. **Data Mapper and Archiver** caters for the\ndifferent stock quote data formats and standardizes them to the\ncorresponding columns of the `quote` table.\n\nThe `quote` table is the **Historical Data**\nrepository and has been explained previously.\n\nWe now turn our focus to the core **Stock Screener**. The\nheart of the **Stock Screener** is the \n**Stock Screener Engine** that uses the \n**Screening Rule** on the **Historical Data**,\nwhich is filtered by the **Data\nScoper**. The **Screen Rule** is \n used by one or more **Technical Analysis\nSignals** so that the **Stock Screener\nEngine** produces an alert if the conditions of the\n**Technical Analysis Signals** are met.\n\nThe alert generated by the **Stock Screener Engine** is\npresented in the form of an **Alert\nList**, which can be kept as records or distributed through\nother means.\n\nBasically, the **Data Feed Provider** and the **Stock\nScreener** need not run in the same process. They work in an\nasynchronous mode. This means that the **Data Feed Provider**\ncan collect, map, and archive the historical stock quote data into the\n**Historical Data** repository, whereas the **Stock\nScreener** can analyze and produce alerts independently.\n\nWe have come up with a high-level design of the\napplication, the next thing to do is conceivably see how it can be\nimplemented.\n\n\n\nSystem design\n-------------------------------\n\n\n\nIn this section, we will select the  appropriate\nsoftware for various system components.\n\n\n\n### The operating system\n\n\nWhen considering the implementation, the first\nfundamental choice is the operating system. The\nsingle most important constraint is that it must be supported by\nCassandra. For this course, I have selected Ubuntu 14.04 LTS 64-bit\nVersion, which can be obtained at the  official\nUbuntu website, <http://www.ubuntu.com/>. You should be able to\npainlessly set up your Linux box by following the verbose installation\ninstructions.\n\nHowever, it is entirely up to you to use any other operating systems,\nsupported by Cassandra, such as Microsoft Windows and Mac OS X. Please\nfollow the respective operating system installation instructions to set\nup your machine. I have already considered the portability of the Stock\nScreener. As you will see in the subsequent sections, the Stock Screener\nApplication is designed and developed in order to be compatible with a\ngreat number of operating systems.\n\n\n### Java Runtime Environment\n\n\nAs Cassandra is Java-based, a **Java Runtime\nEnvironment** (**JRE**) is required as a\nprerequisite. I have used Oracle Java SE Runtime\nEnvironment 7 64-bit Version 1.7.0\\_65. It is provided\n at the following\nURL:<http://www.oracle.com/technetwork/java/javase/downloads/jre7-downloads-1880261.html>.\n\nOf course, I have downloaded the Linux x64 binary and followed the\ninstructions at\n<http://www.datastax.com/documentation/cassandra/2.0/cassandra/install/installJreDeb.html>\nto properly set up the JRE.\n\nAt the time of writing, Java SE has been updated to Version 8. However,\nI have not tested JRE 8 and DataStax recommends JRE 7 for Cassandra 2.0\ntoo. Therefore, I will stick to JRE 7 in this course.\n\n\n### Java Native Access\n\n\nIf you want to deploy Cassandra in production use\non Linux platforms, **Java Native Access**\n(**JNA**) is required to improve Cassandra's memory usage.\nWhen installed and configured, Linux does not swap\nthe  **Java virtual machine**\n(**JVM**), and thus avoids any performance related issues.\nThis is recommended as a best practice even when Cassandra, which is to\nbe installed, is for non-production use.\n\nTo install JNA on Ubuntu, simply use Aptitude\nPackage Manager with the following command in a terminal:\n\n\n``` {.programlisting .language-markup}\n$ sudo apt-get install libjna-java\n```\n\n### Programming language\n\n\nIt is now time to turn our attention to the programming language for the\nimplementation of the Stock Screener Application. For this course, I have\nchosen Python. Python is a high-level programming language \ndesigned for speed of development. It is open source, free,\nand cross-platform. It possesses a wealthy set of libraries for almost\nevery popular algorithm you can imagine.\n\nYou need not be afraid of learning Python if you\nare not familiar with it. Python is designed such that it is very easy\nto learn when compared to other programming languages such as C++.\nCoding a Python program is pretty much like writing pseudocode that\nimproves the speed of development.\n\nIn addition, there are many renowned Python libraries used for data\nanalysis, for example, NumPy, SciPy, pandas, scikit-learn, and\nmatplotlib. You can make use of them to quickly build a full-blown\napplication with all the bells and whistles. For the Stock Screener\nApplication, you will use NumPy and pandas extensively.\n\nWhen it comes to high performance, Python can also utilize Cython, which\nis an optimizing static complier for Python programs to run as fast as\nnative C or C++ programs.\n\nThe latest major version of Python is Python 3. However, there are still\nmany programs running that are written in Python 2. This is caused by\nthe breaking backward compatibility of Python 3 that makes the migration\nof so many libraries written in Python 2 to Python 3, a very long way to\ngo. Hence, the coexistence of Python 2 and Python 3 is expected for\nquite a long time in future. For this course, Python 2.7.x is used.\n\nThe following steps are used to install Python 2.7\nin Ubuntu using a terminal:\n\n\n``` {.programlisting .language-markup}\n$ sudo apt-get –y update\n$ sudo apt-get –y upgrade\n$ sudo apt-get install python-pip python-dev \\\n$ python2.7-dev build-essential\n```\n\nOnce the installation is complete, type the following command:\n\n\n``` {.programlisting .language-markup}\n$ python --version\n```\n\nYou should see the version string returned by Python, which tells you\nthat the installation has been successful.\n\nOne problem that many Python beginners face is the cumbersome\ninstallation of the various library packages. To rectify this problem, I\nsuggest that the reader downloads the Anaconda distribution. Anaconda is\ncompletely free and includes almost 200 of the most popular Python\npackages for Science, Mathematics, engineering, and data analysis.\nAlthough it is  rather bulky in size, it frees you\nfrom the Python package hustle. Anaconda can be\ndownloaded at <http://continuum.io/downloads>, where you can select the\nappropriate versions of Python and the operating\nsystem. It is straightforward to install Anaconda by following the\ninstallation instructions, so I will not detail the steps here.\n\n\n### Cassandra driver\n\n\nThe last item of the system environment is the\ndriver software for Python to connect to a Cassandra database. In fact,\nthere are several choices out there, for example, pycassa, Cassandra\ndriver, and Thrift. I have chosen Python Driver 2.0\nfor Apache Cassandra distributed by DataStax. It exclusively supports\nCQL 3 and Cassandra's new binary protocol, which was introduced in\nVersion 1.2. More detailed information can be found\nat\n<http://www.datastax.com/documentation/developer/python-driver/2.0/common/drivers/introduction/introArchOverview_c.html>.\n\nThe driver can be easily installed with pip in a Ubuntu terminal:\n\n\n``` {.programlisting .language-markup}\n$ pip install cassandra-driver\n```\n\n### Note\n\n**pip**\n\npip is a command-line package management system\nused to install and manage Python library packages. Its project page can\nbe found at Github, <https://github.com/pypa/pip>.\n\n\n### The integrated development environment\n\n\nSpyder is an open source, cross-platform **integrated development\nenvironment** (**IDE**), usually \nused for scientific programming in\nPython. It is automatically installed by Anaconda and integrates NumPy,\nSciPy, matplotlib, IPython, and other open source software. It is\nalso my favorite Python development environment.\n\nThere are many other good and popular Python IDEs, such as IPython and\nEclipse. The code in this course is friendly to these IDEs.\n\n\n### The system overview\n\n\nAlright, we have gone through the major system\ncomponents of the Stock Screener Application and decided their\nimplementation. The following figure depicts the system overview for the\nimplementation of the application:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_05_06.jpg)\n\nIt is worth noting that the system will be developed on a single Ubuntu\nmachine first and then on a single node Cassandra cluster,\n*Deployment and Monitoring*, we will expand the\ncluster to a two-node cluster). It serves as a\nlimit to the superb clustering capabilities of Cassandra. However, from\nthe software development perspective, the most important thing is to\ncompletely realize the required functionalities rather than splitting\nthe significant efforts on the system or infrastructure components,\nwhich are of second priority.\n\n\n\nCode design and development\n---------------------------------------------\n\n\n\nWe are now entering the  development stage. I will\nwalk you through the coding of the application\nbuilding blocks step-by-step. Logically, two core modules\n will be built, namely, Data Feed Provider and Stock\nScreener. First, we will build the Data Feed Provider.\n\n\n\n### Data Feed Provider\n\n\nThe Data Feed Provider achieves the following three\ntasks:\n\n\n1.  Collecting the historical stock quote data from Yahoo! Finance.\n\n2.  Transforming the received data into a standardized format.\n\n3.  Saving the standardized data into the Cassandra database.\n\nPython has a well-known data analysis library\ncalled pandas. It is an open source library\nproviding high-performance, easy-to-use data structures, and data\nanalysis tools, especially, for time-series type of\ndata. You can go to <http://pandas.pydata.org/> for more details.\n\n\n\n#### Collecting stock quote\n\n\npandas offers a `DataReader` function in its\n`pandas_datareader` package. `DataReader` extracts\nfinancial data from various Internet sources into\na data structure known as `DataFrame`.\nYahoo! Finance is one of the supported Internet sources, making the\ncollection of the historical stock quote data a piece of cake. Refer to\nthe following Python code, `lab05_001.py`:\n\n\n``` {.programlisting .language-markup}\n# -*- coding: utf-8 -*-\n# program: lab05_001.py\n\n## web is the shorthand alias of pandas_datareader\nimport pandas_datareader as web\nimport datetime\n\n## we want to retrieve the historical daily stock quote of\n## Goldman Sachs from Yahoo! Finance for the period\n## between 1-Jan-2012 and 28-Jun-2014\nsymbol = 'GS'\nstart_date = datetime.datetime(2012, 1, 1)\nend_date = datetime.datetime(2014, 6, 28)\n\n## data is a DataFrame holding the daily stock quote\ndata = web.DataReader(symbol, 'yahoo', start_date, end_date)\n\n## use a for-loop to print out the data\nfor index, row in data.iterrows():\n    print index.date(), '\\t', row['Open'], '\\t', row['High'], \\\n          '\\t', row['Low'], '\\t', row['Close'], '\\t', row['Volume']\n```\n\nA brief explanation is required. pandas offers a very handy data\nstructure called `DataFrame` , which is a two-dimensional\nlabeled data structure with columns of potentially different\n types. You can think of it as a spreadsheet or SQL table. It\nis generally the most commonly used pandas object.\n\nThe following is a screenshot demonstrating the use of Spyder to write\nand test `lab05_001.py` code:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_05_07.jpg)\n\nThe left-hand side of the Spyder IDE is the place where you write Python\ncode. The middle panel on the right-hand side is the **IPython\nconsole** that runs the code.\n\n",
       "user": "anonymous",
-      "dateUpdated": "2020-06-07T12:05:22+0000",
+      "dateUpdated": "2020-06-09T15:54:42+0000",
       "config": {
         "editorSetting": {
           "language": "text",
@@ -34,17 +34,17 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1591531522520_-561817931",
+      "jobName": "paragraph_1591718082753_-2049602819",
       "id": "paragraph_1591531052208_-1931024947",
-      "dateCreated": "2020-06-07T12:05:22+0000",
+      "dateCreated": "2020-06-09T15:54:42+0000",
       "status": "READY",
       "focus": true,
-      "$$hashKey": "object:407"
+      "$$hashKey": "object:30747"
     },
     {
       "text": "# -*- coding: utf-8 -*-\r\n# program: lab05_001.py\r\n\r\n## web is the shorthand alias of pandas_datareader\r\nimport pandas_datareader as web\r\nimport datetime\r\n\r\n## we want to retrieve the historical daily stock quote of\r\n## Goldman Sachs from Yahoo! Finance for the period\r\n## between 1-Jan-2012 and 28-Jun-2014\r\nsymbol = 'GS'\r\nstart_date = datetime.datetime(2012, 1, 1)\r\nend_date = datetime.datetime(2014, 6, 28)\r\n\r\n## data is a DataFrame holding the daily stock quote\r\ndata = web.DataReader(symbol, 'yahoo', start_date, end_date)\r\n\r\n## use a for-loop to print out the data\r\nfor index, row in data.iterrows():\r\n    print (index.date(), '\\t', row['Open'], '\\t', row['High'], \\\r\n          '\\t', row['Low'], '\\t', row['Close'], '\\t', row['Volume'])\r\n",
       "user": "anonymous",
-      "dateUpdated": "2020-06-07T12:05:22+0000",
+      "dateUpdated": "2020-06-09T15:54:42+0000",
       "config": {
         "editorSetting": {
           "language": "scala",
@@ -65,16 +65,16 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1591531522527_126090945",
+      "jobName": "paragraph_1591718082755_1314262762",
       "id": "paragraph_1589809445834_1256970500",
-      "dateCreated": "2020-06-07T12:05:22+0000",
+      "dateCreated": "2020-06-09T15:54:42+0000",
       "status": "READY",
-      "$$hashKey": "object:408"
+      "$$hashKey": "object:30748"
     },
     {
       "text": "%md\n\n\n\n#### Transforming data\n\n\nAlong with the data in the `DataFrame` , you can optionally\npass index (row labels) and columns (column labels). The row and column\nlabels can be accessed respectively, by accessing the index and columns\nattributes. For example, you can revisit the screenshot of\n`table.csv` and see that the column names\nreturned by Yahoo! Finance are **Date**, **Open**,\n**High**, **Low**, **Close**,\n**Volume**, and **Adj Close**, respectively.\n`DataReader` uses **Date** as the index of the\nreturned `DataFrame`. The remaining column names become the\ncolumn labels of the `DataFrame`.\n\nThe last for-loop in `lab05_001.py` is also worth some\nremarks. `DataFrame` has a function, `iterrows()` ,\nfor iterating over its rows as (index, columns)\npairs. Therefore, the for-loop uses `iterrows()` to iterate\nthe daily stock quotes and we simply print out the index (that is\nconverted to a string by the `date()` function), and the\n**Open**, **High**, **Low**,\n**Close**, **Volume** columns by passing the\nrespective column labels to the row. **Adj Close** is a close\nprice with adjustments of stock split, merge, and dividend. We do not\nuse this, as we want to focus on pure prices.\n\nPlease be aware that stock quote data from the different sources might\nhave different formats and, needless to say, different column names.\nTherefore, we need to take care of such a subtle difference, when\nmapping them to our standardized data model. `DataFrame`\nprovides a very handy way to retrieve the data by column names and a few\nuseful functions to manipulate the index and columns. We can make use of\nthem to standardize the data format, as shown in\n`lab05_002.py`:\n\n\n``` {.programlisting .language-markup}\n# -*- coding: utf-8 -*-\n# program: lab05_002.py\n\n## web is the shorthand alias of pandas_datareader\nimport pandas_datareader as web\nimport datetime\n\n## we want to retrieve the historical daily stock quote of\n## Goldman Sachs from Yahoo! Finance for the period\n## between 1-Jan-2012 and 28-Jun-2014\nsymbol = 'GS'\nstart_date = datetime.datetime(2012, 1, 1)\nend_date = datetime.datetime(2014, 6, 28)\n\n## data is a DataFrame holding the daily stock quote\ndata = web.DataReader(symbol, 'yahoo', start_date, end_date)\n\n## standardize the column names\n## rename index column to price_date to match the Cassandra table\ndata.index.names=['price_date']\n\n## drop extra column 'Adj Close'\ndata = data.drop(['Adj Close'], axis=1)\n\n## rename the columns to match the respective columns in Cassandra\ndata = data.rename(columns={'Open':'open_price', \\\n                            'High':'high_price', \\\n                            'Low':'low_price', \\\n                            'Close':'close_price', \\\n                            'Volume':'volume'})\n\n## use a for-loop to print out the transformed data\nfor index, row in data.iterrows():\n    print index.date(), '\\t', row['open_price'], '\\t', \\\n                              row['high_price'], '\\t', \\\n                              row['low_price'], '\\t', \\\n                              row['close_price'], '\\t', \\\n                              row['volume']\n```\n\n",
       "user": "anonymous",
-      "dateUpdated": "2020-06-07T12:05:22+0000",
+      "dateUpdated": "2020-06-09T15:54:42+0000",
       "config": {
         "editorSetting": {
           "language": "text",
@@ -105,16 +105,16 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1591531522527_-590300894",
+      "jobName": "paragraph_1591718082755_464908241",
       "id": "paragraph_1591531069326_765903079",
-      "dateCreated": "2020-06-07T12:05:22+0000",
+      "dateCreated": "2020-06-09T15:54:42+0000",
       "status": "READY",
-      "$$hashKey": "object:409"
+      "$$hashKey": "object:30749"
     },
     {
       "text": "# -*- coding: utf-8 -*-\r\n# program: lab05_002.py\r\n\r\n## web is the shorthand alias of pandas_datareader\r\nimport pandas_datareader as web\r\nimport datetime\r\n\r\n## we want to retrieve the historical daily stock quote of\r\n## Goldman Sachs from Yahoo! Finance for the period\r\n## between 1-Jan-2012 and 28-Jun-2014\r\nsymbol = 'GS'\r\nstart_date = datetime.datetime(2012, 1, 1)\r\nend_date = datetime.datetime(2014, 6, 28)\r\n\r\n## data is a DataFrame holding the daily stock quote\r\ndata = web.DataReader(symbol, 'yahoo', start_date, end_date)\r\n\r\n## standardize the column names\r\n## rename index column to price_date to match the Cassandra table\r\ndata.index.names=['price_date']\r\n\r\n## drop extra column 'Adj Close'\r\ndata = data.drop(['Adj Close'], axis=1)\r\n\r\n## rename the columns to match the respective columns in Cassandra\r\ndata = data.rename(columns={'Open':'open_price', \\\r\n                            'High':'high_price', \\\r\n                            'Low':'low_price', \\\r\n                            'Close':'close_price', \\\r\n                            'Volume':'volume'})\r\n\r\n## use a for-loop to print out the transformed data\r\nfor index, row in data.iterrows():\r\n    print (index.date(), '\\t', row['open_price'], '\\t', \\\r\n                              row['high_price'], '\\t', \\\r\n                              row['low_price'], '\\t', \\\r\n                              row['close_price'], '\\t', \\\r\n                              row['volume'])\r\n",
       "user": "anonymous",
-      "dateUpdated": "2020-06-07T12:05:22+0000",
+      "dateUpdated": "2020-06-09T15:54:42+0000",
       "config": {
         "editorSetting": {
           "language": "scala",
@@ -135,16 +135,16 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1591531522527_166488491",
+      "jobName": "paragraph_1591718082755_2130353674",
       "id": "paragraph_1589809456213_-2142268776",
-      "dateCreated": "2020-06-07T12:05:22+0000",
+      "dateCreated": "2020-06-09T15:54:42+0000",
       "status": "READY",
-      "$$hashKey": "object:410"
+      "$$hashKey": "object:30750"
     },
     {
       "text": "\r\n%md\r\n#### Storing data in Cassandra\r\n\r\n\r\nBefore storing the retrieved data in Cassandra, we\r\nneed to create the keyspace and table in the Cassandra database. We will\r\ncreate a keyspace called `fenagocdma` and\r\na table called `quote` in `lab05_003.py` to hold\r\nthe Historical Data, as shown in the following\r\ncode:\r\n",
       "user": "anonymous",
-      "dateUpdated": "2020-06-07T12:05:22+0000",
+      "dateUpdated": "2020-06-09T15:54:42+0000",
       "config": {
         "editorSetting": {
           "language": "text",
@@ -175,16 +175,16 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1591531522527_683478123",
+      "jobName": "paragraph_1591718082755_1186118078",
       "id": "paragraph_1591531118127_362298526",
-      "dateCreated": "2020-06-07T12:05:22+0000",
+      "dateCreated": "2020-06-09T15:54:42+0000",
       "status": "READY",
-      "$$hashKey": "object:411"
+      "$$hashKey": "object:30751"
     },
     {
       "text": "# -*- coding: utf-8 -*-\r\n# program: lab05_003.py\r\n\r\n## import Cassandra driver library\r\nfrom cassandra.cluster import Cluster\r\n\r\n## create Cassandra instance\r\ncluster = Cluster()\r\n\r\n## establish Cassandra connection, using local default\r\nsession = cluster.connect()\r\n\r\n## create keyspace fenagocdma if not exists\r\n## currently it runs on a single-node cluster\r\nsession.execute(\"CREATE KEYSPACE IF NOT EXISTS fenagocdma \" + \\\r\n                \"WITH replication\" + \\\r\n                \"={'class':'SimpleStrategy', \" + \\\r\n                \"'replication_factor':1}\")\r\n\r\n## use fenagocdma keyspace\r\nsession.set_keyspace('fenagocdma')\r\n\r\n## execute CQL statement to create quote table if not exists\r\nsession.execute('CREATE TABLE IF NOT EXISTS quote (' + \\\r\n                'symbol varchar,' + \\\r\n                'price_time timestamp,' + \\\r\n                'open_price float,' + \\\r\n                'high_price float,' + \\\r\n                'low_price float,' + \\\r\n                'close_price float,' + \\\r\n                'volume double,' + \\\r\n                'PRIMARY KEY (symbol, price_time))')\r\n\r\n## close Cassandra connection\r\ncluster.shutdown()\r\n",
       "user": "anonymous",
-      "dateUpdated": "2020-06-07T12:05:22+0000",
+      "dateUpdated": "2020-06-09T15:54:42+0000",
       "config": {
         "editorSetting": {
           "language": "scala",
@@ -205,16 +205,16 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1591531522528_489555760",
+      "jobName": "paragraph_1591718082755_-2008700859",
       "id": "paragraph_1589809467574_378285908",
-      "dateCreated": "2020-06-07T12:05:22+0000",
+      "dateCreated": "2020-06-09T15:54:42+0000",
       "status": "READY",
-      "$$hashKey": "object:412"
+      "$$hashKey": "object:30752"
     },
     {
       "text": "%md\n\n\n\nThe comments of the code are sufficient to explain what it is doing.\nNow, we have the Historical Data repository ready\nand what follows is to store the received data into it. This is exactly\nthe purpose of `lab05_004.py` in\nwhich a Python function is created to insert the\ndata, as shown in the following code:\n\n\n``` {.programlisting .language-markup}\n# -*- coding: utf-8 -*-\n# program: lab05_004.py\n\n## import Cassandra driver library\nfrom cassandra.cluster import Cluster\nfrom decimal import Decimal\n\n## function to insert historical data into table quote\n## ss: Cassandra session\n## sym: stock symbol\n## d: standardized DataFrame containing historical data\ndef insert_quote(ss, sym, d):\n    ## CQL to insert data, ? is the placeholder for parameters\n    insert_cql = 'INSERT INTO quote (' + \\\n                 'symbol, price_time, open_price, high_price,' + \\\n                 'low_price, close_price, volume' + \\\n                 ') VALUES (' + \\\n                 '?, ?, ?, ?, ?, ?, ?' + \\\n                 ')'\n    ## prepare the insert CQL as it will run repeatedly\n    insert_stmt = ss.prepare(insert_cql)\n\n    ## set decimal places to 4 digits\n    getcontext().prec = 4\n\n    ## loop thru the DataFrame and insert records\n    for index, row in d.iterrows():\n        ss.execute(insert_stmt, \\\n                   [sym, index, \\\n                   Decimal(row['open_price']), \\\n                   Decimal(row['high_price']), \\\n                   Decimal(row['low_price']), \\\n                   Decimal(row['close_price']), \\\n                   Decimal(row['volume']) \\\n                   ])\n```\n\nAlthough `lab05_004.py` contains less than ten lines of\ncode, it is rather complicated and needs some explanation.\n\nWe can create a function in Python using the\nkeyword `def`. This must be followed by the function name and\nthe parenthesized list of formal parameters. The\ncode that form the body of the function starts in\nthe next line, indented by a tab. Thus, in `lab05_004.py` ,\nthe function name is `insert_quote()` with three parameters,\nnamely, `ss` , `sym` , and `d`.\n",
       "user": "anonymous",
-      "dateUpdated": "2020-06-07T12:05:22+0000",
+      "dateUpdated": "2020-06-09T15:54:42+0000",
       "config": {
         "editorSetting": {
           "language": "text",
@@ -245,16 +245,16 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1591531522528_-1521844934",
+      "jobName": "paragraph_1591718082755_1247794496",
       "id": "paragraph_1591531184527_534548598",
-      "dateCreated": "2020-06-07T12:05:22+0000",
+      "dateCreated": "2020-06-09T15:54:42+0000",
       "status": "READY",
-      "$$hashKey": "object:413"
+      "$$hashKey": "object:30753"
     },
     {
       "text": "# -*- coding: utf-8 -*-\r\n# program: lab05_004.py\r\n\r\n## import Cassandra driver library\r\nfrom cassandra.cluster import Cluster\r\nfrom decimal import Decimal\r\n\r\n## function to insert historical data into table quote\r\n## ss: Cassandra session\r\n## sym: stock symbol\r\n## d: standardized DataFrame containing historical data\r\ndef insert_quote(ss, sym, d):\r\n    ## CQL to insert data, ? is the placeholder for parameters\r\n    insert_cql = 'INSERT INTO quote (' + \\\r\n                 'symbol, price_time, open_price, high_price,' + \\\r\n                 'low_price, close_price, volume' + \\\r\n                 ') VALUES (' + \\\r\n                 '?, ?, ?, ?, ?, ?, ?' + \\\r\n                 ')'\r\n    ## prepare the insert CQL as it will run repeatedly\r\n    insert_stmt = ss.prepare(insert_cql)\r\n\r\n    ## set decimal places to 4 digits\r\n    getcontext().prec = 4\r\n\r\n    ## loop thru the DataFrame and insert records\r\n    for index, row in d.iterrows():\r\n        ss.execute(insert_stmt, \\\r\n                   [sym, index, \\\r\n                   Decimal(row['open_price']), \\\r\n                   Decimal(row['high_price']), \\\r\n                   Decimal(row['low_price']), \\\r\n                   Decimal(row['close_price']), \\\r\n                   Decimal(row['volume']) \\\r\n                   ])\r\n",
       "user": "anonymous",
-      "dateUpdated": "2020-06-07T12:05:22+0000",
+      "dateUpdated": "2020-06-09T15:54:42+0000",
       "config": {
         "editorSetting": {
           "language": "scala",
@@ -275,16 +275,16 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1591531522528_393347272",
+      "jobName": "paragraph_1591718082755_-1004318780",
       "id": "paragraph_1589809474754_-443629134",
-      "dateCreated": "2020-06-07T12:05:22+0000",
+      "dateCreated": "2020-06-09T15:54:42+0000",
       "status": "READY",
-      "$$hashKey": "object:414"
+      "$$hashKey": "object:30754"
     },
     {
       "text": "%md\n\n\n### Note\n\n**Indentation in Python**\n\nIn Python, leading whitespace (spaces and tabs) at the beginning of a\nlogical line is used to compute the indentation level of the line, which\nin turn is used to determine the grouping of statements. Be very careful\nof this. Most of the Python IDE has features to check against the\nindentations. The article on the myths about indentation of Python is\nworth reading, which is available at\n<http://www.secnetix.de/olli/Python/block_indentation.hawk>.\n\nThe second interesting thing is the `prepare()` function. It\nis used to prepare CQL statements that are parsed by Cassandra and then\nsaved for later use. When the driver uses a prepared\n statement, it only needs to send the values of parameters to\nbind. This lowers network traffic and CPU utilization as a result\nof the avoidance of re-parsing the statement each\ntime.\n\nThe placeholders for prepared statements are\n`?` characters so that the parameters are passed in sequence.\nThis method is called positional parameter passing.\n\nThe last segment of code is a for-loop that iterates through the\n`DataFrame` and inserts each row into the quote table. We also\nuse the `Decimal()` function to cast the string into numeric\nvalue.\n\n\n#### Putting them all together\n\n\nAll pieces of Python code can be combined to make\nthe Data Feed Provider. To make the code cleaner, the code fragment for\nthe collection of stock quote is encapsulated in a function called\n`collect_data()` and that for data transformation in\n`transform_yahoo()` function. The complete program,\n`lab05_005.py` , is listed as follows:.\n\n\n``` {.programlisting .language-markup}\n# -*- coding: utf-8 -*-\n# program: lab05_005.py\n\n## import Cassandra driver library\nfrom cassandra.cluster import Cluster\nfrom decimal import Decimal\n\n## web is the shorthand alias of pandas_datareader\nimport pandas_datareader as web\nimport datetime\n\n## function to insert historical data into table quote\n## ss: Cassandra session\n## sym: stock symbol\n## d: standardized DataFrame containing historical data\ndef insert_quote(ss, sym, d):\n    ## CQL to insert data, ? is the placeholder for parameters\n    insert_cql = \"INSERT INTO quote (\" + \\\n                 \"symbol, price_time, open_price, high_price,\" + \\\n                 \"low_price, close_price, volume\" + \\\n                 \") VALUES (\" + \\\n                 \"?, ?, ?, ?, ?, ?, ?\" + \\\n                 \")\"\n    ## prepare the insert CQL as it will run repeatedly\n    insert_stmt = ss.prepare(insert_cql)\n\n    ## set decimal places to 4 digits\n    getcontext().prec = 4\n\n    ## loop thru the DataFrame and insert records\n    for index, row in d.iterrows():\n        ss.execute(insert_stmt, \\\n                   [sym, index, \\\n                   Decimal(row['open_price']), \\\n                   Decimal(row['high_price']), \\\n                   Decimal(row['low_price']), \\\n                   Decimal(row['close_price']), \\\n                   Decimal(row['volume']) \\\n                   ])\n\n## retrieve the historical daily stock quote from Yahoo! Finance\n## Parameters\n## sym: stock symbol\n## sd: start date\n## ed: end date\ndef collect_data(sym, sd, ed):\n    ## data is a DataFrame holding the daily stock quote\n    data = web.DataReader(sym, 'yahoo', sd, ed)\n    return data\n\n## transform received data into standardized format\n## Parameter\n## d: DataFrame containing Yahoo! Finance stock quote\ndef transform_yahoo(d):\n    ## drop extra column 'Adj Close'\n    d1 = d.drop(['Adj Close'], axis=1)\n\n    ## standardize the column names\n    ## rename index column to price_date\n    d1.index.names=['price_date']\n\n    ## rename the columns to match the respective columns\n    d1 = d1.rename(columns={'Open':'open_price', \\\n                            'High':'high_price', \\\n                            'Low':'low_price', \\\n                            'Close':'close_price', \\\n                            'Volume':'volume'})\n    return d1\n\n## create Cassandra instance\ncluster = Cluster()\n\n## establish Cassandra connection, using local default\nsession = cluster.connect('fenagocdma')\n\nsymbol = 'GS'\nstart_date = datetime.datetime(2012, 1, 1)\nend_date = datetime.datetime(2014, 6, 28)\n\n## collect data\ndata = collect_data(symbol, start_date, end_date)\n\n## transform Yahoo! Finance data\ndata = transform_yahoo(data)\n\n## insert historical data\ninsert_quote(session, symbol, data)\n\n## close Cassandra connection\ncluster.shutdown()\n```",
       "user": "anonymous",
-      "dateUpdated": "2020-06-07T12:05:22+0000",
+      "dateUpdated": "2020-06-09T15:54:42+0000",
       "config": {
         "editorSetting": {
           "language": "text",
@@ -315,16 +315,16 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1591531522528_-1554762779",
+      "jobName": "paragraph_1591718082755_-1892563367",
       "id": "paragraph_1591531205826_277403611",
-      "dateCreated": "2020-06-07T12:05:22+0000",
+      "dateCreated": "2020-06-09T15:54:42+0000",
       "status": "READY",
-      "$$hashKey": "object:415"
+      "$$hashKey": "object:30755"
     },
     {
-      "text": "# -*- coding: utf-8 -*-\r\n# program: lab05_005.py\r\n\r\n## import Cassandra driver library\r\nfrom cassandra.cluster import Cluster\r\nfrom decimal import Decimal\r\n\r\n## web is the shorthand alias of pandas_datareader\r\nimport pandas_datareader as web\r\nimport datetime\r\n\r\n## function to insert historical data into table quote\r\n## ss: Cassandra session\r\n## sym: stock symbol\r\n## d: standardized DataFrame containing historical data\r\ndef insert_quote(ss, sym, d):\r\n    ## CQL to insert data, ? is the placeholder for parameters\r\n    insert_cql = \"INSERT INTO quote (\" + \\\r\n                 \"symbol, price_time, open_price, high_price,\" + \\\r\n                 \"low_price, close_price, volume\" + \\\r\n                 \") VALUES (\" + \\\r\n                 \"?, ?, ?, ?, ?, ?, ?\" + \\\r\n                 \")\"\r\n    ## prepare the insert CQL as it will run repeatedly\r\n    insert_stmt = ss.prepare(insert_cql)\r\n\r\n    ## set decimal places to 4 digits\r\n    getcontext().prec = 4\r\n\r\n    ## loop thru the DataFrame and insert records\r\n    for index, row in d.iterrows():\r\n        ss.execute(insert_stmt, \\\r\n                   [sym, index, \\\r\n                   Decimal(row['open_price']), \\\r\n                   Decimal(row['high_price']), \\\r\n                   Decimal(row['low_price']), \\\r\n                   Decimal(row['close_price']), \\\r\n                   Decimal(row['volume']) \\\r\n                   ])\r\n\r\n## retrieve the historical daily stock quote from Yahoo! Finance\r\n## Parameters\r\n## sym: stock symbol\r\n## sd: start date\r\n## ed: end date\r\ndef collect_data(sym, sd, ed):\r\n    ## data is a DataFrame holding the daily stock quote\r\n    data = web.DataReader(sym, 'yahoo', sd, ed)\r\n    return data\r\n\r\n## transform received data into standardized format\r\n## Parameter\r\n## d: DataFrame containing Yahoo! Finance stock quote\r\ndef transform_yahoo(d):\r\n    ## drop extra column 'Adj Close'\r\n    d1 = d.drop(['Adj Close'], axis=1)\r\n\r\n    ## standardize the column names\r\n    ## rename index column to price_date\r\n    d1.index.names=['price_date']\r\n\r\n    ## rename the columns to match the respective columns\r\n    d1 = d1.rename(columns={'Open':'open_price', \\\r\n                            'High':'high_price', \\\r\n                            'Low':'low_price', \\\r\n                            'Close':'close_price', \\\r\n                            'Volume':'volume'})\r\n    return d1\r\n\r\n## create Cassandra instance\r\ncluster = Cluster()\r\n\r\n## establish Cassandra connection, using local default\r\nsession = cluster.connect('fenagocdma')\r\n\r\nsymbol = 'GS'\r\nstart_date = datetime.datetime(2012, 1, 1)\r\nend_date = datetime.datetime(2014, 6, 28)\r\n\r\n## collect data\r\ndata = collect_data(symbol, start_date, end_date)\r\n\r\n## transform Yahoo! Finance data\r\ndata = transform_yahoo(data)\r\n\r\n## insert historical data\r\ninsert_quote(session, symbol, data)\r\n\r\n## close Cassandra connection\r\ncluster.shutdown()\r\n",
+      "text": "# -*- coding: utf-8 -*-\r\n# program: lab05_005.py\r\n\r\n## import Cassandra driver library\r\nfrom cassandra.cluster import Cluster\r\nfrom decimal import Decimal\r\nfrom decimal import *\r\n\r\n## web is the shorthand alias of pandas_datareader\r\nimport pandas_datareader as web\r\nimport datetime\r\n\r\n## function to insert historical data into table quote\r\n## ss: Cassandra session\r\n## sym: stock symbol\r\n## d: standardized DataFrame containing historical data\r\ndef insert_quote(ss, sym, d):\r\n    ## CQL to insert data, ? is the placeholder for parameters\r\n    insert_cql = \"INSERT INTO quote (\" + \\\r\n                 \"symbol, price_time, open_price, high_price,\" + \\\r\n                 \"low_price, close_price, volume\" + \\\r\n                 \") VALUES (\" + \\\r\n                 \"?, ?, ?, ?, ?, ?, ?\" + \\\r\n                 \")\"\r\n    ## prepare the insert CQL as it will run repeatedly\r\n    insert_stmt = ss.prepare(insert_cql)\r\n\r\n    ## set decimal places to 4 digits\r\n    getcontext().prec = 4\r\n\r\n    ## loop thru the DataFrame and insert records\r\n    for index, row in d.iterrows():\r\n        ss.execute(insert_stmt, \\\r\n                   [sym, index, \\\r\n                   Decimal(row['open_price']), \\\r\n                   Decimal(row['high_price']), \\\r\n                   Decimal(row['low_price']), \\\r\n                   Decimal(row['close_price']), \\\r\n                   Decimal(row['volume']) \\\r\n                   ])\r\n\r\n## retrieve the historical daily stock quote from Yahoo! Finance\r\n## Parameters\r\n## sym: stock symbol\r\n## sd: start date\r\n## ed: end date\r\ndef collect_data(sym, sd, ed):\r\n    ## data is a DataFrame holding the daily stock quote\r\n    data = web.DataReader(sym, 'yahoo', sd, ed)\r\n    return data\r\n\r\n## transform received data into standardized format\r\n## Parameter\r\n## d: DataFrame containing Yahoo! Finance stock quote\r\ndef transform_yahoo(d):\r\n    ## drop extra column 'Adj Close'\r\n    d1 = d.drop(['Adj Close'], axis=1)\r\n\r\n    ## standardize the column names\r\n    ## rename index column to price_date\r\n    d1.index.names=['price_date']\r\n\r\n    ## rename the columns to match the respective columns\r\n    d1 = d1.rename(columns={'Open':'open_price', \\\r\n                            'High':'high_price', \\\r\n                            'Low':'low_price', \\\r\n                            'Close':'close_price', \\\r\n                            'Volume':'volume'})\r\n    return d1\r\n\r\n## create Cassandra instance\r\ncluster = Cluster()\r\n\r\n## establish Cassandra connection, using local default\r\nsession = cluster.connect('fenagocdma')\r\n\r\nsymbol = 'GS'\r\nstart_date = datetime.datetime(2012, 1, 1)\r\nend_date = datetime.datetime(2014, 6, 28)\r\n\r\n## collect data\r\ndata = collect_data(symbol, start_date, end_date)\r\n\r\n## transform Yahoo! Finance data\r\ndata = transform_yahoo(data)\r\n\r\n## insert historical data\r\ninsert_quote(session, symbol, data)\r\n\r\n## close Cassandra connection\r\ncluster.shutdown()\r\n",
       "user": "anonymous",
-      "dateUpdated": "2020-06-07T12:05:22+0000",
+      "dateUpdated": "2020-06-09T15:54:42+0000",
       "config": {
         "editorSetting": {
           "language": "scala",
@@ -345,16 +345,16 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1591531522529_-1407085481",
+      "jobName": "paragraph_1591718082755_2092175668",
       "id": "paragraph_1589809481463_-1975483584",
-      "dateCreated": "2020-06-07T12:05:22+0000",
+      "dateCreated": "2020-06-09T15:54:42+0000",
       "status": "READY",
-      "$$hashKey": "object:416"
+      "$$hashKey": "object:30756"
     },
     {
       "text": "%md\n\n\n\n### Stock Screener\n\n\nThe Stock Screener retrieves historical\ndata from the Cassandra database \nand applies technical analysis techniques to produce alerts.\nIt has four components:\n\n\n1.  Retrieve historical data over a specified period\n\n2.  Program a technical analysis indicator for time-series data\n\n3.  Apply the screening rule to the historical data\n\n4.  Produce alert signals\n\n\n#### Data Scoper\n\n\nTo utilize technical analysis techniques, a\nsufficient optimal number of stock quote data is required for\ncalculation. We do not need to use all the stored data, and therefore a\nsubset of data should be retrieved for processing.\nThe following code, `chapte05_006.py` , retrieves the\nhistorical data from the table quote within a specified period:\n\n\n``` {.programlisting .language-markup}\n# -*- coding: utf-8 -*-\n# program: lab05_006.py\n\nimport pandas as pd\nimport numpy as np\n\n## function to insert historical data into table quote\n## ss: Cassandra session\n## sym: stock symbol\n## sd: start date\n## ed: end date\n## return a DataFrame of stock quote\ndef retrieve_data(ss, sym, sd, ed):\n    ## CQL to select data, ? is the placeholder for parameters\n    select_cql = \"SELECT * FROM quote WHERE symbol=? \" + \\\"AND price_time >= ? AND price_time <= ?\"\n\n    ## prepare select CQL\n    select_stmt = ss.prepare(select_cql)\n\n    ## execute the select CQL\n    result = ss.execute(select_stmt, [sym, sd, ed])\n\n    ## initialize an index array\n    idx = np.asarray([])\n\n    ## initialize an array for columns\n    cols = np.asarray([])\n\n    ## loop thru the query resultset to make up the DataFrame\n    for r in result:\n        idx = np.append(idx, [r.price_time])\n        cols = np.append(cols, [r.open_price, r.high_price, \\r.low_price, r.close_price, r.volume])\n\n    ## reshape the 1-D array into a 2-D array for each day\n    cols = cols.reshape(idx.shape[0], 5)\n\n    ## convert the arrays into a pandas DataFrame\n    df = pd.DataFrame(cols, index=idx, \\\n                      columns=['close_price', 'high_price', \\\n                      'low_price', 'close_price', 'volume'])\n    return df\n```\n\nThe first portion of the function should be easy to understand. It\nexecutes a `select_cql` query for a particular stock symbol\nover a specified date period. The clustering column,\n`price_time` , makes range query possible\nhere. The query result set is returned and used to fill two NumPy\narrays, `idx` for index, and `cols` for columns. The\n`cols` array is then reshaped as a two-dimensional\n array with rows of prices and volume for each day. Finally,\nboth `idx` and `cols` arrays are used to create a\n`DataFrame` to return `df`.\n\n",
       "user": "anonymous",
-      "dateUpdated": "2020-06-07T12:05:22+0000",
+      "dateUpdated": "2020-06-09T15:54:42+0000",
       "config": {
         "editorSetting": {
           "language": "text",
@@ -385,16 +385,16 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1591531522529_59302475",
+      "jobName": "paragraph_1591718082755_-240674051",
       "id": "paragraph_1591531238586_1682003899",
-      "dateCreated": "2020-06-07T12:05:22+0000",
+      "dateCreated": "2020-06-09T15:54:42+0000",
       "status": "READY",
-      "$$hashKey": "object:417"
+      "$$hashKey": "object:30757"
     },
     {
       "text": "# -*- coding: utf-8 -*-\r\n# program: lab05_006.py\r\n\r\nimport pandas as pd\r\nimport numpy as np\r\n\r\n## function to insert historical data into table quote\r\n## ss: Cassandra session\r\n## sym: stock symbol\r\n## sd: start date\r\n## ed: end date\r\n## return a DataFrame of stock quote\r\ndef retrieve_data(ss, sym, sd, ed):\r\n    ## CQL to select data, ? is the placeholder for parameters\r\n    select_cql = \"SELECT * FROM quote WHERE symbol=? \" + \\\r\n                 \"AND price_time >= ? AND price_time <= ?\"\r\n\r\n    ## prepare select CQL\r\n    select_stmt = ss.prepare(select_cql)\r\n\r\n    ## execute the select CQL\r\n    result = ss.execute(select_stmt, [sym, sd, ed])\r\n\r\n    ## initialize an index array\r\n    idx = np.asarray([])\r\n\r\n    ## initialize an array for columns\r\n    cols = np.asarray([])\r\n\r\n    ## loop thru the query resultset to make up the DataFrame\r\n    for r in result:\r\n        idx = np.append(idx, [r.price_time])\r\n        cols = np.append(cols, [r.open_price, r.high_price, \\\r\n                         r.low_price, r.close_price, r.volume])\r\n\r\n    ## reshape the 1-D array into a 2-D array for each day\r\n    cols = cols.reshape(idx.shape[0], 5)\r\n\r\n    ## convert the arrays into a pandas DataFrame\r\n    df = pd.DataFrame(cols, index=idx, \\\r\n                      columns=['close_price', 'high_price', \\\r\n                      'low_price', 'close_price', 'volume'])\r\n    return df\r\n",
       "user": "anonymous",
-      "dateUpdated": "2020-06-07T12:05:22+0000",
+      "dateUpdated": "2020-06-09T15:54:42+0000",
       "config": {
         "editorSetting": {
           "language": "scala",
@@ -415,16 +415,16 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1591531522539_-249362987",
+      "jobName": "paragraph_1591718082756_741056232",
       "id": "paragraph_1589809489824_72697182",
-      "dateCreated": "2020-06-07T12:05:22+0000",
+      "dateCreated": "2020-06-09T15:54:42+0000",
       "status": "READY",
-      "$$hashKey": "object:418"
+      "$$hashKey": "object:30758"
     },
     {
       "text": "%md\n\n\n\n#### Time-series data\n\n\nAs a simple illustration, we use a 10-day \n**Simple Moving Average** (**SMA**) as the\ntechnical analysis signal for stock screening. pandas provides a rich\nset of functions to work with time-series data. The SMA\n can be easily computed by the `rolling_mean()`\nfunction, as shown in `lab05_007.py`:\n\n\n``` {.programlisting .language-markup}\n# -*- coding: utf-8 -*-\n# program: lab05_007.py\n\nimport pandas as pd\n\n## function to compute a Simple Moving Average on a DataFrame\n## d: DataFrame\n## prd: period of SMA\n## return a DataFrame with an additional column of SMA\ndef sma(d, prd):\n    d['sma'] = d['close_price'].rolling(window=prd).mean()\n    return d\n```\n\n\n#### The screening rule\n\n\nWhen SMA is can\napply a screening rule in order to look for trading signals. A very\nsimple rule is adopted: a buy-and-hold signal is generated whenever a\ntrading day whose close price is higher than 10-day SMA. In Python, it\nis just a one liner by virtue of pandas power.\nAmazing! Here is an example:\n\n\n``` {.programlisting .language-markup}\n# -*- coding: utf-8 -*-\n# program: lab05_008.py\n\n## function to apply screening rule to generate buy signals\n## screening rule, Close > 10-Day SMA\n## d: DataFrame\n## return a DataFrame containing buy signals\ndef signal_close_higher_than_sma10(d):\n    return d[d.close_price > d.sma]\n```\n",
       "user": "anonymous",
-      "dateUpdated": "2020-06-07T12:05:56+0000",
+      "dateUpdated": "2020-06-09T15:54:42+0000",
       "config": {
         "editorSetting": {
           "language": "text",
@@ -443,16 +443,6 @@
         "params": {},
         "forms": {}
       },
-      "apps": [],
-      "runtimeInfos": {},
-      "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1591531522539_833131688",
-      "id": "paragraph_1591531286228_-1289423641",
-      "dateCreated": "2020-06-07T12:05:22+0000",
-      "status": "FINISHED",
-      "$$hashKey": "object:419",
-      "dateFinished": "2020-06-07T12:05:58+0000",
-      "dateStarted": "2020-06-07T12:05:56+0000",
       "results": {
         "code": "SUCCESS",
         "msg": [
@@ -461,12 +451,20 @@
             "data": "<div class=\"markdown-body\">\n<h4>Time-series data</h4>\n<p>As a simple illustration, we use a 10-day<br />\n<strong>Simple Moving Average</strong> (<strong>SMA</strong>) as the<br />\ntechnical analysis signal for stock screening. pandas provides a rich<br />\nset of functions to work with time-series data. The SMA<br />\ncan be easily computed by the <code>rolling_mean()</code><br />\nfunction, as shown in <code>lab05_007.py</code>:</p>\n<pre><code class=\"language-{.programlisting\"># -*- coding: utf-8 -*-\n# program: lab05_007.py\n\nimport pandas as pd\n\n## function to compute a Simple Moving Average on a DataFrame\n## d: DataFrame\n## prd: period of SMA\n## return a DataFrame with an additional column of SMA\ndef sma(d, prd):\n    d['sma'] = d['close_price'].rolling(window=prd).mean()\n    return d\n</code></pre>\n<h4>The screening rule</h4>\n<p>When SMA is can<br />\napply a screening rule in order to look for trading signals. A very<br />\nsimple rule is adopted: a buy-and-hold signal is generated whenever a<br />\ntrading day whose close price is higher than 10-day SMA. In Python, it<br />\nis just a one liner by virtue of pandas power.<br />\nAmazing! Here is an example:</p>\n<pre><code class=\"language-{.programlisting\"># -*- coding: utf-8 -*-\n# program: lab05_008.py\n\n## function to apply screening rule to generate buy signals\n## screening rule, Close &gt; 10-Day SMA\n## d: DataFrame\n## return a DataFrame containing buy signals\ndef signal_close_higher_than_sma10(d):\n    return d[d.close_price &gt; d.sma]\n</code></pre>\n\n</div>"
           }
         ]
-      }
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591718082756_-1991090270",
+      "id": "paragraph_1591531286228_-1289423641",
+      "dateCreated": "2020-06-09T15:54:42+0000",
+      "status": "READY",
+      "$$hashKey": "object:30759"
     },
     {
       "text": "# -*- coding: utf-8 -*-\r\n# program: lab05_007.py\r\n\r\nimport pandas as pd\r\n\r\n## function to compute a Simple Moving Average on a DataFrame\r\n## d: DataFrame\r\n## prd: period of SMA\r\n## return a DataFrame with an additional column of SMA\r\ndef sma(d, prd):\r\n    d['sma'] = d['close_price'].rolling(window=prd).mean()\r\n    return d\r\n",
       "user": "anonymous",
-      "dateUpdated": "2020-06-07T12:05:22+0000",
+      "dateUpdated": "2020-06-09T15:54:42+0000",
       "config": {
         "editorSetting": {
           "language": "scala",
@@ -487,16 +485,16 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1591531522540_970045025",
+      "jobName": "paragraph_1591718082756_-1977226797",
       "id": "paragraph_1589809498217_2008932856",
-      "dateCreated": "2020-06-07T12:05:22+0000",
+      "dateCreated": "2020-06-09T15:54:42+0000",
       "status": "READY",
-      "$$hashKey": "object:420"
+      "$$hashKey": "object:30760"
     },
     {
       "text": "# -*- coding: utf-8 -*-\r\n# program: lab05_008.py\r\n\r\n## function to apply screening rule to generate buy signals\r\n## screening rule, Close > 10-Day SMA\r\n## d: DataFrame\r\n## return a DataFrame containing buy signals\r\ndef signal_close_higher_than_sma10(d):\r\n    return d[d.close_price > d.sma]\r\n",
       "user": "anonymous",
-      "dateUpdated": "2020-06-07T12:05:22+0000",
+      "dateUpdated": "2020-06-09T15:54:42+0000",
       "config": {
         "editorSetting": {
           "language": "scala",
@@ -517,16 +515,16 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1591531522540_582707301",
+      "jobName": "paragraph_1591718082756_-204846473",
       "id": "paragraph_1589809505835_-895647126",
-      "dateCreated": "2020-06-07T12:05:22+0000",
+      "dateCreated": "2020-06-09T15:54:42+0000",
       "status": "READY",
-      "$$hashKey": "object:421"
+      "$$hashKey": "object:30761"
     },
     {
       "text": "%md\n\n\n\n#### The Stock Screener engine\n\n\nUntil now, we coded the  components of the Stock\nScreener. We now combine them together to generate\nthe Alert List, as shown in the following code:\n\n\n``` {.programlisting .language-markup}\n# -*- coding: utf-8 -*-\n# program: lab05_009.py\n\n## import Cassandra driver library\nfrom cassandra.cluster import Cluster\n\nimport pandas as pd\nimport numpy as np\nimport datetime\n\n## function to insert historical data into table quote\n## ss: Cassandra session\n## sym: stock symbol\n## sd: start date\n## ed: end date\n## return a DataFrame of stock quote\ndef retrieve_data(ss, sym, sd, ed):\n    ## CQL to select data, ? is the placeholder for parameters\n    select_cql = \"SELECT * FROM quote WHERE symbol=? \" + \\\"AND price_time >= ? AND price_time <= ?\"\n\n    ## prepare select CQL\n    select_stmt = ss.prepare(select_cql)\n\n    ## execute the select CQL\n    result = ss.execute(select_stmt, [sym, sd, ed])\n\n    ## initialize an index array\n    idx = np.asarray([])\n\n    ## initialize an array for columns\n    cols = np.asarray([])\n\n    ## loop thru the query resultset to make up the DataFrame\n    for r in result:\n        idx = np.append(idx, [r.price_time])\n        cols = np.append(cols, [r.open_price, r.high_price, \\\n                         r.low_price, r.close_price, r.volume])\n\n    ## reshape the 1-D array into a 2-D array for each day\n    cols = cols.reshape(idx.shape[0], 5)\n\n    ## convert the arrays into a pandas DataFrame\n    df = pd.DataFrame(cols, index=idx, \\\n                      columns=['open_price', 'high_price', \\\n                      'low_price', 'close_price', 'volume'])\n    return df\n\n## function to compute a Simple Moving Average on a DataFrame\n## d: DataFrame\n## prd: period of SMA\n## return a DataFrame with an additional column of SMA\ndef sma(d, prd):\n    d['sma'] = d['close_price'].rolling(window=prd).mean()\n    return d\n\n## function to apply screening rule to generate buy signals\n## screening rule, Close > 10-Day SMA\n## d: DataFrame\n## return a DataFrame containing buy signals\ndef signal_close_higher_than_sma10(d):\n    return d[d.close_price > d.sma]\n\n## create Cassandra instance\ncluster = Cluster()\n\n## establish Cassandra connection, using local default\nsession = cluster.connect('fenagocdma')\n## scan buy-and-hold signals for GS over 1 month since 28-Jun-2012\nsymbol = 'GS'\nstart_date = datetime.datetime(2012, 6, 28)\nend_date = datetime.datetime(2012, 7, 28)\n\n## retrieve data\ndata = retrieve_data(session, symbol, start_date, end_date)\n\n## close Cassandra connection\ncluster.shutdown()\n\n## compute 10-Day SMA\ndata = sma(data, 10)\n\n## generate the buy-and-hold signals\nalerts = signal_close_higher_than_sma10(data)\n\n## print out the alert list\nfor index, r in alerts.iterrows():\n    print index.date(), '\\t', r['close_price']\n```\n\n\n\nTest run\n--------------------------\n\n\n\nAn End-to-End Test consists of two parts. First, we test and verify\n`lab05_005.py` , which is the complete Data Feed Provider\nmodule. Then run `lab05_005.py` in Spyder. Historical\nstock quote data should be stored in the Cassandra database. Then run\nand verify the Stock Screener module, `lab05_009.py` , also\nin Spyder.\n\nA sample screen of the test run is shown in the\nfollowing screenshot. The Alert List should have seven buy-and-hold\ntrading signals:\n\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_05_08.jpg)\n\n\n\nSummary\n-------------------------\n\n\n\nThis lab was rather jam-packed. We designed a simple stock screening\napplication that collects stock quote data from Yahoo! Finance, which\nuses Cassandra as its repository. The system environment of the\napplication was also introduced with brief setup instructions. Then we\ndeveloped the application in Python with a step-by-step explanation.\nDespite of using one Cassandra table, the basic row manipulation logic\nhas been demonstrated.\n\nIn the next lab, we will continue enhancing the Stock Screener\nApplication to collect stock quote data of a bunch of stocks and\noptimize the application with several refinements.\n",
       "user": "anonymous",
-      "dateUpdated": "2020-06-07T12:06:02+0000",
+      "dateUpdated": "2020-06-09T15:54:42+0000",
       "config": {
         "editorSetting": {
           "language": "text",
@@ -545,16 +543,6 @@
         "params": {},
         "forms": {}
       },
-      "apps": [],
-      "runtimeInfos": {},
-      "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1591531522596_-642279347",
-      "id": "paragraph_1591531301906_1529112566",
-      "dateCreated": "2020-06-07T12:05:22+0000",
-      "status": "FINISHED",
-      "$$hashKey": "object:422",
-      "dateFinished": "2020-06-07T12:06:02+0000",
-      "dateStarted": "2020-06-07T12:06:02+0000",
       "results": {
         "code": "SUCCESS",
         "msg": [
@@ -563,12 +551,20 @@
             "data": "<div class=\"markdown-body\">\n<h4>The Stock Screener engine</h4>\n<p>Until now, we coded the  components of the Stock<br />\nScreener. We now combine them together to generate<br />\nthe Alert List, as shown in the following code:</p>\n<pre><code class=\"language-{.programlisting\"># -*- coding: utf-8 -*-\n# program: lab05_009.py\n\n## import Cassandra driver library\nfrom cassandra.cluster import Cluster\n\nimport pandas as pd\nimport numpy as np\nimport datetime\n\n## function to insert historical data into table quote\n## ss: Cassandra session\n## sym: stock symbol\n## sd: start date\n## ed: end date\n## return a DataFrame of stock quote\ndef retrieve_data(ss, sym, sd, ed):\n    ## CQL to select data, ? is the placeholder for parameters\n    select_cql = &quot;SELECT * FROM quote WHERE symbol=? &quot; + \\&quot;AND price_time &gt;= ? AND price_time &lt;= ?&quot;\n\n    ## prepare select CQL\n    select_stmt = ss.prepare(select_cql)\n\n    ## execute the select CQL\n    result = ss.execute(select_stmt, [sym, sd, ed])\n\n    ## initialize an index array\n    idx = np.asarray([])\n\n    ## initialize an array for columns\n    cols = np.asarray([])\n\n    ## loop thru the query resultset to make up the DataFrame\n    for r in result:\n        idx = np.append(idx, [r.price_time])\n        cols = np.append(cols, [r.open_price, r.high_price, \\\n                         r.low_price, r.close_price, r.volume])\n\n    ## reshape the 1-D array into a 2-D array for each day\n    cols = cols.reshape(idx.shape[0], 5)\n\n    ## convert the arrays into a pandas DataFrame\n    df = pd.DataFrame(cols, index=idx, \\\n                      columns=['open_price', 'high_price', \\\n                      'low_price', 'close_price', 'volume'])\n    return df\n\n## function to compute a Simple Moving Average on a DataFrame\n## d: DataFrame\n## prd: period of SMA\n## return a DataFrame with an additional column of SMA\ndef sma(d, prd):\n    d['sma'] = d['close_price'].rolling(window=prd).mean()\n    return d\n\n## function to apply screening rule to generate buy signals\n## screening rule, Close &gt; 10-Day SMA\n## d: DataFrame\n## return a DataFrame containing buy signals\ndef signal_close_higher_than_sma10(d):\n    return d[d.close_price &gt; d.sma]\n\n## create Cassandra instance\ncluster = Cluster()\n\n## establish Cassandra connection, using local default\nsession = cluster.connect('fenagocdma')\n## scan buy-and-hold signals for GS over 1 month since 28-Jun-2012\nsymbol = 'GS'\nstart_date = datetime.datetime(2012, 6, 28)\nend_date = datetime.datetime(2012, 7, 28)\n\n## retrieve data\ndata = retrieve_data(session, symbol, start_date, end_date)\n\n## close Cassandra connection\ncluster.shutdown()\n\n## compute 10-Day SMA\ndata = sma(data, 10)\n\n## generate the buy-and-hold signals\nalerts = signal_close_higher_than_sma10(data)\n\n## print out the alert list\nfor index, r in alerts.iterrows():\n    print index.date(), '\\t', r['close_price']\n</code></pre>\n<h2>Test run</h2>\n<p>An End-to-End Test consists of two parts. First, we test and verify<br />\n<code>lab05_005.py</code> , which is the complete Data Feed Provider<br />\nmodule. Then run <code>lab05_005.py</code> in Spyder. Historical<br />\nstock quote data should be stored in the Cassandra database. Then run<br />\nand verify the Stock Screener module, <code>lab05_009.py</code> , also<br />\nin Spyder.</p>\n<p>A sample screen of the test run is shown in the<br />\nfollowing screenshot. The Alert List should have seven buy-and-hold<br />\ntrading signals:</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/images/8884OS_05_08.jpg\" alt=\"\" /></p>\n<h2>Summary</h2>\n<p>This lab was rather jam-packed. We designed a simple stock screening<br />\napplication that collects stock quote data from Yahoo! Finance, which<br />\nuses Cassandra as its repository. The system environment of the<br />\napplication was also introduced with brief setup instructions. Then we<br />\ndeveloped the application in Python with a step-by-step explanation.<br />\nDespite of using one Cassandra table, the basic row manipulation logic<br />\nhas been demonstrated.</p>\n<p>In the next lab, we will continue enhancing the Stock Screener<br />\nApplication to collect stock quote data of a bunch of stocks and<br />\noptimize the application with several refinements.</p>\n\n</div>"
           }
         ]
-      }
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1591718082756_1279614650",
+      "id": "paragraph_1591531301906_1529112566",
+      "dateCreated": "2020-06-09T15:54:42+0000",
+      "status": "READY",
+      "$$hashKey": "object:30762"
     },
     {
       "text": "# -*- coding: utf-8 -*-\r\n# program: lab05_009.py\r\n\r\n## import Cassandra driver library\r\nfrom cassandra.cluster import Cluster\r\n\r\nimport pandas as pd\r\nimport numpy as np\r\nimport datetime\r\n\r\n## function to insert historical data into table quote\r\n## ss: Cassandra session\r\n## sym: stock symbol\r\n## sd: start date\r\n## ed: end date\r\n## return a DataFrame of stock quote\r\ndef retrieve_data(ss, sym, sd, ed):\r\n    ## CQL to select data, ? is the placeholder for parameters\r\n    select_cql = \"SELECT * FROM quote WHERE symbol=? \" + \\\r\n                 \"AND price_time >= ? AND price_time <= ?\"\r\n\r\n    ## prepare select CQL\r\n    select_stmt = ss.prepare(select_cql)\r\n\r\n    ## execute the select CQL\r\n    result = ss.execute(select_stmt, [sym, sd, ed])\r\n\r\n    ## initialize an index array\r\n    idx = np.asarray([])\r\n\r\n    ## initialize an array for columns\r\n    cols = np.asarray([])\r\n\r\n    ## loop thru the query resultset to make up the DataFrame\r\n    for r in result:\r\n        idx = np.append(idx, [r.price_time])\r\n        cols = np.append(cols, [r.open_price, r.high_price, \\\r\n                         r.low_price, r.close_price, r.volume])\r\n\r\n    ## reshape the 1-D array into a 2-D array for each day\r\n    cols = cols.reshape(idx.shape[0], 5)\r\n\r\n    ## convert the arrays into a pandas DataFrame\r\n    df = pd.DataFrame(cols, index=idx, \\\r\n                      columns=['open_price', 'high_price', \\\r\n                      'low_price', 'close_price', 'volume'])\r\n    return df\r\n\r\n## function to compute a Simple Moving Average on a DataFrame\r\n## d: DataFrame\r\n## prd: period of SMA\r\n## return a DataFrame with an additional column of SMA\r\ndef sma(d, prd):\r\n    d['sma'] = d['close_price'].rolling(window=prd).mean()\r\n    return d\r\n\r\n## function to apply screening rule to generate buy signals\r\n## screening rule, Close > 10-Day SMA\r\n## d: DataFrame\r\n## return a DataFrame containing buy signals\r\ndef signal_close_higher_than_sma10(d):\r\n    return d[d.close_price > d.sma]\r\n\r\n## create Cassandra instance\r\ncluster = Cluster()\r\n\r\n## establish Cassandra connection, using local default\r\nsession = cluster.connect('fenagocdma')\r\n## scan buy-and-hold signals for GS over 1 month since 28-Jun-2012\r\nsymbol = 'GS'\r\nstart_date = datetime.datetime(2012, 6, 28)\r\nend_date = datetime.datetime(2012, 7, 28)\r\n\r\n## retrieve data\r\ndata = retrieve_data(session, symbol, start_date, end_date)\r\n\r\n## close Cassandra connection\r\ncluster.shutdown()\r\n\r\n## compute 10-Day SMA\r\ndata = sma(data, 10)\r\n\r\n## generate the buy-and-hold signals\r\nalerts = signal_close_higher_than_sma10(data)\r\n\r\n## print out the alert list\r\nfor index, r in alerts.iterrows():\r\n    print (index.date(), '\\t', r['close_price'])\r\n",
       "user": "anonymous",
-      "dateUpdated": "2020-06-07T12:05:22+0000",
+      "dateUpdated": "2020-06-09T15:54:42+0000",
       "config": {
         "editorSetting": {
           "language": "scala",
@@ -589,15 +585,15 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1591531522597_-496280560",
+      "jobName": "paragraph_1591718082756_-1499319057",
       "id": "paragraph_1589809523355_-960156020",
-      "dateCreated": "2020-06-07T12:05:22+0000",
+      "dateCreated": "2020-06-09T15:54:42+0000",
       "status": "READY",
-      "$$hashKey": "object:423"
+      "$$hashKey": "object:30763"
     },
     {
       "user": "anonymous",
-      "dateUpdated": "2020-06-07T12:05:22+0000",
+      "dateUpdated": "2020-06-09T15:54:42+0000",
       "config": {
         "editorSetting": {
           "language": "scala",
@@ -618,15 +614,15 @@
       "apps": [],
       "runtimeInfos": {},
       "progressUpdateIntervalMs": 500,
-      "jobName": "paragraph_1591531522597_241084807",
+      "jobName": "paragraph_1591718082756_669438497",
       "id": "paragraph_1589809528836_748809649",
-      "dateCreated": "2020-06-07T12:05:22+0000",
+      "dateCreated": "2020-06-09T15:54:42+0000",
       "status": "READY",
-      "$$hashKey": "object:424"
+      "$$hashKey": "object:30764"
     }
   ],
   "name": "lab_5",
-  "id": "2F9GH3W7M",
+  "id": "2F9TD4ZGB",
   "defaultInterpreterGroup": "spark",
   "version": "0.9.0-preview1",
   "noteParams": {},
