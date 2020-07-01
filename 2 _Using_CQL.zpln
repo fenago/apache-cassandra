@@ -2145,9 +2145,9 @@
       "$$hashKey": "object:13166"
     },
     {
-      "text": "%sh\r\ncat > script.cli <<EOL\r\ndescribe users\r\nEOL\r\n\r\ncqlsh -f  script.cli --keyspace=keyspace\r\n",
+      "text": "%sh\r\ncat > script.cli <<EOL\r\ndescribe users\r\nEOL\r\n\r\ncqlsh -f  script.cli --keyspace=killrvideo\r\n",
       "user": "anonymous",
-      "dateUpdated": "2020-07-01T10:58:03+0000",
+      "dateUpdated": "2020-07-01T11:00:40+0000",
       "config": {
         "editorSetting": {
           "language": "sh",
