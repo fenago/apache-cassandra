@@ -28,7 +28,7 @@
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
       "focus": true,
-      "$$hashKey": "object:55"
+      "$$hashKey": "object:105"
     },
     {
       "text": "%md\n\n![line](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png \"line\" )\n# <center><span style=\"color:teal\">Set Up the Notebook</span></center>\n\n### <span style=\"color:teal\">In this section, you will do the following things:</span>\n- #### Execute a CQL script to initialize the KillrVideo database for this notebook\n\n#### <span style=\"color:teal\"><b>Step 1:</b></span> Execute the following cell to initialize this notebook. Hover over the right-hand corner of that cell and click the _Run_ button.\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/ExecuteCell.png)\n\n#### **Note:** You don't see the CQL script because the code editor is hidden, but you can still run the cell.\n",
@@ -66,12 +66,12 @@
       "id": "paragraph_1593613260926_705631125",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:56"
+      "$$hashKey": "object:106"
     },
     {
-      "text": "%cassandra\n\nCREATE KEYSPACE IF NOT EXISTS killrvideo WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };\n\nuse killrvideo;\n\n// Remove this section after DROP bug is fixed (https://datastax.jira.com/browse/CP-3499)\n// Note we create the tables and then drop them so we can recreate them.\n// This assures us the tables have the correct configuration.\n// If we only did the CREATE TABLE IF NOT EXISTS, we might end up with a table with the wrong columns or something...\nCREATE TABLE IF NOT EXISTS user_credentials (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS users (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS videos (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS user_videos (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS latest_videos (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS video_ratings (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS video_ratings_by_user (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS video_playback_stats (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS video_recommendations (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS video_recommendations_by_video (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS videos_by_tag (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS tags_by_letter (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS comments_by_video (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS comments_by_user (key text, PRIMARY KEY(key));\n// END removable section\n\nDROP TABLE IF EXISTS user_credentials;\nDROP TABLE IF EXISTS users;\nDROP TABLE IF EXISTS videos;\nDROP TABLE IF EXISTS user_videos;\nDROP TABLE IF EXISTS latest_videos;\nDROP TABLE IF EXISTS video_ratings;\nDROP TABLE IF EXISTS video_ratings_by_user;\nDROP TABLE IF EXISTS video_playback_stats;\nDROP TABLE IF EXISTS video_recommendations;\nDROP TABLE IF EXISTS video_recommendations_by_video;\nDROP TABLE IF EXISTS videos_by_tag;\nDROP TABLE IF EXISTS tags_by_letter;\nDROP TABLE IF EXISTS comments_by_video;\nDROP TABLE IF EXISTS comments_by_user;\n\n\n// User credentials, keyed by email address so we can authenticate\nCREATE TABLE IF NOT EXISTS user_credentials (\n    email     text,\n    password  text,\n    userid    uuid,\n    PRIMARY KEY (email)\n);\n\n// Users keyed by id\nCREATE TABLE IF NOT EXISTS users (\n    userid     uuid,\n    firstname  text,\n    lastname   text,\n    email      text,\n    created_date timestamp,\n    PRIMARY KEY (userid)\n);\n\n// Videos by id\nCREATE TABLE IF NOT EXISTS videos (\n    videoid                uuid,\n    userid                 uuid,\n    name                   text,\n    description            text,\n    location               text,\n    location_type          int,\n    preview_image_location text,\n    tags                   set<text>,\n    added_date             timestamp,\n    PRIMARY KEY (videoid)\n);\n\n// One-to-many from user point of view (lookup table)\nCREATE TABLE IF NOT EXISTS user_videos (\n    userid                 uuid,\n    added_date             timestamp,\n    videoid                uuid,\n    name                   text,\n    preview_image_location text,\n    PRIMARY KEY (userid, added_date, videoid)\n) WITH CLUSTERING ORDER BY (added_date DESC, videoid ASC);\n\n// Track latest videos, grouped by day (if we ever develop a bad hotspot from the daily grouping here, we could mitigate by\n// splitting the row using an arbitrary group number, making the partition key (yyyymmdd, group_number))\nCREATE TABLE IF NOT EXISTS latest_videos (\n    yyyymmdd text,\n    added_date timestamp,\n    videoid uuid,\n    userid uuid,\n    name text,\n    preview_image_location text,\n    PRIMARY KEY (yyyymmdd, added_date, videoid)\n) WITH CLUSTERING ORDER BY (added_date DESC, videoid ASC);\n\n// Video ratings (counter table)\nCREATE TABLE IF NOT EXISTS video_ratings (\n    videoid uuid,\n    rating_counter counter,\n    rating_total counter,\n    PRIMARY KEY (videoid)\n);\n\n// Video ratings by user (to try and mitigate voting multiple times)\nCREATE TABLE IF NOT EXISTS video_ratings_by_user (\n    videoid uuid,\n    userid uuid,\n    rating int,\n    PRIMARY KEY (videoid, userid)\n);\n\n// Records the number of views/playbacks of a video\nCREATE TABLE IF NOT EXISTS video_playback_stats (\n    videoid uuid,\n    views counter,\n    PRIMARY KEY (videoid)\n);\n\n// Recommendations by user (powered by Spark), with the newest videos added to the site always first\nCREATE TABLE IF NOT EXISTS video_recommendations ( \n    userid uuid,\n    added_date timestamp,\n    videoid uuid,\n    rating float,\n    authorid uuid,\n    name text,\n    preview_image_location text,\n    PRIMARY KEY(userid, added_date, videoid)\n) WITH CLUSTERING ORDER BY (added_date DESC, videoid ASC);\n\n// Recommendations by video (powered by Spark)\nCREATE TABLE IF NOT EXISTS video_recommendations_by_video (\n    videoid uuid,\n    userid uuid,\n    rating float,\n    added_date timestamp STATIC,\n    authorid uuid STATIC,\n    name text STATIC,\n    preview_image_location text STATIC,\n    PRIMARY KEY(videoid, userid)\n);\n\n// Index for tag keywords\nCREATE TABLE IF NOT EXISTS videos_by_tag (\n    tag text,\n    videoid uuid,\n    added_date timestamp,\n    userid uuid,\n    name text,\n    preview_image_location text,\n    tagged_date timestamp,\n    PRIMARY KEY (tag, videoid)\n);\n\n// Index for tags by first letter in the tag\nCREATE TABLE IF NOT EXISTS tags_by_letter (\n    first_letter text,\n    tag text,\n    PRIMARY KEY (first_letter, tag)\n);\n\n// Comments for a given video\nCREATE TABLE IF NOT EXISTS comments_by_video (\n    videoid uuid,\n    commentid timeuuid,\n    userid uuid,\n    comment text,\n    PRIMARY KEY (videoid, commentid)\n) WITH CLUSTERING ORDER BY (commentid DESC);\n\n// Comments for a given user\nCREATE TABLE IF NOT EXISTS comments_by_user (\n    userid uuid,\n    commentid timeuuid,\n    videoid uuid,\n    comment text,\n    PRIMARY KEY (userid, commentid)\n) WITH CLUSTERING ORDER BY (commentid DESC);\n\n//CREATE SEARCH INDEX ON killrvideo.videos;\n\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\n  VALUES(11111111-1111-1111-1111-111111111111, toTimestamp(now()), 'Jeff', 'Carpenter', 'jc@datastax.com');\nINSERT INTO killrvideo.user_credentials (userid, email, password)\n  VALUES(11111111-1111-1111-1111-111111111111, 'jc@datastax.com', 'J3ffL0v3$C@ss@ndr@');\n  \nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\n  VALUES(22222222-2222-2222-2222-222222222222, toTimestamp(now()), 'Eric', 'Zietlow', 'ez@datastax.com');\nINSERT INTO killrvideo.user_credentials (userid, email, password)\n  VALUES(22222222-2222-2222-2222-222222222222, 'ez@datastax.com', 'C@ss@ndr@R0ck$');\n\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\n  VALUES(33333333-3333-3333-3333-333333333333, toTimestamp(now()), 'Cedrick', 'Lunven', 'cl@datastax.com');\nINSERT INTO killrvideo.user_credentials (userid, email, password)\n  VALUES(33333333-3333-3333-3333-333333333333, 'cl@datastax.com', 'Fr@nc3L0v3$C@ss@ndr@');\n\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\n  VALUES(44444444-4444-4444-4444-444444444444, toTimestamp(now()), 'David', 'Gilardi', 'dg@datastax.com');\nINSERT INTO killrvideo.user_credentials (userid, email, password)\n  VALUES(44444444-4444-4444-4444-444444444444, 'dg@datastax.com', 'H@t$0ff2C@ss@ndr@');\n\n//INSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\n//  VALUES(55555555-5555-5555-5555-555555555555, toTimestamp(now()), 'Cristina', 'Veale', 'cv@datastax.com');\n//INSERT INTO killrvideo.user_credentials (userid, email, password)\n//  VALUES(55555555-5555-5555-5555-555555555555, 'cv@datastax.com', '3@$tC0@$tC@ss@ndr@');\n\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\n  VALUES(66666666-6666-6666-6666-666666666666, toTimestamp(now()), 'Adron', 'Hall', 'ah@datastax.com');\nINSERT INTO killrvideo.user_credentials (userid, email, password)\n  VALUES(66666666-6666-6666-6666-666666666666, 'ah@datastax.com', 'C@ss@ndr@43v3r');\n\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\n  VALUES(77777777-7777-7777-7777-777777777777, toTimestamp(now()), 'Aleks', 'volochnev', 'av@datastax.com');\nINSERT INTO killrvideo.user_credentials (userid, email, password)\n  VALUES(77777777-7777-7777-7777-777777777777, 'av@datastax.com', 'C@ss@ndr@3v3rywh3r3');\n\n// This won't work with CaaS\n//CREATE KEYSPACE IF NOT EXISTS kv_init_done WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };",
+      "text": "%cassandra\r\n\r\nCREATE KEYSPACE IF NOT EXISTS killrvideo WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };\r\n\r\nuse killrvideo;\r\n\r\n// Remove this section after DROP bug is fixed\r\n// Note we create the tables and then drop them so we can recreate them.\r\n// This assures us the tables have the correct configuration.\r\n// If we only did the CREATE TABLE IF NOT EXISTS, we might end up with a table with the wrong columns or something...\r\nCREATE TABLE IF NOT EXISTS user_credentials (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS users (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS videos (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS user_videos (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS latest_videos (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS video_ratings (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS video_ratings_by_user (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS video_playback_stats (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS video_recommendations (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS video_recommendations_by_video (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS videos_by_tag (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS tags_by_letter (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS comments_by_video (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS comments_by_user (key text, PRIMARY KEY(key));\r\n// END removable section\r\n\r\nDROP TABLE IF EXISTS user_credentials;\r\nDROP TABLE IF EXISTS users;\r\nDROP TABLE IF EXISTS videos;\r\nDROP TABLE IF EXISTS user_videos;\r\nDROP TABLE IF EXISTS latest_videos;\r\nDROP TABLE IF EXISTS video_ratings;\r\nDROP TABLE IF EXISTS video_ratings_by_user;\r\nDROP TABLE IF EXISTS video_playback_stats;\r\nDROP TABLE IF EXISTS video_recommendations;\r\nDROP TABLE IF EXISTS video_recommendations_by_video;\r\nDROP TABLE IF EXISTS videos_by_tag;\r\nDROP TABLE IF EXISTS tags_by_letter;\r\nDROP TABLE IF EXISTS comments_by_video;\r\nDROP TABLE IF EXISTS comments_by_user;\r\n\r\n\r\n// User credentials, keyed by email address so we can authenticate\r\nCREATE TABLE IF NOT EXISTS user_credentials (\r\n    email     text,\r\n    password  text,\r\n    userid    uuid,\r\n    PRIMARY KEY (email)\r\n);\r\n\r\n// Users keyed by id\r\nCREATE TABLE IF NOT EXISTS users (\r\n    userid     uuid,\r\n    firstname  text,\r\n    lastname   text,\r\n    email      text,\r\n    created_date timestamp,\r\n    PRIMARY KEY (userid)\r\n);\r\n\r\n// Videos by id\r\nCREATE TABLE IF NOT EXISTS videos (\r\n    videoid                uuid,\r\n    userid                 uuid,\r\n    name                   text,\r\n    description            text,\r\n    location               text,\r\n    location_type          int,\r\n    preview_image_location text,\r\n    tags                   set<text>,\r\n    added_date             timestamp,\r\n    PRIMARY KEY (videoid)\r\n);\r\n\r\n// One-to-many from user point of view (lookup table)\r\nCREATE TABLE IF NOT EXISTS user_videos (\r\n    userid                 uuid,\r\n    added_date             timestamp,\r\n    videoid                uuid,\r\n    name                   text,\r\n    preview_image_location text,\r\n    PRIMARY KEY (userid, added_date, videoid)\r\n) WITH CLUSTERING ORDER BY (added_date DESC, videoid ASC);\r\n\r\n// Track latest videos, grouped by day (if we ever develop a bad hotspot from the daily grouping here, we could mitigate by\r\n// splitting the row using an arbitrary group number, making the partition key (yyyymmdd, group_number))\r\nCREATE TABLE IF NOT EXISTS latest_videos (\r\n    yyyymmdd text,\r\n    added_date timestamp,\r\n    videoid uuid,\r\n    userid uuid,\r\n    name text,\r\n    preview_image_location text,\r\n    PRIMARY KEY (yyyymmdd, added_date, videoid)\r\n) WITH CLUSTERING ORDER BY (added_date DESC, videoid ASC);\r\n\r\n// Video ratings (counter table)\r\nCREATE TABLE IF NOT EXISTS video_ratings (\r\n    videoid uuid,\r\n    rating_counter counter,\r\n    rating_total counter,\r\n    PRIMARY KEY (videoid)\r\n);\r\n\r\n// Video ratings by user (to try and mitigate voting multiple times)\r\nCREATE TABLE IF NOT EXISTS video_ratings_by_user (\r\n    videoid uuid,\r\n    userid uuid,\r\n    rating int,\r\n    PRIMARY KEY (videoid, userid)\r\n);\r\n\r\n// Records the number of views/playbacks of a video\r\nCREATE TABLE IF NOT EXISTS video_playback_stats (\r\n    videoid uuid,\r\n    views counter,\r\n    PRIMARY KEY (videoid)\r\n);\r\n\r\n// Recommendations by user (powered by Spark), with the newest videos added to the site always first\r\nCREATE TABLE IF NOT EXISTS video_recommendations ( \r\n    userid uuid,\r\n    added_date timestamp,\r\n    videoid uuid,\r\n    rating float,\r\n    authorid uuid,\r\n    name text,\r\n    preview_image_location text,\r\n    PRIMARY KEY(userid, added_date, videoid)\r\n) WITH CLUSTERING ORDER BY (added_date DESC, videoid ASC);\r\n\r\n// Recommendations by video (powered by Spark)\r\nCREATE TABLE IF NOT EXISTS video_recommendations_by_video (\r\n    videoid uuid,\r\n    userid uuid,\r\n    rating float,\r\n    added_date timestamp STATIC,\r\n    authorid uuid STATIC,\r\n    name text STATIC,\r\n    preview_image_location text STATIC,\r\n    PRIMARY KEY(videoid, userid)\r\n);\r\n\r\n// Index for tag keywords\r\nCREATE TABLE IF NOT EXISTS videos_by_tag (\r\n    tag text,\r\n    videoid uuid,\r\n    added_date timestamp,\r\n    userid uuid,\r\n    name text,\r\n    preview_image_location text,\r\n    tagged_date timestamp,\r\n    PRIMARY KEY (tag, videoid)\r\n);\r\n\r\n// Index for tags by first letter in the tag\r\nCREATE TABLE IF NOT EXISTS tags_by_letter (\r\n    first_letter text,\r\n    tag text,\r\n    PRIMARY KEY (first_letter, tag)\r\n);\r\n\r\n// Comments for a given video\r\nCREATE TABLE IF NOT EXISTS comments_by_video (\r\n    videoid uuid,\r\n    commentid timeuuid,\r\n    userid uuid,\r\n    comment text,\r\n    PRIMARY KEY (videoid, commentid)\r\n) WITH CLUSTERING ORDER BY (commentid DESC);\r\n\r\n// Comments for a given user\r\nCREATE TABLE IF NOT EXISTS comments_by_user (\r\n    userid uuid,\r\n    commentid timeuuid,\r\n    videoid uuid,\r\n    comment text,\r\n    PRIMARY KEY (userid, commentid)\r\n) WITH CLUSTERING ORDER BY (commentid DESC);\r\n\r\n//CREATE SEARCH INDEX ON killrvideo.videos;\r\n\r\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\r\n  VALUES(11111111-1111-1111-1111-111111111111, toTimestamp(now()), 'Jeff', 'Carpenter', 'jc@fenago.com');\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\n  VALUES(11111111-1111-1111-1111-111111111111, 'jc@fenago.com', 'J3ffL0v3$C@ss@ndr@');\r\n  \r\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\r\n  VALUES(22222222-2222-2222-2222-222222222222, toTimestamp(now()), 'Eric', 'Zietlow', 'ez@fenago.com');\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\n  VALUES(22222222-2222-2222-2222-222222222222, 'ez@fenago.com', 'C@ss@ndr@R0ck$');\r\n\r\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\r\n  VALUES(33333333-3333-3333-3333-333333333333, toTimestamp(now()), 'Cedrick', 'Lunven', 'cl@fenago.com');\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\n  VALUES(33333333-3333-3333-3333-333333333333, 'cl@fenago.com', 'Fr@nc3L0v3$C@ss@ndr@');\r\n\r\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\r\n  VALUES(44444444-4444-4444-4444-444444444444, toTimestamp(now()), 'David', 'Gilardi', 'dg@fenago.com');\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\n  VALUES(44444444-4444-4444-4444-444444444444, 'dg@fenago.com', 'H@t$0ff2C@ss@ndr@');\r\n\r\n//INSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\r\n//  VALUES(55555555-5555-5555-5555-555555555555, toTimestamp(now()), 'Cristina', 'Veale', 'cv@fenago.com');\r\n//INSERT INTO killrvideo.user_credentials (userid, email, password)\r\n//  VALUES(55555555-5555-5555-5555-555555555555, 'cv@fenago.com', '3@$tC0@$tC@ss@ndr@');\r\n\r\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\r\n  VALUES(66666666-6666-6666-6666-666666666666, toTimestamp(now()), 'Adron', 'Hall', 'ah@fenago.com');\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\n  VALUES(66666666-6666-6666-6666-666666666666, 'ah@fenago.com', 'C@ss@ndr@43v3r');\r\n\r\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\r\n  VALUES(77777777-7777-7777-7777-777777777777, toTimestamp(now()), 'Aleks', 'volochnev', 'av@fenago.com');\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\n  VALUES(77777777-7777-7777-7777-777777777777, 'av@fenago.com', 'C@ss@ndr@3v3rywh3r3');\r\n\r\n// This won't work with CaaS\r\n//CREATE KEYSPACE IF NOT EXISTS kv_init_done WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };",
       "user": "anonymous",
-      "dateUpdated": "2020-07-02T07:19:16+0000",
+      "dateUpdated": "2020-07-02T07:57:55+0000",
       "config": {
         "editorSetting": {
           "language": "text",
@@ -80,7 +80,7 @@
           "completionSupport": true
         },
         "colWidth": 12,
-        "editorMode": "ace/mode/text",
+        "editorMode": "ace/mode/undefined",
         "fontSize": 9,
         "editorHide": true,
         "results": {},
@@ -97,7 +97,7 @@
       "id": "paragraph_1593613262668_-219283811",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:57"
+      "$$hashKey": "object:107"
     },
     {
       "text": "%md\n\n![line](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png \"line\" )\n# <center><span style=\"color:teal\">`INSERT` with Lightweight Transactions (LWTs)</span></center>\n\n### <span style=\"color:teal\">In this section, you will do the following things:</span>\n- #### Insert a new row using an LWT\n- #### Insert an existing row using an LWT\n- #### Observe the two behaviors (and compare them to an upsert)\n\n#### <b>Here's the story:</b>\n#### Imagine we want to create a new KillrVideo user. To do so, we need to create an entry in the `user_credentials` table with a specified email address. But we don’t want to create a new user if there is a user already with that email address.\n#### We could read the database to determine if the user exists already, but what if, between reading and creating the user, somebody else creates the same user. That would cause an upsert that we want to avoid.\n#### Instead, we’ll create the user with a lightweight transaction (LWT). This will make sure that Cassandra does a read-before-write as an atomic operation.\n<br>\n <span style=\"color:teal\"><b>Step 1:</b></span> In the following cell, Write an `INSERT` command, with an LWT, to create a user in the `user_credentials` table. Use the following table to inform your values.\n<h4><center>\n <table style=\"width:40%\" border=\"1\">\n  <tr style=\"background-color:blue;color:white\">\n    <th>Column Name</th>\n    <th>Value</th>\n  </tr>\n  <tr style=\"background-color:white\">\n    <td>email</td>\n    <td>'cv@fenago.com`</td>\n  </tr>\n  <tr style=\"background-color:lightgray\">\n    <td>password</td>\n    <td>'3@$tC0@$tC@ss@ndr@'</td>\n  </tr>\n  <tr style=\"background-color:white\">\n    <td>userid</td>\n    <td>55555555-5555-5555-5555-555555555555</td>\n  </tr>\n </table>\n</center></h4>\n\n<br>\n\n<details>\n\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\n\nAs mentioned, create an `INSERT` command for the `killrvideo.user_credentials` table. Use the column names and values from the table above. Tack on the `IF NOT EXISTS` clause (this is the LWT) to the end of the statement.\n</details>\n\n<details>\n\n<summary><i><span style=\"color:blue\">Just want the command? Click here.</span></i></summary>\n\n```\nINSERT INTO killrvideo.user_credentials (email, password, userid)\nVALUES('cv@fenago.com', '3@$tC0@$tC@ss@ndr@', 55555555-5555-5555-5555-555555555555)\nIF NOT EXISTS;\n```\n\n</details>\n",
@@ -135,7 +135,7 @@
       "id": "paragraph_1593613262666_1896289389",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:58"
+      "$$hashKey": "object:108"
     },
     {
       "text": "// Enter and execute the insert command in this cell\n// Remember, click in the cell and press SHIFT+ENTER or click the Run button in the top-right corner \n",
@@ -144,9 +144,7 @@
       "config": {
         "editorSetting": {
           "language": "text",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
+          "editOnDblClick": false
         },
         "colWidth": 12,
         "editorMode": "ace/mode/text",
@@ -165,7 +163,7 @@
       "id": "paragraph_1593613262588_298672998",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:59"
+      "$$hashKey": "object:109"
     },
     {
       "text": "%md\r\n\r\nThe `INSERT` returns a table with a single column named `[applied]`\r\n(with the square brackets in the name of the column).\r\n\r\n![UCLWTSuccess](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/UCLWTSuccess.png)\r\n\r\nWhen the `[applied]` column has a Boolean value of `true`, it means the\r\n`INSERT` succeeded. ",
@@ -203,12 +201,12 @@
       "id": "paragraph_1593613262587_2068897536",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:60"
+      "$$hashKey": "object:110"
     },
     {
-      "text": "%md\n\nThe `INSERT` returns a table with a single column named `[applied]` (with the square brackets in the name of the column).\n\n![UCLWTSuccess](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/UCLWTSuccess.png)\n\nWhen the `[applied]` column has a Boolean value of `true`, it means the `INSERT` succeeded.\n<br>\n#### <span style=\"color:teal\"><b>Step 2:</b></span> In the next cell, run the exact same `INSERT` command you ran in Step 1.\n<br>\n\n<details>\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\n\n> #### We're all out of hints! Just copy the command you used in the previous step.\n</details>\n\n<details>\n\n<summary><i><span style=\"color:blue\">Just want the command? Click here.</span></i></summary>\n\n```\nINSERT INTO killrvideo.user_credentials (email, password, userid)\nVALUES('cv@datastax.com', '3@$tC0@$tC@ss@ndr@', 55555555-5555-5555-5555-555555555555)\nIF NOT EXISTS;\n```\n\n</details>\n",
+      "text": "%md\n\nThe `INSERT` returns a table with a single column named `[applied]` (with the square brackets in the name of the column).\n\n![UCLWTSuccess](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/UCLWTSuccess.png)\n\nWhen the `[applied]` column has a Boolean value of `true`, it means the `INSERT` succeeded.\n<br>\n#### <span style=\"color:teal\"><b>Step 2:</b></span> In the next cell, run the exact same `INSERT` command you ran in Step 1.\n<br>\n\n<details>\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\n\n> #### We're all out of hints! Just copy the command you used in the previous step.\n</details>\n\n<details>\n\n<summary><i><span style=\"color:blue\">Just want the command? Click here.</span></i></summary>\n\n```\nINSERT INTO killrvideo.user_credentials (email, password, userid)\nVALUES('cv@fenago.com', '3@$tC0@$tC@ss@ndr@', 55555555-5555-5555-5555-555555555555)\nIF NOT EXISTS;\n```\n\n</details>\n",
       "user": "anonymous",
-      "dateUpdated": "2020-07-02T07:17:55+0000",
+      "dateUpdated": "2020-07-02T07:51:01+0000",
       "config": {
         "editorSetting": {
           "language": "text",
@@ -230,7 +228,7 @@
         "msg": [
           {
             "type": "HTML",
-            "data": "<div class=\"markdown-body\">\n<p>The <code>INSERT</code> returns a table with a single column named <code>[applied]</code> (with the square brackets in the name of the column).</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/UCLWTSuccess.png\" alt=\"UCLWTSuccess\" /></p>\n<p>When the <code>[applied]</code> column has a Boolean value of <code>true</code>, it means the <code>INSERT</code> succeeded.<br />\n<br></p>\n<h4><span style=\"color:teal\"><b>Step 2:</b></span> In the next cell, run the exact same <code>INSERT</code> command you ran in Step 1.</h4>\n<br>\n<details>\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\n<blockquote>\n<h4>We&rsquo;re all out of hints! Just copy the command you used in the previous step.</h4>\n</blockquote>\n</details>\n<details>\n<summary><i><span style=\"color:blue\">Just want the command? Click here.</span></i></summary>\n<pre><code>INSERT INTO killrvideo.user_credentials (email, password, userid)\nVALUES('cv@datastax.com', '3@$tC0@$tC@ss@ndr@', 55555555-5555-5555-5555-555555555555)\nIF NOT EXISTS;\n</code></pre>\n</details>\n\n</div>"
+            "data": "<div class=\"markdown-body\">\n<p>The <code>INSERT</code> returns a table with a single column named <code>[applied]</code> (with the square brackets in the name of the column).</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/UCLWTSuccess.png\" alt=\"UCLWTSuccess\" /></p>\n<p>When the <code>[applied]</code> column has a Boolean value of <code>true</code>, it means the <code>INSERT</code> succeeded.<br />\n<br></p>\n<h4><span style=\"color:teal\"><b>Step 2:</b></span> In the next cell, run the exact same <code>INSERT</code> command you ran in Step 1.</h4>\n<br>\n<details>\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\n<blockquote>\n<h4>We&rsquo;re all out of hints! Just copy the command you used in the previous step.</h4>\n</blockquote>\n</details>\n<details>\n<summary><i><span style=\"color:blue\">Just want the command? Click here.</span></i></summary>\n<pre><code>INSERT INTO killrvideo.user_credentials (email, password, userid)\nVALUES('cv@fenago.com', '3@$tC0@$tC@ss@ndr@', 55555555-5555-5555-5555-555555555555)\nIF NOT EXISTS;\n</code></pre>\n</details>\n\n</div>"
           }
         ]
       },
@@ -240,8 +238,10 @@
       "jobName": "paragraph_1593674275522_2017359767",
       "id": "paragraph_1593613262586_59626477",
       "dateCreated": "2020-07-02T07:17:55+0000",
-      "status": "READY",
-      "$$hashKey": "object:61"
+      "dateStarted": "2020-07-02T07:51:01+0000",
+      "dateFinished": "2020-07-02T07:51:01+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:111"
     },
     {
       "text": "// Enter and execute the same command in this cell as you did in the previous step\n// Remember, click in the cell and press SHIFT+ENTER or click the Run button in the top-right corner \n",
@@ -250,9 +250,7 @@
       "config": {
         "editorSetting": {
           "language": "text",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
+          "editOnDblClick": false
         },
         "colWidth": 12,
         "editorMode": "ace/mode/text",
@@ -271,7 +269,7 @@
       "id": "paragraph_1593613262227_557463572",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:62"
+      "$$hashKey": "object:112"
     },
     {
       "text": "%md\n\n#### Notice that this time the `INSERT` returns a row that includes the `[applied]` column along with the other columns from the table. Also note that the value of the `[applied]` column is a Boolean `false`.\n\n#### This means that the LWT found a record violating the condition. In this case, it's the row we previously inserted. Rather than upserting the row, the LWT returned the row it read, and noted that the write failed (in the `[applied]` column):\n\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/UCLWTFail.png)",
@@ -309,7 +307,7 @@
       "id": "paragraph_1593613262225_522687967",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:63"
+      "$$hashKey": "object:113"
     },
     {
       "text": "%md\n\n![line](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images//line.png \"line\" )\n# <center><span style=\"color:teal\">`UPDATE` with Lightweight Transactions (LWTs)</span></center>\n\n### <span style=\"color:teal\">In this section, you will do the following things:</span>\n- #### We'll use an `UPDATE` with an LWT that succeeds\n- #### We'll use an `UPDATE` with an LWT that fails\n- #### We'll explain why you care about updates and LWTs\n<br>\n\n#### <b>Here's the story:</b>\n\n#### Sometimes, when you want to update a record, you may run into a similar situation as you did with the insert. For example, let’s say we want to update the password column, but only if the column value has not already been updated. We can use an LWT for this too.\n\n#### First, let’s simulate getting the current password - since that is what your code would have to do.\n<br>\n\n#### <span style=\"color:teal\"><b>Step 1:</b></span> In the cell that follows, write CQL to query for the user you just created\n<br>\n<details>\n\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\n\n> #### You are writing a `SELECT` statement to query the `killrvideo.user_credentials` table. Since the primary key is the `email`, you want to search for the email value of `'cv@fenago.com'`.\n</details>\n\n<details>\n<summary><i><span style=\"color:blue\">Just want the command? Click here.</span></i></summary>\n\n```\nSELECT * FROM killrvideo.user_credentials WHERE email = 'cv@fenago.com';\n```\n</details>\n",
@@ -347,7 +345,7 @@
       "id": "paragraph_1593613262388_141096057",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:64"
+      "$$hashKey": "object:114"
     },
     {
       "text": "// Enter and execute the query to retrieve the user you created in the previous section\n// Remember, click in the cell and press SHIFT+ENTER or click the Run button in the top-right corner \n",
@@ -360,9 +358,7 @@
         "enabled": true,
         "editorSetting": {
           "language": "text",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
+          "editOnDblClick": false
         },
         "editorMode": "ace/mode/text"
       },
@@ -377,7 +373,7 @@
       "id": "paragraph_1593613261647_-1159850577",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:65"
+      "$$hashKey": "object:115"
     },
     {
       "text": "%md\n\n#### Let’s imagine we want to change the password value from `3@$tC0@$tC@ss@ndr@` to `password_A`, but only if nobody has changed the password yet (we realize the security gods would hate you for using this simple password, but let's ignore them for now). We can do that with LWT.\n<br>\n\n#### <span style=\"color:teal\"><b>Step 2:</b></span> In the cell that follows, write an `UPDATE` command to change the user's password from `'3@$tC0@$tC@ss@ndr@'` to `'Password_A'`. Use an LWT to make sure the password wasn't already changed.\n<br>\n\n<details>\n\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\n\n> #### You are writing an `UPDATE` statement for the `killrvideo.user_credentials` table. Since the primary key is the `email`, you want to update the row with the `email` value of `'cv@fenago.com'`. You will use the LWT with the form `IF password = '3@$tC0@$tC@ss@ndr@'`.\n</details>\n\n<details>\n\n<summary><i><span style=\"color:blue\">Just want the command? Click here.</span></i></summary>\n\n```\nUPDATE killrvideo.user_credentials\nSET password = 'password_A'\nWHERE email = 'cv@fenago.com'\nIF password = '3@$tC0@$tC@ss@ndr@';\n```\n</details>\n",
@@ -415,7 +411,7 @@
       "id": "paragraph_1593613261553_1468891853",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:66"
+      "$$hashKey": "object:116"
     },
     {
       "text": "// Enter and execute the update with LWT here\n// Remember, click in the cell and press SHIFT+ENTER or click the Run button in the top-right corner \n",
@@ -426,13 +422,7 @@
         "fontSize": 9,
         "results": {},
         "enabled": true,
-        "editorSetting": {
-          "language": "text",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
-        },
-        "editorMode": "ace/mode/text"
+        "editorSetting": {}
       },
       "settings": {
         "params": {},
@@ -445,12 +435,12 @@
       "id": "paragraph_1593613262346_-937530090",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:67"
+      "$$hashKey": "object:117"
     },
     {
-      "text": "%md\n\n#### The LWT checks that the `password` is what we expect. Notice the resulting value in the `[applied]` column is `true`.\n#### What does this mean?\n\n<details>\n<summary><i><span style=\"color:blue\">If you're not sure, click here.</span></i></summary>\n</summary>\n\n#### When an LWT executes and the resulting `[applied]` column is `true`, the LWT succeeded.\n\n#### When the `[applied]` column contains a `false` value, the LWT failed to do the `UPDATE`.\n</details>\n\n<br>\n\n#### Now, let’s simulate updating the password when it is NOT what we think it is.\n<br>\n#### For example, after we read the record to prepare for the `UPDATE`, imagine somebody else changes the password before we can. If we blindly apply our change, we may overwrite the change they applied.\n\n#### <span style=\"color:teal\"><b>Step 3:</b></span> Execute an `UPDATE` in the following cell to simulate this situation (noticing that the record currently contains the password `password_A`). Set the `password` to `'password_B'` if the current password is `'3@$tC0@$tC@ss@ndr@'`.\n\n<br>\n\n<details>\n\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\n\n> #### Copy the `UPDATE` from the previous step. Then modify the `SET` clause to set the `password` to `password_B`.\n</details>\n\n<details>\n\n<summary><i><span style=\"color:blue\">Just want the command? Click here.</span></i></summary>\n\n```\nUPDATE killrvideo.user_credentials\nSET password = 'password_B'\nWHERE email = 'cv@fenago.com'\nIF password = '3@$tC0@$tC@ss@ndr@';\n```\n</details>\n",
+      "text": "%md\n\n#### The LWT checks that the `password` is what we expect. Notice the resulting value in the `[applied]` column is `true`.\n\nWhat does this mean?\n\n<details>\n<summary><i><span style=\"color:blue\">If you're not sure, click here.</span></i></summary>\n</summary>\n\n#### When an LWT executes and the resulting `[applied]` column is `true`, the LWT succeeded.\n\n#### When the `[applied]` column contains a `false` value, the LWT failed to do the `UPDATE`.\n</details>\n\n<br>\n\n#### Now, let’s simulate updating the password when it is NOT what we think it is.\n<br>\nFor example, after we read the record to prepare for the `UPDATE`, imagine somebody else changes the password before we can. If we blindly apply our change, we may overwrite the change they applied.\n\n#### <span style=\"color:teal\"><b>Step 3:</b></span> Execute an `UPDATE` in the following cell to simulate this situation (noticing that the record currently contains the password `password_A`). Set the `password` to `'password_B'` if the current password is `'3@$tC0@$tC@ss@ndr@'`.\n\n<br>\n\n<details>\n\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\n\n> #### Copy the `UPDATE` from the previous step. Then modify the `SET` clause to set the `password` to `password_B`.\n</details>\n\n<details>\n\n<summary><i><span style=\"color:blue\">Just want the command? Click here.</span></i></summary>\n\n```\nUPDATE killrvideo.user_credentials\nSET password = 'password_B'\nWHERE email = 'cv@fenago.com'\nIF password = '3@$tC0@$tC@ss@ndr@';\n```\n</details>\n",
       "user": "anonymous",
-      "dateUpdated": "2020-07-02T07:17:55+0000",
+      "dateUpdated": "2020-07-02T07:50:02+0000",
       "config": {
         "editorSetting": {
           "language": "text",
@@ -472,7 +462,7 @@
         "msg": [
           {
             "type": "HTML",
-            "data": "<div class=\"markdown-body\">\n<h4>The LWT checks that the <code>password</code> is what we expect. Notice the resulting value in the <code>[applied]</code> column is <code>true</code>.</h4>\n<h4>What does this mean?</h4>\n<details>\n<summary><i><span style=\"color:blue\">If you're not sure, click here.</span></i></summary>\n</summary>\n<h4>When an LWT executes and the resulting <code>[applied]</code> column is <code>true</code>, the LWT succeeded.</h4>\n<h4>When the <code>[applied]</code> column contains a <code>false</code> value, the LWT failed to do the <code>UPDATE</code>.</h4>\n</details>\n<br>\n<h4>Now, let’s simulate updating the password when it is NOT what we think it is.</h4>\n<br>\n#### For example, after we read the record to prepare for the `UPDATE`, imagine somebody else changes the password before we can. If we blindly apply our change, we may overwrite the change they applied.\n<h4><span style=\"color:teal\"><b>Step 3:</b></span> Execute an <code>UPDATE</code> in the following cell to simulate this situation (noticing that the record currently contains the password <code>password_A</code>). Set the <code>password</code> to <code>'password_B'</code> if the current password is <code>'3@$tC0@$tC@ss@ndr@'</code>.</h4>\n<br>\n<details>\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\n<blockquote>\n<h4>Copy the <code>UPDATE</code> from the previous step. Then modify the <code>SET</code> clause to set the <code>password</code> to <code>password_B</code>.</h4>\n</blockquote>\n</details>\n<details>\n<summary><i><span style=\"color:blue\">Just want the command? Click here.</span></i></summary>\n<pre><code>UPDATE killrvideo.user_credentials\nSET password = 'password_B'\nWHERE email = 'cv@fenago.com'\nIF password = '3@$tC0@$tC@ss@ndr@';\n</code></pre>\n</details>\n\n</div>"
+            "data": "<div class=\"markdown-body\">\n<h4>The LWT checks that the <code>password</code> is what we expect. Notice the resulting value in the <code>[applied]</code> column is <code>true</code>.</h4>\n<p>What does this mean?</p>\n<details>\n<summary><i><span style=\"color:blue\">If you're not sure, click here.</span></i></summary>\n</summary>\n<h4>When an LWT executes and the resulting <code>[applied]</code> column is <code>true</code>, the LWT succeeded.</h4>\n<h4>When the <code>[applied]</code> column contains a <code>false</code> value, the LWT failed to do the <code>UPDATE</code>.</h4>\n</details>\n<br>\n<h4>Now, let’s simulate updating the password when it is NOT what we think it is.</h4>\n<br>\nFor example, after we read the record to prepare for the `UPDATE`, imagine somebody else changes the password before we can. If we blindly apply our change, we may overwrite the change they applied.\n<h4><span style=\"color:teal\"><b>Step 3:</b></span> Execute an <code>UPDATE</code> in the following cell to simulate this situation (noticing that the record currently contains the password <code>password_A</code>). Set the <code>password</code> to <code>'password_B'</code> if the current password is <code>'3@$tC0@$tC@ss@ndr@'</code>.</h4>\n<br>\n<details>\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\n<blockquote>\n<h4>Copy the <code>UPDATE</code> from the previous step. Then modify the <code>SET</code> clause to set the <code>password</code> to <code>password_B</code>.</h4>\n</blockquote>\n</details>\n<details>\n<summary><i><span style=\"color:blue\">Just want the command? Click here.</span></i></summary>\n<pre><code>UPDATE killrvideo.user_credentials\nSET password = 'password_B'\nWHERE email = 'cv@fenago.com'\nIF password = '3@$tC0@$tC@ss@ndr@';\n</code></pre>\n</details>\n\n</div>"
           }
         ]
       },
@@ -482,8 +472,10 @@
       "jobName": "paragraph_1593674275525_-2016579494",
       "id": "paragraph_1593613261345_1732393278",
       "dateCreated": "2020-07-02T07:17:55+0000",
-      "status": "READY",
-      "$$hashKey": "object:68"
+      "dateStarted": "2020-07-02T07:50:02+0000",
+      "dateFinished": "2020-07-02T07:50:02+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:118"
     },
     {
       "text": "// Enter and execute the update with LWT here\n// Remember, click in the cell and press SHIFT+ENTER or click the Run button in the top-right corner \n",
@@ -492,9 +484,7 @@
       "config": {
         "editorSetting": {
           "language": "text",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
+          "editOnDblClick": false
         },
         "colWidth": 12,
         "editorMode": "ace/mode/text",
@@ -513,7 +503,7 @@
       "id": "paragraph_1593613260904_-1647256796",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:69"
+      "$$hashKey": "object:119"
     },
     {
       "text": "%md\n\n#### Of course, the LWT failed (as indicated by the `false` value in the `[applied]` column). Do you understand why?\n\n<details>\n<summary><i><span style=\"color:blue\">If you're not sure, click here.</span></i></summary>\n\n</summary>\n\n> The LWT attempts to `UPDATE` the row if and only if the current `password` value is `3@$tC0@$tC@ss@ndr@`.\n> The row's `password` value is `password_A`.\n> So, when the LWT reads the record and sees that the `password` value is not the specified value (i.e. `3@$tC0@$tC@ss@ndr@`), the LWT fails the `UPDATE`.\n</details>\n\n<br>\n\n#### Just to make sure we understand, let's select the row and verify the values of its columns.\n<br>\n\n#### <span style=\"color:teal\"><b>Step 4:</b></span> Write a `SELECT` statement to retrieve the updated row and execute it in the following CQL cell:\n\n<br>\n<details>\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\n\n> #### Retrieve the row from `killrvideo.user_credentails` where the `email` is `cv@fenago.com`.\n</details>\n\n<details>\n\n<summary><i><span style=\"color:blue\">Just want the command? Click here.</span></i></summary>\n\n```\nSELECT * FROM killrvideo.user_credentials WHERE email = 'cv@fenago.com';\n```\n</details>",
@@ -551,7 +541,7 @@
       "id": "paragraph_1593613262465_1302545411",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:70"
+      "$$hashKey": "object:120"
     },
     {
       "text": "// Enter and execute the select statement here\n// Remember, click in the cell and press SHIFT+ENTER or click the Run button in the top-right corner \n",
@@ -562,13 +552,7 @@
         "fontSize": 9,
         "results": {},
         "enabled": true,
-        "editorSetting": {
-          "language": "text",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
-        },
-        "editorMode": "ace/mode/text"
+        "editorSetting": {}
       },
       "settings": {
         "params": {},
@@ -581,12 +565,12 @@
       "id": "paragraph_1593613262305_182239066",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:71"
+      "$$hashKey": "object:121"
     },
     {
       "text": "%md\n\n![line](https://s3.amazonaws.com/datastaxtraining/CaaS/line.png \"line\" )\n# <center><span style=\"color:teal\">Batches</span></center>\n\n### <span style=\"color:teal\">In this section, you will do the following things:</span>\n- #### We'll explore the batch concept and understand when to use it\n- #### We'll use a `BATCH` command to insert rows in each of two denormalized tables\n\n**Note:** The keyword `BATCH` has a completely different meaning in CQL than SQL. Please be careful not to confuse the two.\n\n<br>\n<b>Here's the story:</b>\n\nAs we have seen in Cassandra, we denormalize data so that we can build tables for fast, scalable access. By definition, denormalization requires that we insert redundant data into two or more tables. This can cause problems. Imagine two writes to two denormalized tables. If one write succeeds and the other, for reasons unknown, fails, the tables are permanently inconsistent. Batches help us solve this problem by making sure that the data gets written to both tables.\n\nBatches sound a little like traditional transactions, and in some ways, they are. Traditional transactions will commit to both writes or, if one write fails, it rolls back the successful write. Alternatively, batches just keep trying until both writes succeed.\n<br>\n\nTwo KillrVideo tables that contain denormalized data are the `users` table and the `users_credentials table`. In the previous section, we only wrote to the `user_credentials` table, so our tables are now out of sync. Let's fix that! We'll start by deleting the row we inserted in the previous sections, and then we'll add it back in to both tables using batches.\n<br>\n<span style=\"color:teal\"><b>Step 1:</b></span> In the following cell, delete the row with the `email` of `cv@fenago.com` from the `user_credentials` table.\n\n<br>\n<details>\n\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\n\nYou will use the `DELETE` command on the `killrvideo.user_credentials` table. Since we want to delete all columns in the row, leave the column specification clause empty. In the `WHERE` clause, be sure to specify the `email` as `cv@fenago.com`\n</details>\n\n<details>\n\n<summary><i><span style=\"color:blue\">Just want the command? Click here.</span></i></summary>\n\n```\nDELETE FROM killrvideo.user_credentials WHERE email = 'cv@fenago.com';\n```\n\n</details>",
       "user": "anonymous",
-      "dateUpdated": "2020-07-02T07:17:55+0000",
+      "dateUpdated": "2020-07-02T07:48:38+0000",
       "config": {
         "editorSetting": {
           "language": "text",
@@ -619,7 +603,7 @@
       "id": "paragraph_1593613260866_-1101222115",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:72"
+      "$$hashKey": "object:122"
     },
     {
       "text": "// Enter and execute the delete command here\n// Remember, click in the cell and press SHIFT+ENTER or click the Run button in the top-right corner \n",
@@ -630,13 +614,7 @@
         "fontSize": 9,
         "results": {},
         "enabled": true,
-        "editorSetting": {
-          "language": "text",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
-        },
-        "editorMode": "ace/mode/text"
+        "editorSetting": {}
       },
       "settings": {
         "params": {},
@@ -649,7 +627,7 @@
       "id": "paragraph_1593613262446_343939607",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:73"
+      "$$hashKey": "object:123"
     },
     {
       "text": "%md\n\n#### Let's review the contents of both the `users` table and the `user_credentials` table.\n<br>\n<span style=\"color:teal\"><b>Step 2:</b></span> Execute the next two cells to view the contents of both tables.",
@@ -687,7 +665,7 @@
       "id": "paragraph_1593613262406_-11442358",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:74"
+      "$$hashKey": "object:124"
     },
     {
       "text": "// This command will let you review the contents of the user_credentials table.\n// This command requires a full table scan, which means it's fine on small tables like this on, but will not be performant for large production tables.\n// Remember, click in the cell and press SHIFT+ENTER or click the Run button in the top-right corner \n\nSELECT * FROM killrvideo.user_credentials;\n",
@@ -698,13 +676,7 @@
         "fontSize": 9,
         "results": {},
         "enabled": true,
-        "editorSetting": {
-          "language": "text",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
-        },
-        "editorMode": "ace/mode/text"
+        "editorSetting": {}
       },
       "settings": {
         "params": {},
@@ -717,7 +689,7 @@
       "id": "paragraph_1593613262285_1544176791",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:75"
+      "$$hashKey": "object:125"
     },
     {
       "text": "// This command will let you review the contents of the users table.\n// This command requires a full table scan, which means it's fine on small tables like this on, but will not be performant for large production tables.\n// Remember, click in the cell and press SHIFT+ENTER or click the Run button in the top-right corner \n\nSELECT * FROM killrvideo.users;\n",
@@ -728,13 +700,7 @@
         "fontSize": 9,
         "results": {},
         "enabled": true,
-        "editorSetting": {
-          "language": "text",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
-        },
-        "editorMode": "ace/mode/text"
+        "editorSetting": {}
       },
       "settings": {
         "params": {},
@@ -747,12 +713,12 @@
       "id": "paragraph_1593613262253_-799265529",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:76"
+      "$$hashKey": "object:126"
     },
     {
-      "text": "%md\r\n\r\n#### Note two points about these tables:\r\n- #### The contents of the tables are consistent - the redundant data is identical in both tables\r\n- #### Cristina's data does not show up in either table\r\n\r\n<br>\r\nLet's add a row to each table for Cristina. The following table gives you her data:\r\n<h4><center>\r\n\r\n <table style=\"width:40%\" border=\"1\">\r\n  <tr style=\"background-color:blue;color:white\">\r\n    <th>Column Name</th>\r\n    <th>Value</th>\r\n  </tr>\r\n  <tr style=\"background-color:white\">\r\n    <td>firstname</td>\r\n    <td>'Cristina'</td>\r\n  </tr>\r\n  <tr style=\"background-color:lightgray\">\r\n    <td>lastname</td>\r\n    <td>'Veale'</td>\r\n  </tr>\r\n  <tr style=\"background-color:white\">\r\n    <td>email</td>\r\n    <td>'cv@fenago.com`</td>\r\n  </tr>\r\n  <tr style=\"background-color:lightgray\">\r\n    <td>password</td>\r\n    <td>'3@$tC0@$tC@ss@ndr@'</td>\r\n  </tr>\r\n  <tr style=\"background-color:white\">\r\n    <td>userid</td>\r\n    <td>55555555-5555-5555-5555-555555555555</td>\r\n  </tr>\r\n </table>\r\n</center></h4>\r\n\r\n<br>\r\n<span style=\"color:teal\"><b>Step 3:</b></span> In the following cell, write and execute the CQL to insert a row into each table. Use a batch to make sure the code updates both tables.\r\n\r\n<br>\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\r\n\r\n> #### You will write two `INSERT` statements and surround them with `BEGIN BATCH`/`APPLY BATCH`. One of the `INSERT` statements should create a row in the `users` table and the other `INSERT` statement should create a row in the `user_credentials` table. Use the table above for the values of each insert. Also, don't forget to use `toTimestamp(now())` as the value for the `created_date` column.\r\n</details>\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Just want the CQL? Click here.</span></i></summary>\r\n\r\n```\r\nBEGIN BATCH\r\nINSERT INTO killrvideo.user_credentials (email, password, userid)\r\n  VALUES('cv@fenago.com', '3@$tC0@$tC@ss@ndr@', 55555555-5555-5555-5555-555555555555);\r\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\r\n  VALUES(55555555-5555-5555-5555-555555555555, toTimestamp(now()), 'Cristina', 'Veale', 'cv@fenago.com');\r\nAPPLY BATCH\r\n```\r\n\r\n</details>",
+      "text": "%md\r\n\r\n#### Note two points about these tables:\r\n- #### The contents of the tables are consistent - the redundant data is identical in both tables\r\n- #### Cristina's data does not show up in either table\r\n\r\n<br>\r\nLet's add a row to each table for Cristina. The following table gives you her data:\r\n<h4><center>\r\n\r\n <table style=\"width:40%\" border=\"1\">\r\n  <tr style=\"background-color:blue;color:white\">\r\n    <th>Column Name</th>\r\n    <th>Value</th>\r\n  </tr>\r\n  <tr style=\"background-color:white\">\r\n    <td>firstname</td>\r\n    <td>'Cristina'</td>\r\n  </tr>\r\n  <tr style=\"background-color:lightgray\">\r\n    <td>lastname</td>\r\n    <td>'Veale'</td>\r\n  </tr>\r\n  <tr style=\"background-color:white\">\r\n    <td>email</td>\r\n    <td>'cv@fenago.com`</td>\r\n  </tr>\r\n  <tr style=\"background-color:lightgray\">\r\n    <td>password</td>\r\n    <td>'3@$tC0@$tC@ss@ndr@'</td>\r\n  </tr>\r\n  <tr style=\"background-color:white\">\r\n    <td>userid</td>\r\n    <td>55555555-5555-5555-5555-555555555555</td>\r\n  </tr>\r\n </table>\r\n</center></h4>\r\n\r\n<br>\r\n<span style=\"color:teal\"><b>Step 3:</b></span> In the following cell, write and execute the CQL to insert a row into each table. Use a batch to make sure the code updates both tables.\r\n\r\n<br>\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\r\n\r\n> #### You will write two `INSERT` statements and surround them with `BEGIN BATCH`/`APPLY BATCH`. One of the `INSERT` statements should create a row in the `users` table and the other `INSERT` statement should create a row in the `user_credentials` table. Use the table above for the values of each insert. Also, don't forget to use `toTimestamp(now())` as the value for the `created_date` column.\r\n</details>\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Just want the CQL? Click here.</span></i></summary>\r\n\r\n```\r\n%cassandra\r\nBEGIN BATCH\r\n\r\nINSERT INTO killrvideo.user_credentials (email, password, userid)\r\n  VALUES('cv@fenago.com', '3@$tC0@$tC@ss@ndr@', 55555555-5555-5555-5555-555555555555);\r\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\r\n  VALUES(55555555-5555-5555-5555-555555555555, toTimestamp(now()), 'Cristina', 'Veale', 'cv@fenago.com');\r\n  \r\nAPPLY BATCH;\r\n\r\n```\r\n\r\n</details>",
       "user": "anonymous",
-      "dateUpdated": "2020-07-02T07:17:55+0000",
+      "dateUpdated": "2020-07-02T07:49:02+0000",
       "config": {
         "editorSetting": {
           "language": "text",
@@ -774,7 +740,7 @@
         "msg": [
           {
             "type": "HTML",
-            "data": "<div class=\"markdown-body\">\n<h4>Note two points about these tables:</h4>\n<ul>\n<li>\n<h4>The contents of the tables are consistent - the redundant data is identical in both tables</h4>\n</li>\n<li>\n<h4>Cristina&rsquo;s data does not show up in either table</h4>\n</li>\n</ul>\n<br>\nLet's add a row to each table for Cristina. The following table gives you her data:\n<h4><center>\n <table style=\"width:40%\" border=\"1\">\n  <tr style=\"background-color:blue;color:white\">\n    <th>Column Name</th>\n    <th>Value</th>\n  </tr>\n  <tr style=\"background-color:white\">\n    <td>firstname</td>\n    <td>'Cristina'</td>\n  </tr>\n  <tr style=\"background-color:lightgray\">\n    <td>lastname</td>\n    <td>'Veale'</td>\n  </tr>\n  <tr style=\"background-color:white\">\n    <td>email</td>\n    <td>'cv@fenago.com`</td>\n  </tr>\n  <tr style=\"background-color:lightgray\">\n    <td>password</td>\n    <td>'3@$tC0@$tC@ss@ndr@'</td>\n  </tr>\n  <tr style=\"background-color:white\">\n    <td>userid</td>\n    <td>55555555-5555-5555-5555-555555555555</td>\n  </tr>\n </table>\n</center></h4>\n<br>\n<span style=\"color:teal\"><b>Step 3:</b></span> In the following cell, write and execute the CQL to insert a row into each table. Use a batch to make sure the code updates both tables.\n<br>\n<details>\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\n<blockquote>\n<h4>You will write two <code>INSERT</code> statements and surround them with <code>BEGIN BATCH</code>/<code>APPLY BATCH</code>. One of the <code>INSERT</code> statements should create a row in the <code>users</code> table and the other <code>INSERT</code> statement should create a row in the <code>user_credentials</code> table. Use the table above for the values of each insert. Also, don&rsquo;t forget to use <code>toTimestamp(now())</code> as the value for the <code>created_date</code> column.</h4>\n</blockquote>\n</details>\n<details>\n<summary><i><span style=\"color:blue\">Just want the CQL? Click here.</span></i></summary>\n<pre><code>BEGIN BATCH\nINSERT INTO killrvideo.user_credentials (email, password, userid)\n  VALUES('cv@fenago.com', '3@$tC0@$tC@ss@ndr@', 55555555-5555-5555-5555-555555555555);\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\n  VALUES(55555555-5555-5555-5555-555555555555, toTimestamp(now()), 'Cristina', 'Veale', 'cv@fenago.com');\nAPPLY BATCH\n</code></pre>\n</details>\n\n</div>"
+            "data": "<div class=\"markdown-body\">\n<h4>Note two points about these tables:</h4>\n<ul>\n<li>\n<h4>The contents of the tables are consistent - the redundant data is identical in both tables</h4>\n</li>\n<li>\n<h4>Cristina&rsquo;s data does not show up in either table</h4>\n</li>\n</ul>\n<br>\nLet's add a row to each table for Cristina. The following table gives you her data:\n<h4><center>\n <table style=\"width:40%\" border=\"1\">\n  <tr style=\"background-color:blue;color:white\">\n    <th>Column Name</th>\n    <th>Value</th>\n  </tr>\n  <tr style=\"background-color:white\">\n    <td>firstname</td>\n    <td>'Cristina'</td>\n  </tr>\n  <tr style=\"background-color:lightgray\">\n    <td>lastname</td>\n    <td>'Veale'</td>\n  </tr>\n  <tr style=\"background-color:white\">\n    <td>email</td>\n    <td>'cv@fenago.com`</td>\n  </tr>\n  <tr style=\"background-color:lightgray\">\n    <td>password</td>\n    <td>'3@$tC0@$tC@ss@ndr@'</td>\n  </tr>\n  <tr style=\"background-color:white\">\n    <td>userid</td>\n    <td>55555555-5555-5555-5555-555555555555</td>\n  </tr>\n </table>\n</center></h4>\n<br>\n<span style=\"color:teal\"><b>Step 3:</b></span> In the following cell, write and execute the CQL to insert a row into each table. Use a batch to make sure the code updates both tables.\n<br>\n<details>\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\n<blockquote>\n<h4>You will write two <code>INSERT</code> statements and surround them with <code>BEGIN BATCH</code>/<code>APPLY BATCH</code>. One of the <code>INSERT</code> statements should create a row in the <code>users</code> table and the other <code>INSERT</code> statement should create a row in the <code>user_credentials</code> table. Use the table above for the values of each insert. Also, don&rsquo;t forget to use <code>toTimestamp(now())</code> as the value for the <code>created_date</code> column.</h4>\n</blockquote>\n</details>\n<details>\n<summary><i><span style=\"color:blue\">Just want the CQL? Click here.</span></i></summary>\n<pre><code>%cassandra\nBEGIN BATCH\n\nINSERT INTO killrvideo.user_credentials (email, password, userid)\n  VALUES('cv@fenago.com', '3@$tC0@$tC@ss@ndr@', 55555555-5555-5555-5555-555555555555);\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\n  VALUES(55555555-5555-5555-5555-555555555555, toTimestamp(now()), 'Cristina', 'Veale', 'cv@fenago.com');\n  \nAPPLY BATCH;\n\n</code></pre>\n</details>\n\n</div>"
           }
         ]
       },
@@ -784,8 +750,10 @@
       "jobName": "paragraph_1593674275528_-879194555",
       "id": "paragraph_1593613260826_-920837694",
       "dateCreated": "2020-07-02T07:17:55+0000",
-      "status": "READY",
-      "$$hashKey": "object:77"
+      "dateStarted": "2020-07-02T07:49:03+0000",
+      "dateFinished": "2020-07-02T07:49:04+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:127"
     },
     {
       "user": "anonymous",
@@ -795,13 +763,7 @@
         "fontSize": 9,
         "results": {},
         "enabled": true,
-        "editorSetting": {
-          "language": "scala",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
-        },
-        "editorMode": "ace/mode/scala"
+        "editorSetting": {}
       },
       "settings": {
         "params": {},
@@ -814,7 +776,7 @@
       "id": "paragraph_1593615061042_-1988234466",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:78"
+      "$$hashKey": "object:128"
     },
     {
       "text": "// Write and execute the batch with the two inserts here\n// Remember, click in the cell and press SHIFT+ENTER or click the Run button in the top-right corner \n",
@@ -823,9 +785,7 @@
       "config": {
         "editorSetting": {
           "language": "text",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
+          "editOnDblClick": false
         },
         "colWidth": 12,
         "editorMode": "ace/mode/text",
@@ -844,7 +804,7 @@
       "id": "paragraph_1593613260786_-103737537",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:79"
+      "$$hashKey": "object:129"
     },
     {
       "text": "%md\n\nFinally, let's review the contents of both the `users` table and the `user_credentials` table and verify the changes\n\n<span style=\"color:teal\"><b>Step 4:</b></span> Execute the next two cells to view the contents of both tables.",
@@ -882,7 +842,7 @@
       "id": "paragraph_1593613262166_589224863",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:80"
+      "$$hashKey": "object:130"
     },
     {
       "text": "\n// This command will let you review the contents of the users table.\n// This command requires a full table scan, which means it's fine on small tables like this on, but will not be performant for large production tables.\n// Remember, click in the cell and press SHIFT+ENTER or click the Run button in the top-right corner \nSELECT * FROM killrvideo.users;\n\n",
@@ -891,9 +851,7 @@
       "config": {
         "editorSetting": {
           "language": "text",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
+          "editOnDblClick": false
         },
         "colWidth": 12,
         "editorMode": "ace/mode/text",
@@ -912,7 +870,7 @@
       "id": "paragraph_1593613260765_-928681310",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:81"
+      "$$hashKey": "object:131"
     },
     {
       "text": "\n// This command will let you review the contents of the user_credentials table.\n// This command requires a full table scan, which means it's fine on small tables like this on, but will not be performant for large production tables.\n// Remember, click in the cell and press SHIFT+ENTER or click the Run button in the top-right corner \nSELECT * FROM killrvideo.user_credentials;\n",
@@ -921,9 +879,7 @@
       "config": {
         "editorSetting": {
           "language": "text",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
+          "editOnDblClick": false
         },
         "colWidth": 12,
         "editorMode": "ace/mode/text",
@@ -942,7 +898,7 @@
       "id": "paragraph_1593613260731_1055227562",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:82"
+      "$$hashKey": "object:132"
     },
     {
       "text": "%md\n\nReview the results in the previous two cells. If you carefully compare them with results from Step 2, you should find the row in each table containing Cristina's data.",
@@ -980,7 +936,7 @@
       "id": "paragraph_1593613262105_1147790105",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:83"
+      "$$hashKey": "object:133"
     },
     {
       "text": "%md\n\n![line](https://s3.amazonaws.com/datastaxtraining/CaaS/line.png \"line\" )\n# <center><span style=\"color:teal\">Congratulations!!!!</span></center>\n\n<p><h4>At this point you understand some of the advanced concepts of Cassandra.</h4></p>\n\nYou are like some kind of an Apache Cassandra PhD!\n\n<details>\n<summary><i><span style=\"color:blue\">Want to feel the graduating experience? Click here.</span></i></summary>\n\n<div class=\"solution-wrapper\">\n\n<div class=\"solution-content\">\n<center><div class=\"align-center\"><img alt=\"Dance off!\" src=\"http://giphygifs.s3.amazonaws.com/media/BfcNk5h20pdte/giphy.gif\"></div></center>\n</div>\n</div>\n\n</details>\n",
@@ -1017,10 +973,10 @@
       "jobName": "paragraph_1593674275530_-1799172081",
       "id": "paragraph_1593613260713_789012323",
       "dateCreated": "2020-07-02T07:17:55+0000",
-      "status": "FINISHED",
-      "$$hashKey": "object:84",
+      "dateStarted": "2020-07-02T07:21:12+0000",
       "dateFinished": "2020-07-02T07:21:12+0000",
-      "dateStarted": "2020-07-02T07:21:12+0000"
+      "status": "FINISHED",
+      "$$hashKey": "object:134"
     },
     {
       "text": "%md\n\n![line](https://s3.amazonaws.com/datastaxtraining/CaaS/line.png \"line\" )\n# <center><span style=\"color:teal\">Bonus Challenge: Using TTL</span></center>\n### <center>If you got done early and want something to do while you wait for others, here's a bonus challenge</center>\n\n<span style=\"color:teal\">In this section, you will do the following things:</span>\n- #### Create a table to keep track of video positions for each user\n- #### We will cause entries in the new table to expire after a period of time using TTL\n\n\n**Here's the pitch:**\nImagine while a user is playing a video, they decide to pause it. Further, we want to keep track of where they paused so we can restart the video at that point. However, we don't want to keep track of every time every user pauses a video forever. This information is probably only useful for a limited period of time, so after that period we would like the data to just go away.\nThis is where Time To Live (TTL) comes in. We can set a value (in seconds) for how long a column value should exist. After that amount of time passes, Cassandra automatically removed the value from that column. Let's see how it works...\n\n<br>\n <span style=\"color:teal\"><b>Step 1:</b></span> In the next cell, write and execute the CQL to create a table named `video_positions_by_user`.\n \n- Make the `userid` the primary key\n- Include the following columns in the table\n\n<h4><center>\n <table style=\"width:25%\" border=\"1\">\n  <tr style=\"background-color:blue;color:white\">\n    <th>Column Name</th>\n    <th>Data Type</th>\n  </tr>\n  <tr style=\"background-color:white\">\n    <td>userid</td>\n    <td>UUID</td>\n  </tr>\n  <tr style=\"background-color:lightgray\">\n    <td>videoid</td>\n    <td>UUID</td>\n  </tr>\n  <tr style=\"background-color:white\">\n    <td>video_position</td>\n    <td>INT</td>\n  </tr>\n</table>\n</center></h4>\n\n\n<details>\n\n<summary><i><span style=\"color:blue\">Want the solution? Click here.</span></i></summary>\n\n```\n\nCREATE TABLE killrvideo.video_positions_by_user (\n    userid          UUID,\n    videoid         UUID,\n    video_position  INT,\n    PRIMARY KEY (userid)\n);\n```\n\n</details>\n",
@@ -1057,10 +1013,10 @@
       "jobName": "paragraph_1593674275530_1771421445",
       "id": "paragraph_1593613260663_142404105",
       "dateCreated": "2020-07-02T07:17:55+0000",
-      "status": "FINISHED",
-      "$$hashKey": "object:85",
+      "dateStarted": "2020-07-02T07:21:54+0000",
       "dateFinished": "2020-07-02T07:21:54+0000",
-      "dateStarted": "2020-07-02T07:21:54+0000"
+      "status": "FINISHED",
+      "$$hashKey": "object:135"
     },
     {
       "text": "// Write and execute the CQL to create the video_positions_by_user table\n// Remember, click in the cell and press SHIFT+ENTER or click the Run button in the top-right corner \n",
@@ -1071,13 +1027,7 @@
         "fontSize": 9,
         "results": {},
         "enabled": true,
-        "editorSetting": {
-          "language": "text",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
-        },
-        "editorMode": "ace/mode/text"
+        "editorSetting": {}
       },
       "settings": {
         "params": {},
@@ -1090,7 +1040,7 @@
       "id": "paragraph_1593613260626_-1206190066",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:86"
+      "$$hashKey": "object:136"
     },
     {
       "text": "%md\n\n<span style=\"color:teal\"><b>Step 2:</b></span> In the following cell, insert a row into the `video_positions_by_user` table using TTL.\n- #### Set the TTL on the `videoid` and `video_position` values to five minutes (300 seconds) with the clause `USING TTL 300` at the end of the statement\n- #### Use the values in the following table\n\n<h4><center>\n <table style=\"width:40%\" border=\"1\">\n  <tr style=\"background-color:blue;color:white\">\n    <th>Column Name</th>\n    <th>Column Value</th>\n  </tr>\n  <tr style=\"background-color:white\">\n    <td>userid</td>\n    <td>11111111-1111-1111-1111-111111111111</td>\n  </tr>\n  <tr style=\"background-color:lightgray\">\n    <td>videoid</td>\n    <td>aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa</td>\n  </tr>\n  <tr style=\"background-color:white\">\n    <td>video_position</td>\n    <td>42</td>\n  </tr>\n</table>\n</center></h4>\n\n**Note:** Once you execute the `INSERT` command, proceed directly to the next step. You will want to execute the next step within the TTL window. Time is ticking...\n\n<details>\n\n<summary><i><span style=\"color:blue\">Want the solution? Click here.</span></i></summary>\n\n```\n\nINSERT INTO killrvideo.video_positions_by_user\n    (userid, videoid, video_position)\n    VALUES(11111111-1111-1111-1111-111111111111, aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa, 42)\n    USING TTL 300;\n```\n\n</details>\n",
@@ -1127,10 +1077,10 @@
       "jobName": "paragraph_1593674275531_730344252",
       "id": "paragraph_1593613260605_1452046991",
       "dateCreated": "2020-07-02T07:17:55+0000",
-      "status": "FINISHED",
-      "$$hashKey": "object:87",
+      "dateStarted": "2020-07-02T07:22:11+0000",
       "dateFinished": "2020-07-02T07:22:11+0000",
-      "dateStarted": "2020-07-02T07:22:11+0000"
+      "status": "FINISHED",
+      "$$hashKey": "object:137"
     },
     {
       "text": "// Write and execute the CQL to insert the row into video_positions_by_user table with the TTL of 180\n// Remember, click in the cell and press SHIFT+ENTER or click the Run button in the top-right corner \n",
@@ -1141,13 +1091,7 @@
         "fontSize": 9,
         "results": {},
         "enabled": true,
-        "editorSetting": {
-          "language": "text",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
-        },
-        "editorMode": "ace/mode/text"
+        "editorSetting": {}
       },
       "settings": {
         "params": {},
@@ -1160,7 +1104,7 @@
       "id": "paragraph_1593613260567_1827104339",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:88"
+      "$$hashKey": "object:138"
     },
     {
       "text": "%md\n\n<span style=\"color:teal\"><b>Step 3:</b></span> Inspect how much time is left for the row's values.\n- Execute the following cell to see how much time is left on the TTL for the `videoid` value\n- You may want to execute the next cell several times and watch the TTL value count down\n- In fact, continue to execute this query every few seconds until the TTL expires (just to see what happens)\n- Notice that Cassandra associates TTL values with column values (not the row), so the query selects the TTL for a specific column\n\n",
@@ -1198,7 +1142,7 @@
       "id": "paragraph_1593613260546_2132917245",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:89"
+      "$$hashKey": "object:139"
     },
     {
       "text": "// Execute this cell to see how much time is left on the TTL for the videoid value\n// Remember, click in the cell and press SHIFT+ENTER or click the Run button in the top-right corner \nSELECT videoid, TTL(videoid) FROM killrvideo.video_positions_by_user WHERE userid = 11111111-1111-1111-1111-111111111111;",
@@ -1207,9 +1151,7 @@
       "config": {
         "editorSetting": {
           "language": "text",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
+          "editOnDblClick": false
         },
         "colWidth": 12,
         "editorMode": "ace/mode/text",
@@ -1228,7 +1170,7 @@
       "id": "paragraph_1593613260505_1498464974",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:90"
+      "$$hashKey": "object:140"
     },
     {
       "text": "%md\n\n#### As we mentioned, Cassandra associates the TTL with a value in the row. This implies we could set different TTLs for different columns. How might we do that? Glad you asked...\n\n<span style=\"color:teal\"><b>Step 4:</b></span> In the following cell, insert the same row again into the `video_positions_by_user` table using TTL.\n- #### Again, set the TTL for to 300 seconds with the clause `USING TTL 300` at the end of the statement\n- #### Here is the table again for your reference\n\n<h4><center>\n <table style=\"width:40%\" border=\"1\">\n  <tr style=\"background-color:blue;color:white\">\n    <th>Column Name</th>\n    <th>Column Value</th>\n  </tr>\n  <tr style=\"background-color:white\">\n    <td>userid</td>\n    <td>11111111-1111-1111-1111-111111111111</td>\n  </tr>\n  <tr style=\"background-color:lightgray\">\n    <td>videoid</td>\n    <td>aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa</td>\n  </tr>\n  <tr style=\"background-color:white\">\n    <td>video_position</td>\n    <td>42</td>\n  </tr>\n</table>\n</center></h4>\n\n<details>\n\n<summary><i><span style=\"color:blue\">Want the solution? Click here.</span></i></summary>\n\n```\n\nINSERT INTO killrvideo.video_positions_by_user\n    (userid, videoid, video_position)\n    VALUES(11111111-1111-1111-1111-111111111111, aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa, 42)\n    USING TTL 300;\n```\n\n</details>\n",
@@ -1266,7 +1208,7 @@
       "id": "paragraph_1593613260466_-1047193209",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:91"
+      "$$hashKey": "object:141"
     },
     {
       "text": "// Write and execute the CQL to insert the row into video_positions_by_user table with the TTL of 180\n// Remember, click in the cell and press SHIFT+ENTER or click the Run button in the top-right corner \n",
@@ -1275,9 +1217,7 @@
       "config": {
         "editorSetting": {
           "language": "text",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
+          "editOnDblClick": false
         },
         "colWidth": 12,
         "editorMode": "ace/mode/text",
@@ -1296,7 +1236,7 @@
       "id": "paragraph_1593613260454_-366961449",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:92"
+      "$$hashKey": "object:142"
     },
     {
       "text": "%md\n<span style=\"color:teal\"><b>Step 5:</b></span> Execute the following cell to reset the value of the TTL for _only_ the videoid value.\n\n**Note:** You may only set TTLs for values of non-primary key columns.\n",
@@ -1334,7 +1274,7 @@
       "id": "paragraph_1593613260406_-1111011670",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:93"
+      "$$hashKey": "object:143"
     },
     {
       "text": "\n// Execute this cell to see how much time is left on the TTL for the videoid value\n// Remember, click in the cell and press SHIFT+ENTER or click the Run button in the top-right corner \n\nUPDATE killrvideo.video_positions_by_user\n    USING TTL 300\n    SET videoid = aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa\n    WHERE userid = 11111111-1111-1111-1111-111111111111;",
@@ -1343,9 +1283,7 @@
       "config": {
         "editorSetting": {
           "language": "text",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
+          "editOnDblClick": false
         },
         "colWidth": 12,
         "editorMode": "ace/mode/text",
@@ -1365,7 +1303,7 @@
       "id": "paragraph_1593613260366_-1925076724",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:94"
+      "$$hashKey": "object:144"
     },
     {
       "text": "%md\n\n<span style=\"color:teal\"><b>Step 6:</b></span> Execute the following cell repeatedly to watch the TTLs count down.\n- #### Continue to execute the next cell until both TTLs expire\n- #### We know, the suspense is killing you...\n",
@@ -1403,7 +1341,7 @@
       "id": "paragraph_1593613260327_-1478360293",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:95"
+      "$$hashKey": "object:145"
     },
     {
       "text": "// Execute this cell to see how much time is left on the TTL for both of the row's values\n// Remember, click in the cell and press SHIFT+ENTER or click the Run button in the top-right corner \n\nSELECT videoid, TTL(videoid), video_position, TTL(video_position) FROM killrvideo.video_positions_by_user WHERE userid = 11111111-1111-1111-1111-111111111111;\n",
@@ -1412,9 +1350,7 @@
       "config": {
         "editorSetting": {
           "language": "text",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
+          "editOnDblClick": false
         },
         "colWidth": 12,
         "editorMode": "ace/mode/text",
@@ -1433,7 +1369,7 @@
       "id": "paragraph_1593613260325_-1060122668",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:96"
+      "$$hashKey": "object:146"
     },
     {
       "user": "anonymous",
@@ -1443,13 +1379,7 @@
         "fontSize": 9,
         "results": {},
         "enabled": true,
-        "editorSetting": {
-          "language": "scala",
-          "editOnDblClick": false,
-          "completionKey": "TAB",
-          "completionSupport": true
-        },
-        "editorMode": "ace/mode/scala"
+        "editorSetting": {}
       },
       "settings": {
         "params": {},
@@ -1462,12 +1392,12 @@
       "id": "paragraph_1593613259814_1472969674",
       "dateCreated": "2020-07-02T07:17:55+0000",
       "status": "READY",
-      "$$hashKey": "object:97"
+      "$$hashKey": "object:147"
     }
   ],
   "name": "6_Advanced_Topics",
   "id": "2FEGDFJ1E",
-  "defaultInterpreterGroup": "spark",
+  "defaultInterpreterGroup": "cassandra",
   "version": "0.9.0-preview1",
   "noteParams": {},
   "noteForms": {},
