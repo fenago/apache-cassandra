@@ -1,0 +1,1145 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\r\n\r\n<img align=\"right\" src=\"https://raw.githubusercontent.com/fenago/datastax-enterprise-cassandra/master/DS201-Exercises/images/logo.png\">\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<img align=\"right\" src=\"https://raw.githubusercontent.com/fenago/datastax-enterprise-cassandra/master/DS201-Exercises/images/logo.png\">\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465309_1980941572",
+      "id": "paragraph_1594619989918_387368939",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "focus": true,
+      "$$hashKey": "object:57"
+    },
+    {
+      "text": "%sh\nSTATUS=\"$(service cassandra status)\"\n\nif [[ $STATUS == *\"is running\"* ]]; then\n    echo \"Cassandra is running\"\nelse \n    echo \" Cassandra not running .... Starting\"  \n    service cassandra restart > /dev/null 2>&1 &\n    echo \" Started\"  \nfi",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465311_-444726701",
+      "id": "paragraph_1594619789615_1225371573",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:58"
+    },
+    {
+      "text": "%md\r\n\r\n# Exercise 2 – Partitions\r\n\r\nIn this exercise, you will:\r\n\r\n- Experiment with partitions",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h1>Exercise 2 – Partitions</h1>\n<p>In this exercise, you will:</p>\n<ul>\n<li>Experiment with partitions</li>\n</ul>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465312_263293406",
+      "id": "paragraph_1594619992654_-1909338151",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:59"
+    },
+    {
+      "text": "%md\r\n\r\n1) NOTE: Be sure Apache Cassandra™ is running before doing these exercises. You can check by\r\nrunning nodetool on the command line:\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol>\n<li>NOTE: Be sure Apache Cassandra™ is running before doing these exercises. You can check by<br />\nrunning nodetool on the command line:</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465312_-1206750557",
+      "id": "paragraph_1594619994854_38623905",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:60"
+    },
+    {
+      "text": "%sh\nnodetool status",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465312_1549092857",
+      "id": "paragraph_1594620217233_-2025011778",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:61"
+    },
+    {
+      "text": "%md\r\n2) Switch to the YooToob keyspace via the USE command:",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"2\">\n<li>Switch to the YooToob keyspace via the USE command:</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465312_-375692502",
+      "id": "paragraph_1594620217394_-242620878",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:62"
+    },
+    {
+      "text": "%cassandra\n\nUSE YooToob;",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:09:23+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465313_-615968522",
+      "id": "paragraph_1594620217595_1121993654",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:63"
+    },
+    {
+      "text": "%md\r\n3) Execute the following command to view the metadata for the videos table you created earlier.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"3\">\n<li>Execute the following command to view the metadata for the videos table you created earlier.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465313_1451356798",
+      "id": "paragraph_1594620217778_204601101",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:64"
+    },
+    {
+      "text": "DESCRIBE TABLE videos;",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465313_-1148396857",
+      "id": "paragraph_1594620217976_-954419632",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:65"
+    },
+    {
+      "text": "%md\r\n- What is the partition key?\r\n- How many partitions are in this table?",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ul>\n<li>What is the partition key?</li>\n<li>How many partitions are in this table?</li>\n</ul>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465313_555489379",
+      "id": "paragraph_1594620218136_1220208085",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:66"
+    },
+    {
+      "text": "%md\n\n### Answers:\n\nvideo_id\n\nOne for each unique primary key value.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h3>Answers:</h3>\n<p>video_id</p>\n<p>One for each unique primary key value.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465314_1697417050",
+      "id": "paragraph_1594620231310_16553096",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:67"
+    },
+    {
+      "text": "%md\r\n4) Execute the following query to view the partitioner token value for each video id.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"4\">\n<li>Execute the following query to view the partitioner token value for each video id.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465314_-1919430429",
+      "id": "paragraph_1594620232090_1718682131",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:68"
+    },
+    {
+      "text": "SELECT token(video_id), video_id\r\nFROM videos;",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465314_1137359266",
+      "id": "paragraph_1594623690845_954025506",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:69"
+    },
+    {
+      "text": "%md\r\n5) Use the following command to inspect the file named /home/labwork/data-files/videos-by-tag.csv:",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"5\">\n<li>Use the following command to inspect the file named /home/labwork/data-files/videos-by-tag.csv:</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465314_229231530",
+      "id": "paragraph_1594623691096_-1711995974",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:70"
+    },
+    {
+      "text": "%sh\ncat /home/labwork/data-files/videos-by-tag.csv",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465315_1427713052",
+      "id": "paragraph_1594623691226_-763341722",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:71"
+    },
+    {
+      "text": "%md\r\n6) Switch to the YooToob keyspace.\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"6\">\n<li>Switch to the YooToob keyspace.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465315_713118168",
+      "id": "paragraph_1594623691391_903143493",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:72"
+    },
+    {
+      "text": "USE YooToob;",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465315_26665977",
+      "id": "paragraph_1594623691831_-7322443",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:73"
+    },
+    {
+      "text": "%md\r\n7) Your mission, should you choose to accept it, is to write a CREATE TABLE statement\r\nthat will store this data partitioned by tags. With this given data set, there should be\r\ntwo partitions, one for each tag. Call your table videos_by_tag.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"7\">\n<li>Your mission, should you choose to accept it, is to write a CREATE TABLE statement<br />\nthat will store this data partitioned by tags. With this given data set, there should be<br />\ntwo partitions, one for each tag. Call your table videos_by_tag.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465315_-1523873955",
+      "id": "paragraph_1594623691564_2117314684",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:74"
+    },
+    {
+      "text": "CREATE TABLE videos_by_tag (\r\ntag TEXT,\r\nvideo_id UUID,\r\nadded_date TIMESTAMP,\r\ntitle TEXT,\r\nPRIMARY KEY ((tag), video_id)\r\n);",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465316_2116643620",
+      "id": "paragraph_1594623827047_1681753786",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:75"
+    },
+    {
+      "text": "%md\r\n8) Execute the following COPY command to import the videos-by-tag.csv data.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"8\">\n<li>Execute the following COPY command to import the videos-by-tag.csv data.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465316_587851204",
+      "id": "paragraph_1594623827409_-1077850154",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:76"
+    },
+    {
+      "text": "INSERT INTO videos_by_tag(tag, video_id, added_date, title)\r\nVALUES ('cassandra', 1645ea59-14bd-11e5-a993-8138354b7e31, '2014-01-29', 'Cassandra History');\r\n\r\nINSERT INTO videos_by_tag(tag, video_id, added_date, title)\r\nVALUES ('cassandra',245e8024-14bd-11e5-9743-8238356b7e32, '2012-04-03', 'Cassandra & SSDs');\r\n\r\nINSERT INTO videos_by_tag(tag, video_id, added_date, title)\r\nVALUES ('cassandra',3452f7de-14bd-11e5-855e-8738355b7e3a, '2013-03-17', 'Cassandra Intro');\r\n\r\nINSERT INTO videos_by_tag(tag, video_id, added_date, title)\r\nVALUES ('fenago',4845ed97-14bd-11e5-8a40-8338255b7e33, '2013-10-16', 'Apache Cassandra');\r\n\r\nINSERT INTO videos_by_tag(tag, video_id, added_date, title)\r\nVALUES ('fenago',5645f8bd-14bd-11e5-af1a-8638355b8e3a, '2013-04-16', 'What is Apache Cassandra?');\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:32:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465316_761106287",
+      "id": "paragraph_1594623827610_79537682",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:77"
+    },
+    {
+      "text": "%md\r\n9) Verify CQL imported your data correctly by writing a SELECT * command.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"9\">\n<li>Verify CQL imported your data correctly by writing a SELECT * command.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465316_-1547900784",
+      "id": "paragraph_1594623827235_1870893763",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:78"
+    },
+    {
+      "text": "SELECT *\r\nFROM videos_by_tag;",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465317_-412511268",
+      "id": "paragraph_1594623691763_390865551",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:79"
+    },
+    {
+      "text": "%md\r\n10) Write a SELECT statement to retrieve all rows tagged with cassandra.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"10\">\n<li>Write a SELECT statement to retrieve all rows tagged with cassandra.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465317_1491152232",
+      "id": "paragraph_1594623855728_-822056754",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:80"
+    },
+    {
+      "text": "SELECT *\r\nFROM videos_by_tag\r\nWHERE tag = 'cassandra';",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465317_-770473166",
+      "id": "paragraph_1594623855949_970495130",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:81"
+    },
+    {
+      "text": "%md\r\n11) Now, find all videos tagged with fenago (similar to the previous query).\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"11\">\n<li>Now, find all videos tagged with fenago (similar to the previous query).</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465318_-184337419",
+      "id": "paragraph_1594623856113_1522623868",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:82"
+    },
+    {
+      "text": "FROM videos_by_tag\r\nWHERE tag = 'fenago';",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465318_1119892970",
+      "id": "paragraph_1594623856280_-1941096257",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:83"
+    },
+    {
+      "text": "%md\r\n12) Finally, write a query to retrieve the video having a title of Cassandra Intro.\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"12\">\n<li>Finally, write a query to retrieve the video having a title of Cassandra Intro.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465319_-131574415",
+      "id": "paragraph_1594623856485_-1153340622",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:84"
+    },
+    {
+      "text": "SELECT *\r\nFROM videos_by_tag\r\nWHERE title = 'Cassandra Intro';",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465319_1795074215",
+      "id": "paragraph_1594623872708_-2016938590",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:85"
+    },
+    {
+      "text": "%md\r\n\r\n**NOTE:** Notice your query errors out. Apache Cassandra™ only allows queries on the\r\npartition key (and clustering columns shown in the next section). Since `title` is not the\r\npartition key, Apache Cassandra™ fails the query. If Apache Cassandra™ allowed querying\r\non non-partition key columns, Apache Cassandra™ would have to scan all partitions on all\r\nnodes to produce a result set (which goes against the reason you would use Apache\r\nCassandra™ in the first place).",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><strong>NOTE:</strong> Notice your query errors out. Apache Cassandra™ only allows queries on the<br />\npartition key (and clustering columns shown in the next section). Since <code>title</code> is not the<br />\npartition key, Apache Cassandra™ fails the query. If Apache Cassandra™ allowed querying<br />\non non-partition key columns, Apache Cassandra™ would have to scan all partitions on all<br />\nnodes to produce a result set (which goes against the reason you would use Apache<br />\nCassandra™ in the first place).</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465319_667923500",
+      "id": "paragraph_1594623872895_-1046403246",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:86"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465320_877685823",
+      "id": "paragraph_1594623873035_1445828055",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:87"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:07:45+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594656465320_-797987203",
+      "id": "paragraph_1594623981112_533284676",
+      "dateCreated": "2020-07-13T16:07:45+0000",
+      "status": "READY",
+      "$$hashKey": "object:88"
+    }
+  ],
+  "name": "02_Partitions_Solution",
+  "id": "2FCBZCMQN",
+  "defaultInterpreterGroup": "cassandra",
+  "version": "0.9.0-preview1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/02_Partitions_Solution"
+}

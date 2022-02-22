@@ -1,0 +1,771 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\r\n\r\n<img align=\"right\" src=\"data:image/png;base64,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\" alt=\"\" />\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2021-03-19T14:00:20+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<img align=\"right\" src=\"data:image/png;base64,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\" alt=\"\" />\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604209_1538769523",
+      "id": "paragraph_1594619989918_387368939",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "status": "READY",
+      "focus": true,
+      "$$hashKey": "object:57"
+    },
+    {
+      "text": "%sh\nSTATUS=\"$(service cassandra status)\"\n\nif [[ $STATUS == *\"is running\"* ]]; then\n    echo \"Cassandra is running\"\nelse \n    echo \" Cassandra not running .... Starting\"  \n    service cassandra restart > /dev/null 2>&1 &\n    echo \" Started\"  \nfi",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:44+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604209_412921142",
+      "id": "paragraph_1594619789615_1225371573",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "status": "READY",
+      "$$hashKey": "object:58"
+    },
+    {
+      "text": "%md\r\n# Exercise 3 – Clustering Columns\r\n\r\nIn this exercise, you will:\r\n\r\n- Understand how clustering columns affect the underlying storage mechanism.\r\n- Understand how clustering columns affect queries.\r\n\r\nClustering columns are those columns that are part of the primary key, but are not the partition\r\nkey. This exercise will help you understand how clustering columns affect what and how you can\r\nquery.\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:11:30+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h1>Exercise 3 – Clustering Columns</h1>\n<p>In this exercise, you will:</p>\n<ul>\n<li>Understand how clustering columns affect the underlying storage mechanism.</li>\n<li>Understand how clustering columns affect queries.</li>\n</ul>\n<p>Clustering columns are those columns that are part of the primary key, but are not the partition<br />\nkey. This exercise will help you understand how clustering columns affect what and how you can<br />\nquery.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604209_-1971900056",
+      "id": "paragraph_1594619992654_-1909338151",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "dateStarted": "2020-07-13T16:11:28+0000",
+      "dateFinished": "2020-07-13T16:11:28+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:59"
+    },
+    {
+      "text": "\r\n%md\r\n\r\n## Steps\r\n\r\n1) Ensure you are using the YooToob keyspace by executing the line below:\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:44+0000",
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Steps</h2>\n<ol>\n<li>Ensure you are using the YooToob keyspace by executing the line below:</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604209_-1457175935",
+      "id": "paragraph_1594619994854_38623905",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "status": "READY",
+      "$$hashKey": "object:60"
+    },
+    {
+      "text": "%cassandra\n\nUSE YooToob;",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:11:42+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604210_-1380341608",
+      "id": "paragraph_1594620217233_-2025011778",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "status": "READY",
+      "$$hashKey": "object:61"
+    },
+    {
+      "text": "%md\n2) Drop your videos_by_tag table that you created in the previous exercise.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:44+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"2\">\n<li>Drop your videos_by_tag table that you created in the previous exercise.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604210_-2085372308",
+      "id": "paragraph_1594620217394_-242620878",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "status": "READY",
+      "$$hashKey": "object:62"
+    },
+    {
+      "text": "DROP TABLE videos_by_tag;",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:44+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604210_991657786",
+      "id": "paragraph_1594620217595_1121993654",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "status": "READY",
+      "$$hashKey": "object:63"
+    },
+    {
+      "text": "%md\r\n\r\n3) Modify the following command to create a new videos_by_tag table partitioned\r\nbased on the tag. The table should also store the rows of each partition so that the\r\nnewest videos are listed first within the partition.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:44+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"3\">\n<li>Modify the following command to create a new videos_by_tag table partitioned<br />\nbased on the tag. The table should also store the rows of each partition so that the<br />\nnewest videos are listed first within the partition.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604210_-1231510903",
+      "id": "paragraph_1594620217778_204601101",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "status": "READY",
+      "$$hashKey": "object:64"
+    },
+    {
+      "text": "%md\r\n**Note:** Remember that you must include WITH CLUSTERING ORDER BY(column1 ASC/DESC,\r\ncolumn2 ASC/DESC, etc.) to do so.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:44+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><strong>Note:</strong> Remember that you must include WITH CLUSTERING ORDER BY(column1 ASC/DESC,<br />\ncolumn2 ASC/DESC, etc.) to do so.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604210_-2088136954",
+      "id": "paragraph_1594620217976_-954419632",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "status": "READY",
+      "$$hashKey": "object:65"
+    },
+    {
+      "text": "CREATE TABLE videos_by_tag (\r\ntag text,\r\nvideo_id uuid,\r\nadded_date timestamp,\r\ntitle text,\r\nPRIMARY KEY ((tag), added_date, video_id)\r\n) WITH CLUSTERING ORDER BY(added_date DESC);",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:44+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604211_-155031970",
+      "id": "paragraph_1594620231310_16553096",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "status": "READY",
+      "$$hashKey": "object:66"
+    },
+    {
+      "text": "%md\r\n4) Insert the videos_by_tag.csv again via the insert commands by executing the code below.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T09:38:18+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"4\">\n<li>Insert the videos_by_tag.csv again via the insert commands by executing the code below.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604211_911292072",
+      "id": "paragraph_1594620232090_1718682131",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "dateStarted": "2020-07-13T09:38:18+0000",
+      "dateFinished": "2020-07-13T09:38:18+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:67"
+    },
+    {
+      "text": "INSERT INTO videos_by_tag(tag, video_id, added_date, title)\r\nVALUES ('cassandra', 1645ea59-14bd-11e5-a993-8138354b7e31, '2014-01-29', 'Cassandra History');\r\n\r\nINSERT INTO videos_by_tag(tag, video_id, added_date, title)\r\nVALUES ('cassandra',245e8024-14bd-11e5-9743-8238356b7e32, '2012-04-03', 'Cassandra & SSDs');\r\n\r\nINSERT INTO videos_by_tag(tag, video_id, added_date, title)\r\nVALUES ('cassandra',3452f7de-14bd-11e5-855e-8738355b7e3a, '2013-03-17', 'Cassandra Intro');\r\n\r\nINSERT INTO videos_by_tag(tag, video_id, added_date, title)\r\nVALUES ('fenago',4845ed97-14bd-11e5-8a40-8338255b7e33, '2013-10-16', 'Apache Cassandra');\r\n\r\nINSERT INTO videos_by_tag(tag, video_id, added_date, title)\r\nVALUES ('fenago',5645f8bd-14bd-11e5-af1a-8638355b8e3a, '2013-04-16', 'What is Apache Cassandra?');\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T09:37:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604211_-1002299947",
+      "id": "paragraph_1594624758248_1384542732",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "status": "READY",
+      "$$hashKey": "object:68"
+    },
+    {
+      "text": "%md\n5) Perform a SELECT * query on videos_by_tag.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:44+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"5\">\n<li>Perform a SELECT * query on videos_by_tag.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604211_1574498033",
+      "id": "paragraph_1594624758411_-699322520",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "status": "READY",
+      "$$hashKey": "object:69"
+    },
+    {
+      "text": "SELECT *\r\nFROM videos_by_tag;",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:44+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604211_1623092712",
+      "id": "paragraph_1594624779052_665712399",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "status": "READY",
+      "$$hashKey": "object:70"
+    },
+    {
+      "text": "%md\r\n\r\nNote: Notice the rows are still grouped by their partition key value but ordered in descending order of added date.\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:44+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Note: Notice the rows are still grouped by their partition key value but ordered in descending order of added date.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604211_2135098631",
+      "id": "paragraph_1594624779209_1551112970",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "status": "READY",
+      "$$hashKey": "object:71"
+    },
+    {
+      "text": "%md\r\n\r\n6) Execute your query again, but list the oldest videos first.\r\n\r\n**Note:** Your query will fail. When specifying ORDER BY, you must restrict the partition key.\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:44+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"6\">\n<li>Execute your query again, but list the oldest videos first.</li>\n</ol>\n<p><strong>Note:</strong> Your query will fail. When specifying ORDER BY, you must restrict the partition key.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604211_-2108384362",
+      "id": "paragraph_1594624779371_2095284179",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "status": "READY",
+      "$$hashKey": "object:72"
+    },
+    {
+      "text": "SELECT *\r\nFROM videos_by_tag\r\nORDER BY added_date ASC;",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:44+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604212_348733615",
+      "id": "paragraph_1594624779621_1440756603",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "status": "READY",
+      "$$hashKey": "object:73"
+    },
+    {
+      "text": "%md\r\n\r\n7) Change your query to restrict the partition key value to 'cassandra'.\r\n\r\n**Note:** Clustering columns allow range queries (<, \\<=, >=).\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:44+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"7\">\n<li>Change your query to restrict the partition key value to &lsquo;cassandra&rsquo;.</li>\n</ol>\n<p><strong>Note:</strong> Clustering columns allow range queries (&lt;, &lt;=, &gt;=).</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604212_-1895470210",
+      "id": "paragraph_1594624779806_1102417041",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "status": "READY",
+      "$$hashKey": "object:74"
+    },
+    {
+      "text": "SELECT *\r\nFROM videos_by_tag\r\nWHERE tag = 'cassandra'\r\nORDER BY added_date ASC;",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:44+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604212_2075166519",
+      "id": "paragraph_1594624871034_2102475615",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "status": "READY",
+      "$$hashKey": "object:75"
+    },
+    {
+      "text": "%md\n\n8) Change your query to retrieve videos made in 2013 or later.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:44+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"8\">\n<li>Change your query to retrieve videos made in 2013 or later.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604213_-1898039723",
+      "id": "paragraph_1594624871192_529140222",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "status": "READY",
+      "$$hashKey": "object:76"
+    },
+    {
+      "text": "SELECT *\r\nFROM videos_by_tag\r\nWHERE tag = 'cassandra' and added_date >= '2013-1-1'\r\nORDER BY added_date ASC;\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T10:03:12+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630604213_467794324",
+      "id": "paragraph_1594624779781_783380251",
+      "dateCreated": "2020-07-13T08:56:44+0000",
+      "status": "READY",
+      "$$hashKey": "object:77"
+    }
+  ],
+  "name": "03_ClusteringColumns_Solution",
+  "id": "2FCQG7AZA",
+  "defaultInterpreterGroup": "cassandra",
+  "version": "0.9.0-preview1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/03_ClusteringColumns_Solution"
+}

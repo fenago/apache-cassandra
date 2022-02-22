@@ -1,0 +1,748 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\r\n\r\n<img align=\"right\" src=\"https://raw.githubusercontent.com/fenago/datastax-enterprise-cassandra/master/DS201-Exercises/images/logo.png\">\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:18+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<img align=\"right\" src=\"https://raw.githubusercontent.com/fenago/datastax-enterprise-cassandra/master/DS201-Exercises/images/logo.png\">\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630578937_-1257157867",
+      "id": "paragraph_1594619989918_387368939",
+      "dateCreated": "2020-07-13T08:56:18+0000",
+      "status": "READY",
+      "focus": true,
+      "$$hashKey": "object:57"
+    },
+    {
+      "text": "%sh\nSTATUS=\"$(service cassandra status)\"\n\nif [[ $STATUS == *\"is running\"* ]]; then\n    echo \"Cassandra is running\"\nelse \n    echo \" Cassandra not running .... Starting\"  \n    service cassandra restart > /dev/null 2>&1 &\n    echo \" Started\"  \nfi",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:18+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630578937_-700602856",
+      "id": "paragraph_1594619789615_1225371573",
+      "dateCreated": "2020-07-13T08:56:18+0000",
+      "status": "READY",
+      "$$hashKey": "object:58"
+    },
+    {
+      "text": "%md\r\n\r\n### Exercise 6 – Ring\r\n\r\nIn this exercise, you will:\r\n\r\n- Understand the Apache Cassandra™ token ring\r\n\r\nOne of the secrets to Apache Cassandra's™ performance is the use of a ring that keeps track of\r\ntokens. This ring enables Apache Cassandra™ to know exactly which nodes contain which\r\npartitions. The ring also eliminates any single points of failure.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:55:21+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h3>Exercise 6 – Ring</h3>\n<p>In this exercise, you will:</p>\n<ul>\n<li>Understand the Apache Cassandra™ token ring</li>\n</ul>\n<p>One of the secrets to Apache Cassandra&rsquo;s™ performance is the use of a ring that keeps track of<br />\ntokens. This ring enables Apache Cassandra™ to know exactly which nodes contain which<br />\npartitions. The ring also eliminates any single points of failure.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630578937_375768176",
+      "id": "paragraph_1594619992654_-1909338151",
+      "dateCreated": "2020-07-13T08:56:18+0000",
+      "dateStarted": "2020-07-13T11:55:20+0000",
+      "dateFinished": "2020-07-13T11:55:20+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:59"
+    },
+    {
+      "text": "%md\r\n\r\nRun the nodetool status command to verify the node is working properly.\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:40:03+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Run the nodetool status command to verify the node is working properly.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630578938_-786693023",
+      "id": "paragraph_1594619994854_38623905",
+      "dateCreated": "2020-07-13T08:56:18+0000",
+      "dateStarted": "2020-07-13T11:40:02+0000",
+      "dateFinished": "2020-07-13T11:40:02+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:60"
+    },
+    {
+      "text": "%sh\nnodetool status",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:18+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630578938_-1396403525",
+      "id": "paragraph_1594620217233_-2025011778",
+      "dateCreated": "2020-07-13T08:56:18+0000",
+      "status": "READY",
+      "$$hashKey": "object:61"
+    },
+    {
+      "text": "%md\r\n\r\nThe UN indicates UP NORMAL meaning the node is ready to go. Load indicates current\r\ndisk space usage. Owns indicates how many tokens this node is responsible for (it is the\r\nonly node in the ring at the moment). Token should be (the same value set in the\r\ncassandra.yaml file).\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T12:10:41+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>The UN indicates UP NORMAL meaning the node is ready to go. Load indicates current<br />\ndisk space usage. Owns indicates how many tokens this node is responsible for (it is the<br />\nonly node in the ring at the moment). Token should be (the same value set in the<br />\ncassandra.yaml file).</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630578938_-1517278742",
+      "id": "paragraph_1594620217394_-242620878",
+      "dateCreated": "2020-07-13T08:56:18+0000",
+      "dateStarted": "2020-07-13T12:10:40+0000",
+      "dateFinished": "2020-07-13T12:10:40+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:62"
+    },
+    {
+      "text": "%md\n Now let's recreate the two tables we made in previous exercises and import their data.\nStart cqlsh and execute the commands that follow:",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:55:45+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Now let&rsquo;s recreate the two tables we made in previous exercises and import their data.<br />\nStart cqlsh and execute the commands that follow:</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594640454588_-939712017",
+      "id": "paragraph_1594640454588_-939712017",
+      "dateCreated": "2020-07-13T11:40:54+0000",
+      "dateStarted": "2020-07-13T11:55:39+0000",
+      "dateFinished": "2020-07-13T11:55:39+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:63"
+    },
+    {
+      "text": "%cassandra\nCREATE KEYSPACE IF NOT EXISTS YooToob\nWITH replication = {'class': 'SimpleStrategy',\n'replication_factor': 1 };\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T12:12:07+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630578938_1198156057",
+      "id": "paragraph_1594620217595_1121993654",
+      "dateCreated": "2020-07-13T08:56:18+0000",
+      "status": "READY",
+      "$$hashKey": "object:64"
+    },
+    {
+      "text": "USE YooToob;\n\nCREATE TABLE videos (\nid uuid,\nadded_date timestamp,\ntitle text,\nPRIMARY KEY ((id))\n);\n\nCREATE TABLE videos_by_tag (\ntag text,\nvideo_id uuid,\nadded_date timestamp,\ntitle text,\nPRIMARY KEY ((tag), added_date, video_id))\nWITH CLUSTERING ORDER BY(added_date DESC);\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:59:36+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594640475950_-1911514753",
+      "id": "paragraph_1594640475950_-1911514753",
+      "dateCreated": "2020-07-13T11:41:15+0000",
+      "status": "READY",
+      "$$hashKey": "object:65"
+    },
+    {
+      "text": "USE YooToob;\r\n\r\nINSERT INTO videos_by_tag(tag, video_id, added_date, title)\r\nVALUES ('cassandra', 1645ea59-14bd-11e5-a993-8138354b7e31, '2014-01-29', 'Cassandra History');\r\n\r\nINSERT INTO videos_by_tag(tag, video_id, added_date, title)\r\nVALUES ('cassandra',245e8024-14bd-11e5-9743-8238356b7e32, '2012-04-03', 'Cassandra & SSDs');\r\n\r\nINSERT INTO videos_by_tag(tag, video_id, added_date, title)\r\nVALUES ('cassandra',3452f7de-14bd-11e5-855e-8738355b7e3a, '2013-03-17', 'Cassandra Intro');\r\n\r\nINSERT INTO videos_by_tag(tag, video_id, added_date, title)\r\nVALUES ('fenago',4845ed97-14bd-11e5-8a40-8338255b7e33, '2013-10-16', 'Apache Cassandra');\r\n\r\nINSERT INTO videos_by_tag(tag, video_id, added_date, title)\r\nVALUES ('fenago',5645f8bd-14bd-11e5-af1a-8638355b8e3a, '2013-04-16', 'What is Apache Cassandra?');\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:48:10+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630578941_2033621855",
+      "id": "paragraph_1594623827610_79537682",
+      "dateCreated": "2020-07-13T08:56:18+0000",
+      "status": "READY",
+      "$$hashKey": "object:66"
+    },
+    {
+      "text": "\nSELECT token(tag), tag\nFROM videos_by_tag;",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:54:00+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594640567635_295972160",
+      "id": "paragraph_1594640567635_295972160",
+      "dateCreated": "2020-07-13T11:42:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:67"
+    },
+    {
+      "text": "%md\r\n- How many partitions are there?\r\n- On which node does each partition reside?",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T12:12:31+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ul>\n<li>How many partitions are there?</li>\n<li>On which node does each partition reside?</li>\n</ul>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630578939_-428046108",
+      "id": "paragraph_1594620218136_1220208085",
+      "dateCreated": "2020-07-13T08:56:18+0000",
+      "dateStarted": "2020-07-13T12:12:31+0000",
+      "dateFinished": "2020-07-13T12:12:31+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:68"
+    },
+    {
+      "text": "SELECT *\r\nFROM videos_by_tag;",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:18+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630578942_658123479",
+      "id": "paragraph_1594623691763_390865551",
+      "dateCreated": "2020-07-13T08:56:18+0000",
+      "status": "READY",
+      "$$hashKey": "object:69"
+    },
+    {
+      "text": "%md\r\n\r\nYou can refresh your memory as to which nodes own which token ranges by running the following in the terminal:\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:53:02+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true,
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>You can refresh your memory as to which nodes own which token ranges by running the following in the terminal:</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630578939_-696160650",
+      "id": "paragraph_1594623690845_954025506",
+      "dateCreated": "2020-07-13T08:56:18+0000",
+      "dateStarted": "2020-07-13T11:47:41+0000",
+      "dateFinished": "2020-07-13T11:47:41+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:70"
+    },
+    {
+      "text": "%sh\n\nnodetool ring",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:47:19+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630578939_-1655305588",
+      "id": "paragraph_1594620232090_1718682131",
+      "dateCreated": "2020-07-13T08:56:18+0000",
+      "dateStarted": "2020-07-13T11:47:18+0000",
+      "dateFinished": "2020-07-13T11:47:21+0000",
+      "status": "ERROR",
+      "$$hashKey": "object:71"
+    },
+    {
+      "text": "%md\r\n\r\nYou can further prove  partition resides on the node by executing the following nodetool commands in the terminal:\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:48:29+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true,
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>You can further prove  partition resides on the node by executing the following nodetool commands in the terminal:</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630578942_1509932890",
+      "id": "paragraph_1594623855949_970495130",
+      "dateCreated": "2020-07-13T08:56:18+0000",
+      "dateStarted": "2020-07-13T11:48:29+0000",
+      "dateFinished": "2020-07-13T11:48:29+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:72"
+    },
+    {
+      "text": "%sh\n\nnodetool getendpoints yootoob videos_by_tag 'cassandra'",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T12:01:37+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630578942_739115870",
+      "id": "paragraph_1594623856280_-1941096257",
+      "dateCreated": "2020-07-13T08:56:18+0000",
+      "status": "READY",
+      "$$hashKey": "object:73"
+    },
+    {
+      "text": "%sh\nnodetool getendpoints yootoob videos_by_tag 'fenago'",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T12:01:48+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/sh"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594640704134_910070723",
+      "id": "paragraph_1594640704134_910070723",
+      "dateCreated": "2020-07-13T11:45:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:74"
+    },
+    {
+      "text": "%md\r\ngetendpoints returns the IP addresses of the node(s) which store the partitions with\r\nthe respective partition key value (the last argument in single quotes: cassandra and\r\ndatastax respectively). Notice we must also supply the keyspace and table name we\r\nare interested in since we set replication on a per-keyspace basis. There is more on\r\nreplication to come later in this course.\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T12:12:56+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>getendpoints returns the IP addresses of the node(s) which store the partitions with<br />\nthe respective partition key value (the last argument in single quotes: cassandra and<br />\ndatastax respectively). Notice we must also supply the keyspace and table name we<br />\nare interested in since we set replication on a per-keyspace basis. There is more on<br />\nreplication to come later in this course.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630578942_1063447981",
+      "id": "paragraph_1594623856485_-1153340622",
+      "dateCreated": "2020-07-13T08:56:18+0000",
+      "dateStarted": "2020-07-13T12:12:56+0000",
+      "dateFinished": "2020-07-13T12:12:56+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:75"
+    },
+    {
+      "text": "",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:44:14+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630578943_-340221965",
+      "id": "paragraph_1594623872708_-2016938590",
+      "dateCreated": "2020-07-13T08:56:18+0000",
+      "status": "READY",
+      "$$hashKey": "object:76"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:56:18+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594630578943_70052284",
+      "id": "paragraph_1594623873035_1445828055",
+      "dateCreated": "2020-07-13T08:56:18+0000",
+      "status": "READY",
+      "$$hashKey": "object:77"
+    }
+  ],
+  "name": "06_Ring",
+  "id": "2FD7EZ84H",
+  "defaultInterpreterGroup": "cassandra",
+  "version": "0.9.0-preview1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/06_Ring"
+}

@@ -1,0 +1,963 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\r\n\r\n<img align=\"right\" src=\"https://raw.githubusercontent.com/fenago/datastax-enterprise-cassandra/master/DS201-Exercises/images/logo.png\">\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<img align=\"right\" src=\"https://raw.githubusercontent.com/fenago/datastax-enterprise-cassandra/master/DS201-Exercises/images/logo.png\">\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064513_-635357023",
+      "id": "paragraph_1594619989918_387368939",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "focus": true,
+      "$$hashKey": "object:808"
+    },
+    {
+      "text": "%sh\nSTATUS=\"$(service cassandra status)\"\n\nif [[ $STATUS == *\"is running\"* ]]; then\n    echo \"Cassandra is running\"\nelse \n    echo \" Cassandra not running .... Starting\"  \n    service cassandra restart > /dev/null 2>&1 &\n    echo \" Started\"  \nfi",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064513_1396651962",
+      "id": "paragraph_1594619789615_1225371573",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:809"
+    },
+    {
+      "text": "%md\n\n# Exercise 1 – CQL\n\nIn this exercise, you will:\n\n- Create a keyspace for YooToob\n- Create a table to store video metadata\n- Load the data for the video table from a CSV file\n\n# Steps\n\nWelcome to the YooToob company! YooToob hired you to build the latest and greatest video\nsharing application on the Internet. Your task is to ramp up on the domain and become\nacquainted with Apache Cassandra™. To start, you decided to look into creating a table schema\nand to load some video data.\n\nThe video metadata is made up of:\n\n\n<img  src=\"https://raw.githubusercontent.com/fenago/datastax-enterprise-cassandra/master/DS201-Exercises/images/1.PNG\">\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h1>Exercise 1 – CQL</h1>\n<p>In this exercise, you will:</p>\n<ul>\n<li>Create a keyspace for YooToob</li>\n<li>Create a table to store video metadata</li>\n<li>Load the data for the video table from a CSV file</li>\n</ul>\n<h1>Steps</h1>\n<p>Welcome to the YooToob company! YooToob hired you to build the latest and greatest video<br />\nsharing application on the Internet. Your task is to ramp up on the domain and become<br />\nacquainted with Apache Cassandra™. To start, you decided to look into creating a table schema<br />\nand to load some video data.</p>\n<p>The video metadata is made up of:</p>\n<img  src=\"https://raw.githubusercontent.com/fenago/datastax-enterprise-cassandra/master/DS201-Exercises/images/1.PNG\">\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064513_-1262200367",
+      "id": "paragraph_1594619992654_-1909338151",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:810"
+    },
+    {
+      "text": "%md\r\n1) Make sure Apache Cassandra is still running with nodetool status. If not, restart Apache Cassandra.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol>\n<li>Make sure Apache Cassandra is still running with nodetool status. If not, restart Apache Cassandra.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064513_748158353",
+      "id": "paragraph_1594620217233_-2025011778",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:811"
+    },
+    {
+      "text": "%sh\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064514_749729578",
+      "id": "paragraph_1594620217394_-242620878",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:812"
+    },
+    {
+      "text": "%md\n2) In the terminal window, verify cqlsh is working:",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"2\">\n<li>In the terminal window, verify cqlsh is working:</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064514_266953162",
+      "id": "paragraph_1594620217595_1121993654",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:813"
+    },
+    {
+      "text": "%sh\ncqlsh",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064514_-1777808898",
+      "id": "paragraph_1594620217778_204601101",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:814"
+    },
+    {
+      "text": "%md\r\n3) In cqlsh, create a keyspace called YooToob. Use SimpleStrategy for the replication class with a replication factor of one.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"3\">\n<li>In cqlsh, create a keyspace called YooToob. Use SimpleStrategy for the<br />\nreplication class with a replication factor of one.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064514_777517371",
+      "id": "paragraph_1594620217976_-954419632",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:815"
+    },
+    {
+      "text": "%cassandra",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:41:02+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064516_-1018426601",
+      "id": "paragraph_1594620218136_1220208085",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:816"
+    },
+    {
+      "text": "%md\n4) In cqlsh switch to the newly created keyspace with the USE command.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"4\">\n<li>In cqlsh switch to the newly created keyspace with the USE command.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064516_-1607084654",
+      "id": "paragraph_1594620231310_16553096",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:817"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064517_-446631896",
+      "id": "paragraph_1594621035843_523719388",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:818"
+    },
+    {
+      "text": "%md\r\n5) Create a single table called videos with the same structure as shown above. **video_id** is the primary key.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"5\">\n<li>Create a single table called videos with the same structure as shown above. <strong>video_id</strong> is the primary key.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064517_-1474096196",
+      "id": "paragraph_1594621037789_-1831713403",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:819"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064517_-263464221",
+      "id": "paragraph_1594621037928_239968570",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:820"
+    },
+    {
+      "text": "%md\r\n6) Manually insert a single record into the table using INSERT command. Use the first row\r\nfrom the table below:\r\n\r\n<img  src=\"https://raw.githubusercontent.com/fenago/datastax-enterprise-cassandra/master/DS201-Exercises/images/2.PNG\">\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"6\">\n<li>Manually insert a single record into the table using INSERT command. Use the first row<br />\nfrom the table below:</li>\n</ol>\n<img  src=\"https://raw.githubusercontent.com/fenago/datastax-enterprise-cassandra/master/DS201-Exercises/images/2.PNG\">\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064517_-1574357981",
+      "id": "paragraph_1594620232090_1718682131",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:821"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064517_-508973433",
+      "id": "paragraph_1594621095907_-1463351805",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:822"
+    },
+    {
+      "text": "%md\n7) Write a select statement to verify your record was inserted.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"7\">\n<li>Write a select statement to verify your record was inserted.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064517_1852218170",
+      "id": "paragraph_1594621099111_-311190853",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:823"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064518_-33547221",
+      "id": "paragraph_1594621099293_2063368570",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:824"
+    },
+    {
+      "text": "%md\n8) Insert the second record as well and run a select statement to verify it's there.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"8\">\n<li>Insert the second record as well and run a select statement to verify it&rsquo;s there.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064518_643572159",
+      "id": "paragraph_1594621099470_-1024366471",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:825"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064518_-589046586",
+      "id": "paragraph_1594621099661_-1659008332",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:826"
+    },
+    {
+      "text": "%md\n9) Let's remove the data you inserted using the TRUNCATE command.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"9\">\n<li>Let&rsquo;s remove the data you inserted using the TRUNCATE command.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064518_1782473892",
+      "id": "paragraph_1594621100260_1302404838",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:827"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064518_1127981278",
+      "id": "paragraph_1594621111232_1220097772",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:828"
+    },
+    {
+      "text": "%md\n10) Execute the following command to import data into your videos table.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"10\">\n<li>Execute the following command to import data into your videos table.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064519_461235128",
+      "id": "paragraph_1594621111230_96394010",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:829"
+    },
+    {
+      "text": "INSERT INTO videos (video_id, added_date, title)\r\nVALUES (1645ea59-14bd-11e5-a993-8138354b7e31, '2014-01-29', 'Cassandra History');\r\n\r\nINSERT INTO videos (video_id, added_date, title)\r\nVALUES (245e8024-14bd-11e5-9743-8238356b7e32, '2012-04-03', 'Cassandra & SSDs');\r\n\r\nINSERT INTO videos (video_id, added_date, title)\r\nVALUES (3452f7de-14bd-11e5-855e-8738355b7e3a, '2013-03-17', 'Cassandra Intro');\r\n\r\nINSERT INTO videos (video_id, added_date, title)\r\nVALUES (4845ed97-14bd-11e5-8a40-8338255b7e33, '2013-10-16', 'Apache Cassandra');\r\n\r\nINSERT INTO videos (video_id, added_date, title)\r\nVALUES (5645f8bd-14bd-11e5-af1a-8638355b8e3a, '2013-04-16', 'What is Apache Cassandra?');\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T16:08:48+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064519_2130929185",
+      "id": "paragraph_1594621185288_-1459771000",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:830"
+    },
+    {
+      "text": "%md\n\n11) Use SELECT to verify the data loaded correctly.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"11\">\n<li>Use SELECT to verify the data loaded correctly.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064520_1472247021",
+      "id": "paragraph_1594621185710_-1322636669",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:831"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064520_1225717970",
+      "id": "paragraph_1594621185935_-806759432",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:832"
+    },
+    {
+      "text": "%md\r\n\r\n12) Use SELECT to COUNT(*) the number of imported rows. It should match the number of\r\nrows COPY reported as imported.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"12\">\n<li>Use SELECT to COUNT(*) the number of imported rows. It should match the number of<br />\nrows COPY reported as imported.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064521_1079999952",
+      "id": "paragraph_1594621186128_916200564",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:833"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064521_-1985879506",
+      "id": "paragraph_1594621186304_-748985928",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:834"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T08:31:04+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594629064521_-192909646",
+      "id": "paragraph_1594621100029_1842785796",
+      "dateCreated": "2020-07-13T08:31:04+0000",
+      "status": "READY",
+      "$$hashKey": "object:835"
+    }
+  ],
+  "name": "01_CQL",
+  "id": "2FFQTFHCA",
+  "defaultInterpreterGroup": "cassandra",
+  "version": "0.9.0-preview1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/01_CQL"
+}

@@ -1,0 +1,1080 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\r\n\r\n<img align=\"right\" src=\"data:image/png;base64,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\" alt=\"\" />\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<img align=\"right\" src=\"data:image/png;base64,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\" alt=\"\" />\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487792_-1093456015",
+      "id": "paragraph_1594619989918_387368939",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "focus": true,
+      "$$hashKey": "object:57"
+    },
+    {
+      "text": "%sh\nSTATUS=\"$(service cassandra status)\"\n\nif [[ $STATUS == *\"is running\"* ]]; then\n    echo \"Cassandra is running\"\nelse \n    echo \" Cassandra not running .... Starting\"  \n    service cassandra restart > /dev/null 2>&1 &\n    echo \" Started\"  \nfi",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487796_-923052438",
+      "id": "paragraph_1594619789615_1225371573",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:58"
+    },
+    {
+      "text": "%md\r\n### Exercise 9 – Read Path\r\n\r\nIn this exercise, you will:\r\n\r\n- Understand the Apache Cassandra read path.\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:37:49+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": false,
+          "completionKey": "TAB"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h3>Exercise 9 – Read Path</h3>\n<p>In this exercise, you will:</p>\n<ul>\n<li>Understand the Apache Cassandra read path.</li>\n</ul>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487797_1029401674",
+      "id": "paragraph_1594619992654_-1909338151",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "dateStarted": "2020-07-14T16:37:49+0000",
+      "dateFinished": "2020-07-14T16:37:49+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:59"
+    },
+    {
+      "text": "%md\n#### Steps\n\n\n1) To begin, we need to populate our single-node cluster with a good chunk of data. We\nwill use cassandra-stress to do so. Execute the following command in a terminal\nwindow. Wait for cassandra-stress to complete before continuing.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4>Steps</h4>\n<ol>\n<li>To begin, we need to populate our single-node cluster with a good chunk of data. We<br />\nwill use cassandra-stress to do so. Execute the following command in a terminal<br />\nwindow. Wait for cassandra-stress to complete before continuing.</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487797_1880705431",
+      "id": "paragraph_1594741289080_-1837941716",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:60"
+    },
+    {
+      "text": "cassandra-stress write no-warmup n=75000 -port native=9042 -rate threads=1",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false,
+          "completionKey": "TAB"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487798_-161854690",
+      "id": "paragraph_1594619994854_38623905",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:61"
+    },
+    {
+      "text": "%md\n2) Now force Apache Cassandra™ to flush its current memtable to disk by executing the\nfollowing command:",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"2\">\n<li>Now force Apache Cassandra™ to flush its current memtable to disk by executing the<br />\nfollowing command:</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487799_2075209840",
+      "id": "paragraph_1594620217233_-2025011778",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:62"
+    },
+    {
+      "text": "nodetool flush",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487799_1610035913",
+      "id": "paragraph_1594620217394_-242620878",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:63"
+    },
+    {
+      "text": "%md\nNavigate to the data directory for the large table that cassandra-\nstress wrote. Remember that cassandra-stress creates a keyspace called\nkeyspace1 and a table called standard1. You will find the directory as illustrated\nbelow, however, your table ID will differ.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Navigate to the data directory for the large table that cassandra-<br />\nstress wrote. Remember that cassandra-stress creates a keyspace called<br />\nkeyspace1 and a table called standard1. You will find the directory as illustrated<br />\nbelow, however, your table ID will differ.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487800_-1141085434",
+      "id": "paragraph_1594620217778_204601101",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:64"
+    },
+    {
+      "text": "ls -ltr /var/lib/cassandra/data/keyspace1/",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487800_1801694748",
+      "id": "paragraph_1594620217595_1121993654",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:65"
+    },
+    {
+      "text": "# Use the following command to list the bloom filter files for your SSTables:\n\nls -ltr /var/lib/cassandra/data/keyspace1/standard1-*/*Filter.db",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487802_-2126770713",
+      "id": "paragraph_1594741366185_886090429",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:66"
+    },
+    {
+      "text": "%md\nTake note of the file sizes.\n\nWe will now decrease the probability that a bloom filter will return a false positive and\nsee how this affects the bloom filter files sizes.\n\n5) Execute the following command to view the current bloom filter settings:",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Take note of the file sizes.</p>\n<p>We will now decrease the probability that a bloom filter will return a false positive and<br />\nsee how this affects the bloom filter files sizes.</p>\n<ol start=\"5\">\n<li>Execute the following command to view the current bloom filter settings:</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487802_2071914945",
+      "id": "paragraph_1594741346346_-1551450631",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:67"
+    },
+    {
+      "text": "%cassandra\nDESCRIBE keyspace keyspace1;",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487803_-1776369212",
+      "id": "paragraph_1594620217976_-954419632",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:68"
+    },
+    {
+      "text": "%md\nNote the bloom_filter_fp_chance is 0.01, meaning a 1% chance of a false positive.\nThat's pretty good, but if we want an even smaller chance, we can trade space for it.\n\n6) Execute the following command:",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Note the bloom_filter_fp_chance is 0.01, meaning a 1% chance of a false positive.<br />\nThat&rsquo;s pretty good, but if we want an even smaller chance, we can trade space for it.</p>\n<ol start=\"6\">\n<li>Execute the following command:</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487804_-41477539",
+      "id": "paragraph_1594620231310_16553096",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:69"
+    },
+    {
+      "text": "%cassandra\nALTER TABLE keyspace1.standard1 WITH bloom_filter_fp_chance = 0.0001;\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:35:30+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487804_570580513",
+      "id": "paragraph_1594740896905_712877855",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:70"
+    },
+    {
+      "text": "%md\r\n\r\nNow that we have changed the bloom_filter_fp_chance, we must update our\r\nSSTables and associated bloom filter files.\r\n\r\n7) Switch back to your terminal window and execute the following command:\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Now that we have changed the bloom_filter_fp_chance, we must update our<br />\nSSTables and associated bloom filter files.</p>\n<ol start=\"7\">\n<li>Switch back to your terminal window and execute the following command:</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487805_1164167540",
+      "id": "paragraph_1594740897284_61825403",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:71"
+    },
+    {
+      "text": "nodetool upgradesstables --include-all-sstables",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487805_337524234",
+      "id": "paragraph_1594740897686_-1265087283",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:72"
+    },
+    {
+      "text": "%md\r\n\r\nnodetool upgradesstables rebuilds SSTables for a specified keyspace and table.\r\nWe are doing this here to rebuild the Bloom Filters also. Normally this command will\r\nonly upgrade sstables if the sstables are not at the most recent SSTable version; the --\r\ninclude-all-sstables flag forces the rebuild to occur. Normally you would need to\r\nrun nodetool upgradesstables on each node. For the purposes of this exercise, we\r\nonly have one node.\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>nodetool upgradesstables rebuilds SSTables for a specified keyspace and table.<br />\nWe are doing this here to rebuild the Bloom Filters also. Normally this command will<br />\nonly upgrade sstables if the sstables are not at the most recent SSTable version; the &ndash;<br />\ninclude-all-sstables flag forces the rebuild to occur. Normally you would need to<br />\nrun nodetool upgradesstables on each node. For the purposes of this exercise, we<br />\nonly have one node.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487805_-1336931521",
+      "id": "paragraph_1594740897852_-2071664736",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:73"
+    },
+    {
+      "text": "%md\n\n8) Now examine the new size of your bloom filter files.\n\nNotice the size of these files is larger. We traded space for a smaller chance of a false\npositive.\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"8\">\n<li>Now examine the new size of your bloom filter files.</li>\n</ol>\n<p>Notice the size of these files is larger. We traded space for a smaller chance of a false<br />\npositive.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487806_955824095",
+      "id": "paragraph_1594740897464_996546174",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:74"
+    },
+    {
+      "text": "ls -ltr /var/lib/cassandra/data/keyspace1/standard1-*/*Filter.db",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487806_-562047410",
+      "id": "paragraph_1594740897066_-689781115",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:75"
+    },
+    {
+      "text": "%md\r\n9) Now execute the following command:\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"9\">\n<li>Now execute the following command:</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487807_-199319964",
+      "id": "paragraph_1594740896752_64678818",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:76"
+    },
+    {
+      "text": "%cassandra\nALTER TABLE keyspace1.standard1 WITH bloom_filter_fp_chance = 1.0;",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:35:21+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487807_-1249406659",
+      "id": "paragraph_1594740896553_-213909895",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:77"
+    },
+    {
+      "text": "%md\n10) And update your SSTables once again in your terminal:",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"10\">\n<li>And update your SSTables once again in your terminal:</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487807_-2052306651",
+      "id": "paragraph_1594741644752_-1000333259",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:78"
+    },
+    {
+      "text": "nodetool upgradesstables --include-all-sstables",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487808_-584737824",
+      "id": "paragraph_1594620232090_1718682131",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:79"
+    },
+    {
+      "text": "%md\r\n\r\nNow what is the size of your bloom filter files? Why? :)\r\n\r\nThe files are gone! A bloom_filter_fp_chance = 1.0 means that no filtering is going\r\non, so there is no need to store the filters.\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:36:14+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Now what is the size of your bloom filter files? Why? :)</p>\n<p>The files are gone! A bloom_filter_fp_chance = 1.0 means that no filtering is going<br />\non, so there is no need to store the filters.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487808_2084372216",
+      "id": "paragraph_1594740952544_-180987710",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "dateStarted": "2020-07-14T16:36:13+0000",
+      "dateFinished": "2020-07-14T16:36:16+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:80"
+    },
+    {
+      "text": "# No file exists now\nls -ltr /var/lib/cassandra/data/keyspace1/standard1-*/*Filter.db",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:38:28+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/sh"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744558134_993905553",
+      "id": "paragraph_1594744558134_993905553",
+      "dateCreated": "2020-07-14T16:35:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:81"
+    },
+    {
+      "text": "%md\r\n\r\n11) Now execute the following command in your terminal:\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:36:29+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/text",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<ol start=\"11\">\n<li>Now execute the following command in your terminal:</li>\n</ol>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744583550_-216225942",
+      "id": "paragraph_1594744583550_-216225942",
+      "dateCreated": "2020-07-14T16:36:23+0000",
+      "dateStarted": "2020-07-14T16:36:29+0000",
+      "dateFinished": "2020-07-14T16:36:29+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:82"
+    },
+    {
+      "text": "nodetool cfstats keyspace1.standard1",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:35:44+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false,
+          "completionKey": "TAB"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487808_-471491485",
+      "id": "paragraph_1594740952347_1587662429",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:83"
+    },
+    {
+      "text": "%md\r\nPart of the stats include bloom filter information. Since we have not read from the\r\ncassandra-stress tables, the values are all zero. However, you can use these stats to\r\ntune Apache Cassandra™ if necessary.\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Part of the stats include bloom filter information. Since we have not read from the<br />\ncassandra-stress tables, the values are all zero. However, you can use these stats to<br />\ntune Apache Cassandra™ if necessary.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487808_-1905646338",
+      "id": "paragraph_1594740951948_1581601332",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:84"
+    },
+    {
+      "text": "nodetool cfstats keyspace1.standard1",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:35:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false,
+          "completionKey": "TAB"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487808_416836731",
+      "id": "paragraph_1594740951747_1141730759",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:85"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487809_-1938374788",
+      "id": "paragraph_1594741702185_-1497998595",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:86"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-07-14T16:34:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594744487809_22995611",
+      "id": "paragraph_1594741701928_952313808",
+      "dateCreated": "2020-07-14T16:34:47+0000",
+      "status": "READY",
+      "$$hashKey": "object:87"
+    }
+  ],
+  "name": "09_Read Path",
+  "id": "2FCJYX74E",
+  "defaultInterpreterGroup": "sh",
+  "version": "0.9.0-preview1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/09_Read Path"
+}

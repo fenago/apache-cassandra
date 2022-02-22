@@ -1,0 +1,1050 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%md\r\n\r\n<img align=\"right\" src=\"data:image/png;base64,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\" alt=\"\" />\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<img align=\"right\" src=\"data:image/png;base64,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\" alt=\"\" />\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438622_1934416292",
+      "id": "paragraph_1594619989918_387368939",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "focus": true,
+      "$$hashKey": "object:57"
+    },
+    {
+      "text": "%sh\nSTATUS=\"$(service cassandra status)\"\n\nif [[ $STATUS == *\"is running\"* ]]; then\n    echo \"Cassandra is running\"\nelse \n    echo \" Cassandra not running .... Starting\"  \n    service cassandra restart > /dev/null 2>&1 &\n    echo \" Started\"  \nfi",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438630_1075308515",
+      "id": "paragraph_1594619789615_1225371573",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:58"
+    },
+    {
+      "text": "%md\r\n\r\n## Exercise 5 – Node\r\n\r\nIn this exercise, you will:\r\n- Understand what Apache Cassandra™ nodes are.\r\n- Understand core hardware/software requirements of a node.\r\n\r\nNodes are the building blocks of Apache Cassandra™'s clusters. Therefore, it is useful to\r\nunderstand the care and feeding of nodes. These exercises will do just that.\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h2>Exercise 5 – Node</h2>\n<p>In this exercise, you will:</p>\n<ul>\n<li>Understand what Apache Cassandra™ nodes are.</li>\n<li>Understand core hardware/software requirements of a node.</li>\n</ul>\n<p>Nodes are the building blocks of Apache Cassandra™&rsquo;s clusters. Therefore, it is useful to<br />\nunderstand the care and feeding of nodes. These exercises will do just that.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438631_-1571521230",
+      "id": "paragraph_1594619992654_-1909338151",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:59"
+    },
+    {
+      "text": "%md\r\nExecute nodetool with the `help` command to list all possible commands.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": true,
+          "completionKey": "TAB"
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Execute nodetool with the <code>help</code> command to list all possible commands.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438631_489403266",
+      "id": "paragraph_1594619994854_38623905",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:60"
+    },
+    {
+      "text": "%sh\nnodetool help",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438631_-1512138804",
+      "id": "paragraph_1594620217233_-2025011778",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:61"
+    },
+    {
+      "text": "nodetool status",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438631_-370621709",
+      "id": "paragraph_1594620217394_-242620878",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:62"
+    },
+    {
+      "text": "%md\r\n\r\nThe status command shows information about the entire cluster, particularly the state of each\r\nnode, and information about each of those nodes: IP address, data load, number of tokens,total percentage of data saved on each node, host ID, and datacenter and rack. We will discuss these in detail as the course progresses",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>The status command shows information about the entire cluster, particularly the state of each<br />\nnode, and information about each of those nodes: IP address, data load, number of tokens,total percentage of data saved on each node, host ID, and datacenter and rack. We will discuss these in detail as the course progresses</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438631_221128298",
+      "id": "paragraph_1594620217595_1121993654",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:63"
+    },
+    {
+      "text": "nodetool info",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438632_869509457",
+      "id": "paragraph_1594620217976_-954419632",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:64"
+    },
+    {
+      "text": "nodetool describecluster",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438632_1629099054",
+      "id": "paragraph_1594620218136_1220208085",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:65"
+    },
+    {
+      "text": "nodetool getlogginglevels",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438632_-1639349266",
+      "id": "paragraph_1594620231310_16553096",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:66"
+    },
+    {
+      "text": "nodetool setlogginglevel org.apache.cassandra TRACE",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438632_862963154",
+      "id": "paragraph_1594638048336_-427850649",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:67"
+    },
+    {
+      "text": "%md\r\nThe command setlogginglevel dynamically changes the logging level used by Apache Cassandra™ without the need for a restart. You can also look at the\r\n/var/log/cassandra/system.log afterwards to observe the changes.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>The command setlogginglevel dynamically changes the logging level used by Apache Cassandra™ without the need for a restart. You can also look at the<br />\n/var/log/cassandra/system.log afterwards to observe the changes.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438632_382285238",
+      "id": "paragraph_1594638048495_865285642",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:68"
+    },
+    {
+      "text": "%sh\ncat /var/log/cassandra/system.log\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:29:23+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438632_-394873854",
+      "id": "paragraph_1594638048656_464294671",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:69"
+    },
+    {
+      "text": "nodetool settraceprobability 0.1",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438633_-861694053",
+      "id": "paragraph_1594638048849_1965232047",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:70"
+    },
+    {
+      "text": "%md\r\nThe resultant value from the settraceprobability command represents a decimaldescribing the percentage of queries being saved, starting from 0 (0%) to 1 (100%).\r\nSaved traces can then be viewed in the system_traces keyspace.\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>The resultant value from the settraceprobability command represents a decimaldescribing the percentage of queries being saved, starting from 0 (0%) to 1 (100%).<br />\nSaved traces can then be viewed in the system_traces keyspace.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438633_-966530442",
+      "id": "paragraph_1594638049023_930884715",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:71"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438635_597953530",
+      "id": "paragraph_1594638096289_1491508295",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:72"
+    },
+    {
+      "text": "cassandra-stress write n=50000 no-warmup -rate threads=1",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438635_256278243",
+      "id": "paragraph_1594638096489_-1605215460",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:73"
+    },
+    {
+      "text": "%md\r\nInitially, we will see a long list of setting for the stress run. As Apache Cassandra™ stress\r\nexecutes, it logs several statistics to the terminal. Each line displays the statistics for the\r\noperations that occurred each second and shows number of partitions written, operations per\r\nsecond, latency information, and more.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Initially, we will see a long list of setting for the stress run. As Apache Cassandra™ stress<br />\nexecutes, it logs several statistics to the terminal. Each line displays the statistics for the<br />\noperations that occurred each second and shows number of partitions written, operations per<br />\nsecond, latency information, and more.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438635_543398544",
+      "id": "paragraph_1594638185951_-1482739945",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:74"
+    },
+    {
+      "text": "\r\nnodetool flush\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438635_1270108465",
+      "id": "paragraph_1594638096632_-2105265954",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:75"
+    },
+    {
+      "text": "\r\n%md\r\nThe flush command commits all written (memtable, discussed later) data to disk. Unlike\r\ndrain, flush allows further writes to occur.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>The flush command commits all written (memtable, discussed later) data to disk. Unlike<br />\ndrain, flush allows further writes to occur.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438635_2141127388",
+      "id": "paragraph_1594638096850_2141271314",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:76"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438636_-1904445198",
+      "id": "paragraph_1594638097006_531432056",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:77"
+    },
+    {
+      "text": "%md\r\nCheck the new load on the node. We will now examine the data cassandra-stress wrote to our node.\r\n\r\nExecute the following CQLSH **describe** command to view the current keyspaces:\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Check the new load on the node. We will now examine the data cassandra-stress wrote to our node.</p>\n<p>Execute the following CQLSH <strong>describe</strong> command to view the current keyspaces:</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438636_-2136063994",
+      "id": "paragraph_1594638236048_1297145075",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:78"
+    },
+    {
+      "text": "nodetool status\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438636_-312072072",
+      "id": "paragraph_1594638236251_-1951330711",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:79"
+    },
+    {
+      "text": "%cassandra\r\n\r\n//Notice the presence of keyspace1 which cassandra-stress created.\r\nDESCRIBE KEYSPACES;\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:29:52+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438636_-600386292",
+      "id": "paragraph_1594638236557_24969731",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:80"
+    },
+    {
+      "text": "%cassandra\n\n// Switch to that keyspace by executing the following:\nUSE keyspace1;",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:29:53+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438636_-1731778469",
+      "id": "paragraph_1594638236391_-964430210",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:81"
+    },
+    {
+      "text": "%cassandra\n\n// View the tables in keyspace1 by executing the following:\nDESCRIBE TABLES;\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:29:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438643_1306705548",
+      "id": "paragraph_1594638272028_1794356757",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:82"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438644_-1148100723",
+      "id": "paragraph_1594638247588_-524343782",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:83"
+    },
+    {
+      "text": "%md\r\nQuery the first five rows from **standard1** by executing the following query:\r\n\r\nThe data that was written is not very meaningful, since they are all arbitrary BLOB values.",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Query the first five rows from <strong>standard1</strong> by executing the following query:</p>\n<p>The data that was written is not very meaningful, since they are all arbitrary BLOB values.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438644_1923388725",
+      "id": "paragraph_1594638247771_-1883616382",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:84"
+    },
+    {
+      "text": "%cassandra\r\n\r\nSELECT *\r\nFROM standard1\r\nLIMIT 5;",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:29:47+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438646_-919653823",
+      "id": "paragraph_1594638904744_-1605843912",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:85"
+    },
+    {
+      "text": "%md\r\n\r\n**nodetool drain**\r\n\r\nThe drain command stops writes from occurring on the node and flushes all data to disk.\r\nTypically, this command may be run before stopping an Apache Cassandra™ node.\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><strong>nodetool drain</strong></p>\n<p>The drain command stops writes from occurring on the node and flushes all data to disk.<br />\nTypically, this command may be run before stopping an Apache Cassandra™ node.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438647_1857914627",
+      "id": "paragraph_1594638907664_-373036772",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:86"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-07-13T11:23:58+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1594639438647_1031896445",
+      "id": "paragraph_1594620232090_1718682131",
+      "dateCreated": "2020-07-13T11:23:58+0000",
+      "status": "READY",
+      "$$hashKey": "object:87"
+    }
+  ],
+  "name": "05_Node",
+  "id": "2FG2W42VK",
+  "defaultInterpreterGroup": "sh",
+  "version": "0.9.0-preview1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/05_Node"
+}
