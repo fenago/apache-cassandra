@@ -1,0 +1,1546 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%sh\nSTATUS=\"$(service cassandra status)\"\n\nif [[ $STATUS == *\"is running\"* ]]; then\n    echo \"Cassandra is running\"\nelse \n    echo \" Cassandra not running .... Starting\"  \n    service cassandra restart > /dev/null 2>&1 &\n    echo \" Started\"  \nfi",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217672_-2044048773",
+      "id": "paragraph_1593608985448_-1000688485",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "focus": true,
+      "$$hashKey": "object:57"
+    },
+    {
+      "text": "%md\r\n\r\n\r\n![line](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png \"line\")\r\n\r\n### Set Up the Notebook\r\n\r\nIn this section, you will do the following things:\r\n\r\n- Execute a CQL script to initialize the KillrVideo database for this notebook\r\n\r\n\r\n**Step 1:** Execute the following cell to initialize this notebook. Hover over the right-hand corner of the cell and click the *Run* button.\r\n\r\n![line](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/ExecuteCell.png \"line\")\r\n\r\n**Note:** You don't see the CQL script because the code editor is hidden, but you can still run the cell.\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:17:19+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png\" alt=\"line\" title=\"line\" /></p>\n<h3>Set Up the Notebook</h3>\n<p>In this section, you will do the following things:</p>\n<ul>\n<li>Execute a CQL script to initialize the KillrVideo database for this notebook</li>\n</ul>\n<p><strong>Step 1:</strong> Execute the following cell to initialize this notebook. Hover over the right-hand corner of the cell and click the <em>Run</em> button.</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/ExecuteCell.png\" alt=\"line\" title=\"line\" /></p>\n<p><strong>Note:</strong> You don&rsquo;t see the CQL script because the code editor is hidden, but you can still run the cell.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217674_122670777",
+      "id": "paragraph_1593608985006_-1169694020",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:58"
+    },
+    {
+      "text": "%cassandra\r\n\r\nCREATE KEYSPACE IF NOT EXISTS killrvideo WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };\r\n\r\nuse killrvideo;\r\n\r\n// Remove this section after DROP bug is fixed\r\n// Note we create the tables and then drop them so we can recreate them.\r\n// This assures us the tables have the correct configuration.\r\n// If we only did the CREATE TABLE IF NOT EXISTS, we might end up with a table with the wrong columns or something...\r\nCREATE TABLE IF NOT EXISTS user_credentials (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS users (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS videos (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS user_videos (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS latest_videos (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS video_ratings (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS video_ratings_by_user (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS video_playback_stats (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS video_recommendations (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS video_recommendations_by_video (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS videos_by_tag (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS tags_by_letter (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS comments_by_video (key text, PRIMARY KEY(key));\r\nCREATE TABLE IF NOT EXISTS comments_by_user (key text, PRIMARY KEY(key));\r\n// END removable section\r\n\r\nDROP TABLE IF EXISTS user_credentials;\r\nDROP TABLE IF EXISTS users;\r\nDROP TABLE IF EXISTS videos;\r\nDROP TABLE IF EXISTS user_videos;\r\nDROP TABLE IF EXISTS latest_videos;\r\nDROP TABLE IF EXISTS video_ratings;\r\nDROP TABLE IF EXISTS video_ratings_by_user;\r\nDROP TABLE IF EXISTS video_playback_stats;\r\nDROP TABLE IF EXISTS video_recommendations;\r\nDROP TABLE IF EXISTS video_recommendations_by_video;\r\nDROP TABLE IF EXISTS videos_by_tag;\r\nDROP TABLE IF EXISTS tags_by_letter;\r\nDROP TABLE IF EXISTS comments_by_video;\r\nDROP TABLE IF EXISTS comments_by_user;\r\n\r\n\r\n// User credentials, keyed by email address so we can authenticate\r\nCREATE TABLE IF NOT EXISTS user_credentials (\r\n    email     text,\r\n    password  text,\r\n    userid    uuid,\r\n    PRIMARY KEY (email)\r\n);\r\n\r\n// Users keyed by id\r\nCREATE TABLE IF NOT EXISTS users (\r\n    userid     uuid,\r\n    firstname  text,\r\n    lastname   text,\r\n    email      text,\r\n    created_date timestamp,\r\n    PRIMARY KEY (userid)\r\n);\r\n\r\n// Videos by id\r\nCREATE TABLE IF NOT EXISTS videos (\r\n    videoid                uuid,\r\n    userid                 uuid,\r\n    name                   text,\r\n    description            text,\r\n    location               text,\r\n    location_type          int,\r\n    preview_image_location text,\r\n    tags                   set<text>,\r\n    added_date             timestamp,\r\n    PRIMARY KEY (videoid)\r\n);\r\n\r\n// One-to-many from user point of view (lookup table)\r\nCREATE TABLE IF NOT EXISTS user_videos (\r\n    userid                 uuid,\r\n    added_date             timestamp,\r\n    videoid                uuid,\r\n    name                   text,\r\n    preview_image_location text,\r\n    PRIMARY KEY (userid, added_date, videoid)\r\n) WITH CLUSTERING ORDER BY (added_date DESC, videoid ASC);\r\n\r\n// Track latest videos, grouped by day (if we ever develop a bad hotspot from the daily grouping here, we could mitigate by\r\n// splitting the row using an arbitrary group number, making the partition key (yyyymmdd, group_number))\r\nCREATE TABLE IF NOT EXISTS latest_videos (\r\n    yyyymmdd text,\r\n    added_date timestamp,\r\n    videoid uuid,\r\n    userid uuid,\r\n    name text,\r\n    preview_image_location text,\r\n    PRIMARY KEY (yyyymmdd, added_date, videoid)\r\n) WITH CLUSTERING ORDER BY (added_date DESC, videoid ASC);\r\n\r\n// Video ratings (counter table)\r\nCREATE TABLE IF NOT EXISTS video_ratings (\r\n    videoid uuid,\r\n    rating_counter counter,\r\n    rating_total counter,\r\n    PRIMARY KEY (videoid)\r\n);\r\n\r\n// Video ratings by user (to try and mitigate voting multiple times)\r\nCREATE TABLE IF NOT EXISTS video_ratings_by_user (\r\n    videoid uuid,\r\n    userid uuid,\r\n    rating int,\r\n    PRIMARY KEY (videoid, userid)\r\n);\r\n\r\n// Records the number of views/playbacks of a video\r\nCREATE TABLE IF NOT EXISTS video_playback_stats (\r\n    videoid uuid,\r\n    views counter,\r\n    PRIMARY KEY (videoid)\r\n);\r\n\r\n// Recommendations by user (powered by Spark), with the newest videos added to the site always first\r\nCREATE TABLE IF NOT EXISTS video_recommendations ( \r\n    userid uuid,\r\n    added_date timestamp,\r\n    videoid uuid,\r\n    rating float,\r\n    authorid uuid,\r\n    name text,\r\n    preview_image_location text,\r\n    PRIMARY KEY(userid, added_date, videoid)\r\n) WITH CLUSTERING ORDER BY (added_date DESC, videoid ASC);\r\n\r\n// Recommendations by video (powered by Spark)\r\nCREATE TABLE IF NOT EXISTS video_recommendations_by_video (\r\n    videoid uuid,\r\n    userid uuid,\r\n    rating float,\r\n    added_date timestamp STATIC,\r\n    authorid uuid STATIC,\r\n    name text STATIC,\r\n    preview_image_location text STATIC,\r\n    PRIMARY KEY(videoid, userid)\r\n);\r\n\r\n// Index for tag keywords\r\nCREATE TABLE IF NOT EXISTS videos_by_tag (\r\n    tag text,\r\n    videoid uuid,\r\n    added_date timestamp,\r\n    userid uuid,\r\n    name text,\r\n    preview_image_location text,\r\n    tagged_date timestamp,\r\n    PRIMARY KEY (tag, videoid)\r\n);\r\n\r\n// Index for tags by first letter in the tag\r\nCREATE TABLE IF NOT EXISTS tags_by_letter (\r\n    first_letter text,\r\n    tag text,\r\n    PRIMARY KEY (first_letter, tag)\r\n);\r\n\r\n// Comments for a given video\r\nCREATE TABLE IF NOT EXISTS comments_by_video (\r\n    videoid uuid,\r\n    commentid timeuuid,\r\n    userid uuid,\r\n    comment text,\r\n    PRIMARY KEY (videoid, commentid)\r\n) WITH CLUSTERING ORDER BY (commentid DESC);\r\n\r\n// Comments for a given user\r\nCREATE TABLE IF NOT EXISTS comments_by_user (\r\n    userid uuid,\r\n    commentid timeuuid,\r\n    videoid uuid,\r\n    comment text,\r\n    PRIMARY KEY (userid, commentid)\r\n) WITH CLUSTERING ORDER BY (commentid DESC);\r\n\r\n\r\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\r\n  VALUES(11111111-1111-1111-1111-111111111111, toTimestamp(now()), 'Jeff', 'Carpenter', 'jc@fenago.com');\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\n  VALUES(11111111-1111-1111-1111-111111111111, 'jc@fenago.com', 'J3ffL0v3$C@ss@ndr@');\r\n  \r\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\r\n  VALUES(22222222-2222-2222-2222-222222222222, toTimestamp(now()), 'Eric', 'Zietlow', 'ez@fenago.com');\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\n  VALUES(22222222-2222-2222-2222-222222222222, 'ez@fenago.com', 'C@ss@ndr@R0ck$');\r\n\r\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\r\n  VALUES(33333333-3333-3333-3333-333333333333, toTimestamp(now()), 'Cedrick', 'Lunven', 'cl@fenago.com');\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\n  VALUES(33333333-3333-3333-3333-333333333333, 'cl@fenago.com', 'Fr@nc3L0v3$C@ss@ndr@');\r\n\r\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\r\n  VALUES(44444444-4444-4444-4444-444444444444, toTimestamp(now()), 'David', 'Gilardi', 'dg@fenago.com');\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\n  VALUES(44444444-4444-4444-4444-444444444444, 'dg@fenago.com', 'H@t$0ff2C@ss@ndr@');\r\n\r\n//INSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\r\n//  VALUES(55555555-5555-5555-5555-555555555555, toTimestamp(now()), 'Cristina', 'Veale', 'cv@fenago.com');\r\n//INSERT INTO killrvideo.user_credentials (userid, email, password)\r\n//  VALUES(55555555-5555-5555-5555-555555555555, 'cv@fenago.com', '3@$tC0@$tC@ss@ndr@');\r\n\r\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\r\n  VALUES(66666666-6666-6666-6666-666666666666, toTimestamp(now()), 'Adron', 'Hall', 'ah@fenago.com');\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\n  VALUES(66666666-6666-6666-6666-666666666666, 'ah@fenago.com', 'C@ss@ndr@43v3r');\r\n\r\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\r\n  VALUES(77777777-7777-7777-7777-777777777777, toTimestamp(now()), 'Aleks', 'volochnev', 'av@fenago.com');\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\n  VALUES(77777777-7777-7777-7777-777777777777, 'av@fenago.com', 'C@ss@ndr@3v3rywh3r3');\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T08:28:07+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217674_-420797123",
+      "id": "paragraph_1593608985307_-2090853847",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:59"
+    },
+    {
+      "text": "%md\r\n\r\n![line](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png \"line\")\r\n\r\nCollection Types\r\n\r\nIn this section, you will do the following things:\r\n\r\n- Investigate `SET`, which is one of the collection types\r\n\r\n- Insert and retrieve rows in the `videos` table that use `SET`\r\n\r\nThe `videos` table uses a `SET` collection to keep track of tags associated with each video. A `SET` is a great collection to use because sets do not maintain an order - we are not concerned with any tag order, only if a tag is or is not associated with the video.\r\n\r\nLet's start by reviewing the definition of the `videos` table:\r\n\r\n\r\n**Step 1:** Execute the following cell to describe the `videos` table.\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:20:32+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png\" alt=\"line\" title=\"line\" /></p>\n<p>Collection Types</p>\n<p>In this section, you will do the following things:</p>\n<ul>\n<li>\n<p>Investigate <code>SET</code>, which is one of the collection types</p>\n</li>\n<li>\n<p>Insert and retrieve rows in the <code>videos</code> table that use <code>SET</code></p>\n</li>\n</ul>\n<p>The <code>videos</code> table uses a <code>SET</code> collection to keep track of tags associated with each video. A <code>SET</code> is a great collection to use because sets do not maintain an order - we are not concerned with any tag order, only if a tag is or is not associated with the video.</p>\n<p>Let&rsquo;s start by reviewing the definition of the <code>videos</code> table:</p>\n<p><strong>Step 1:</strong> Execute the following cell to describe the <code>videos</code> table.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217674_-1483014813",
+      "id": "paragraph_1593608985255_-345539161",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "dateStarted": "2020-07-02T07:20:32+0000",
+      "dateFinished": "2020-07-02T07:20:32+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:60"
+    },
+    {
+      "text": "\r\n// Execute this cell (click the Run button in the top-right corner)\r\n\r\nDESCRIBE TABLE killrvideo.videos;",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217675_-1070743292",
+      "id": "paragraph_1593608985147_-914826625",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:61"
+    },
+    {
+      "text": "\r\n%md\r\n\r\nNote two things about the `videos` table. First, the primary key is just `videoid`. Second, the `tags` column is a set of text. Tags are words or phrases we want to associate with a video.\r\n\r\nTo allow us to keep our focus on `SET`, in this example we will only specify the `videoid` and the `tags`. Once again, let's use our contrived `uuid` of `12121212-1212-1212-1212-121212121212`.\r\n\r\n\r\n**Step 2:** In the following cell, insert a sparse row into the videos table with a `videoid` of `12121212-1212-1212-1212-121212121212` and a set of tags that contain the words: `Favorite`, `Fast-paced`, `Funny`.\r\n\r\n\r\n*Need a hint? Click here.*\r\n\r\nYou want to `INSERT` into the `killrvideo.videos` table with a\r\n`videoid` of `12121212-1212-1212-1212-121212121212` and a set of tags\r\nsuch as `{ 'Favorite', 'Fast-paced', 'Funny' }`. \\\r\n\r\n*Want the command? Click here.*\r\n\r\n    INSERT INTO killrvideo.videos (videoid, tags)\r\n      VALUES(12121212-1212-1212-1212-121212121212, { 'Favorite', 'Fast-paced', 'Funny' });\r\n\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Note two things about the <code>videos</code> table. First, the primary key is just <code>videoid</code>. Second, the <code>tags</code> column is a set of text. Tags are words or phrases we want to associate with a video.</p>\n<p>To allow us to keep our focus on <code>SET</code>, in this example we will only specify the <code>videoid</code> and the <code>tags</code>. Once again, let&rsquo;s use our contrived <code>uuid</code> of <code>12121212-1212-1212-1212-121212121212</code>.</p>\n<p><strong>Step 2:</strong> In the following cell, insert a sparse row into the videos table with a <code>videoid</code> of <code>12121212-1212-1212-1212-121212121212</code> and a set of tags that contain the words: <code>Favorite</code>, <code>Fast-paced</code>, <code>Funny</code>.</p>\n<p><em>Need a hint? Click here.</em></p>\n<p>You want to <code>INSERT</code> into the <code>killrvideo.videos</code> table with a<br />\n<code>videoid</code> of <code>12121212-1212-1212-1212-121212121212</code> and a set of tags<br />\nsuch as <code>{ 'Favorite', 'Fast-paced', 'Funny' }</code>. \\</p>\n<p><em>Want the command? Click here.</em></p>\n<pre><code>INSERT INTO killrvideo.videos (videoid, tags)\n  VALUES(12121212-1212-1212-1212-121212121212, { 'Favorite', 'Fast-paced', 'Funny' });\n</code></pre>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217675_-1049666378",
+      "id": "paragraph_1593608984647_-2144052083",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:62"
+    },
+    {
+      "text": "// Write a command to insert a row into the videos table\r\n// Execute this cell (click the Run button in the top-right corner)\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217676_-2046598761",
+      "id": "paragraph_1593608984807_-458893450",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:63"
+    },
+    {
+      "text": "%md\r\n\r\nNow, let's check to see if our insert worked as expected.\r\n\r\n**Step 3:** Execute the following cell to query for the row with the `videoid` of `12121212-1212-1212-1212-121212121212`.\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Now, let&rsquo;s check to see if our insert worked as expected.</p>\n<p><strong>Step 3:</strong> Execute the following cell to query for the row with the <code>videoid</code> of <code>12121212-1212-1212-1212-121212121212</code>.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217676_1581266853",
+      "id": "paragraph_1593608984407_1933635886",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:64"
+    },
+    {
+      "text": "// Execute this cell (click the Run button in the top-right corner)\r\nSELECT * FROM killrvideo.videos WHERE videoid = 12121212-1212-1212-1212-121212121212;\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217676_-1952880857",
+      "id": "paragraph_1593608984248_-1266608021",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:65"
+    },
+    {
+      "text": "%md\r\n\r\nInspect the `tags` values and see that the `INSERT` worked as expected.\r\n\r\nThere are two kinds of `SET` updates we could perform. We can completely replace a set, or we can modify the contents of an existing set. First, we'll replace the entire `tags` set with the values `High-brow`, `Intellectual` and `Refined`.\r\n\r\n\r\n**Step 4:** In the following cell, write a comand to replace the `tags` set for the `videoid` of `12121212-1212-1212-1212-121212121212`.\r\n\r\n\r\n*Need a hint? Click here.*\r\n\r\nYou want to `UPDATE` the `killrvideo.videos` table with a `videoid` of\r\n`12121212-1212-1212-1212-121212121212`. `SET` the `tags` value to the\r\nnew set `{ 'High-brow', 'Intellectual', 'Refined' }`. \\\r\n\r\n*Want the command? Click here.*\r\n\r\n    UPDATE killrvideo.videos SET tags = { 'High-brow', 'Intellectual', 'Refined' } WHERE videoid = 12121212-1212-1212-1212-121212121212;\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Inspect the <code>tags</code> values and see that the <code>INSERT</code> worked as expected.</p>\n<p>There are two kinds of <code>SET</code> updates we could perform. We can completely replace a set, or we can modify the contents of an existing set. First, we&rsquo;ll replace the entire <code>tags</code> set with the values <code>High-brow</code>, <code>Intellectual</code> and <code>Refined</code>.</p>\n<p><strong>Step 4:</strong> In the following cell, write a comand to replace the <code>tags</code> set for the <code>videoid</code> of <code>12121212-1212-1212-1212-121212121212</code>.</p>\n<p><em>Need a hint? Click here.</em></p>\n<p>You want to <code>UPDATE</code> the <code>killrvideo.videos</code> table with a <code>videoid</code> of<br />\n<code>12121212-1212-1212-1212-121212121212</code>. <code>SET</code> the <code>tags</code> value to the<br />\nnew set <code>{ 'High-brow', 'Intellectual', 'Refined' }</code>. \\</p>\n<p><em>Want the command? Click here.</em></p>\n<pre><code>UPDATE killrvideo.videos SET tags = { 'High-brow', 'Intellectual', 'Refined' } WHERE videoid = 12121212-1212-1212-1212-121212121212;\n</code></pre>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217677_-1210116963",
+      "id": "paragraph_1593608994006_-965528551",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:66"
+    },
+    {
+      "text": "\r\n// Write a command to update the row from the videos table\r\n// Execute this cell (click the Run button in the top-right corner)\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217677_-934331569",
+      "id": "paragraph_1593608993748_1384618070",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:67"
+    },
+    {
+      "text": "%md\r\n\r\n\r\nOnce again, let's inspect the effect of the `UPDATE`.\r\n\r\n**Step 5:** Execute the following cell - a query to retrieve the row for the `videoid` of `12121212-1212-1212-1212-121212121212`.\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Once again, let&rsquo;s inspect the effect of the <code>UPDATE</code>.</p>\n<p><strong>Step 5:</strong> Execute the following cell - a query to retrieve the row for the <code>videoid</code> of <code>12121212-1212-1212-1212-121212121212</code>.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217678_1940085544",
+      "id": "paragraph_1593608993468_668439800",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:68"
+    },
+    {
+      "text": "// Execute this cell (click the Run button in the top-right corner)\nSELECT * FROM killrvideo.videos WHERE videoid = 12121212-1212-1212-1212-121212121212;\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217678_-424108086",
+      "id": "paragraph_1593608993587_-1862696443",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:69"
+    },
+    {
+      "text": "\r\n\r\n%md\r\n\r\nWe see the values we updated in Step 3. The values may not be in the same order as in your `UPDATE` command, but that's OK.\r\n\r\n\r\n**Thought question:** If you *were* concerned about the order of the tags, what data type would you use instead of a `SET`?\r\n\r\n\r\nLet's modify the set again. This time we will remove the `Refined` tag. Then in later steps we will replace it with `Low-rent`.\r\n\r\n\r\n**Step 6:** In the following cell, write a command to update, by removing the `Refined` tag, for the `videoid` of `12121212-1212-1212-1212-121212121212`.\r\n\r\n\r\n*Need a hint? Click here.*\r\n\r\nHere, you will use an `UPDATE` command. Again, we are updating the row\r\nin the `killrvideo.videos` table with the `videoid` of\r\n`12121212-1212-1212-1212-121212121212`. The clause you use to remove\r\nthe tag looks like `tags = tags - { 'Refined' }`. \\\r\n\r\n*Want the command? Click here.*\r\n\r\n    UPDATE killrvideo.videos SET tags = tags - { 'Refined' } WHERE videoid = 12121212-1212-1212-1212-121212121212;\r\n\r\n\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>We see the values we updated in Step 3. The values may not be in the same order as in your <code>UPDATE</code> command, but that&rsquo;s OK.</p>\n<p><strong>Thought question:</strong> If you <em>were</em> concerned about the order of the tags, what data type would you use instead of a <code>SET</code>?</p>\n<p>Let&rsquo;s modify the set again. This time we will remove the <code>Refined</code> tag. Then in later steps we will replace it with <code>Low-rent</code>.</p>\n<p><strong>Step 6:</strong> In the following cell, write a command to update, by removing the <code>Refined</code> tag, for the <code>videoid</code> of <code>12121212-1212-1212-1212-121212121212</code>.</p>\n<p><em>Need a hint? Click here.</em></p>\n<p>Here, you will use an <code>UPDATE</code> command. Again, we are updating the row<br />\nin the <code>killrvideo.videos</code> table with the <code>videoid</code> of<br />\n<code>12121212-1212-1212-1212-121212121212</code>. The clause you use to remove<br />\nthe tag looks like <code>tags = tags - { 'Refined' }</code>. \\</p>\n<p><em>Want the command? Click here.</em></p>\n<pre><code>UPDATE killrvideo.videos SET tags = tags - { 'Refined' } WHERE videoid = 12121212-1212-1212-1212-121212121212;\n</code></pre>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217678_-132447290",
+      "id": "paragraph_1593608993287_-1696924555",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:70"
+    },
+    {
+      "text": "// Write a command to update the row from the videos table\r\n// Execute this cell (click the Run button in the top-right corner)\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217679_-410316322",
+      "id": "paragraph_1593608993108_-666979047",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:71"
+    },
+    {
+      "text": "%md\r\n\r\nAgain, let's check the contents of the row to see the effects of our command.\r\n\r\n\r\n**Step 7:** Execute the following cell - a query to retrieve the row for the `videoid` of `12121212-1212-1212-1212-121212121212`.\r\n\r\n\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Again, let&rsquo;s check the contents of the row to see the effects of our command.</p>\n<p><strong>Step 7:</strong> Execute the following cell - a query to retrieve the row for the <code>videoid</code> of <code>12121212-1212-1212-1212-121212121212</code>.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217679_921602681",
+      "id": "paragraph_1593608992947_167338426",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:72"
+    },
+    {
+      "text": "// Execute this cell (click the Run button in the top-right corner)\n\nSELECT * FROM killrvideo.videos WHERE videoid = 12121212-1212-1212-1212-121212121212;\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217680_437297745",
+      "id": "paragraph_1593608984110_-601518096",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:73"
+    },
+    {
+      "text": "%md\r\n\r\n\r\nInspecting the previous results, we see the row now only has two tags - that's what we wanted!\r\n\r\n\r\nLet's add a third tag `Low-rent`.\r\n\r\n\r\n**Step 8:** In the following cell, write a command to update, by adding the `Low-rent` tag, for the `videoid` of `12121212-1212-1212-1212-121212121212`.\r\n\r\n\r\n*Need a hint? Click here.*\r\n\r\nHere, you will use an `UPDATE` command. Again, we are updating the row\r\nin the `killrvideo.videos` table with the `videoid` of\r\n`12121212-1212-1212-1212-121212121212`. The clause you use to remove\r\nthe tag looks like `tags = tags + { 'Low-rent' }`. \\\r\n\r\n*Want the command? Click here.*\r\n\r\n    UPDATE killrvideo.videos SET tags = tags + { 'Low-rent' } WHERE videoid = 12121212-1212-1212-1212-121212121212;\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Inspecting the previous results, we see the row now only has two tags - that&rsquo;s what we wanted!</p>\n<p>Let&rsquo;s add a third tag <code>Low-rent</code>.</p>\n<p><strong>Step 8:</strong> In the following cell, write a command to update, by adding the <code>Low-rent</code> tag, for the <code>videoid</code> of <code>12121212-1212-1212-1212-121212121212</code>.</p>\n<p><em>Need a hint? Click here.</em></p>\n<p>Here, you will use an <code>UPDATE</code> command. Again, we are updating the row<br />\nin the <code>killrvideo.videos</code> table with the <code>videoid</code> of<br />\n<code>12121212-1212-1212-1212-121212121212</code>. The clause you use to remove<br />\nthe tag looks like <code>tags = tags + { 'Low-rent' }</code>. \\</p>\n<p><em>Want the command? Click here.</em></p>\n<pre><code>UPDATE killrvideo.videos SET tags = tags + { 'Low-rent' } WHERE videoid = 12121212-1212-1212-1212-121212121212;\n</code></pre>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217680_-2041036202",
+      "id": "paragraph_1593608984108_-1146292167",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:74"
+    },
+    {
+      "text": "// Write a command to update the row from the videos table\r\n// Execute this cell (click the Run button in the top-right corner)\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217680_1929687509",
+      "id": "paragraph_1593608983789_1097758017",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:75"
+    },
+    {
+      "text": "%md\r\n\r\nOne last time, let's check the contents of the row to see the effects of our command.\r\n\r\n\r\n**Step 9:** Execute the following cell.\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>One last time, let&rsquo;s check the contents of the row to see the effects of our command.</p>\n<p><strong>Step 9:</strong> Execute the following cell.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217681_-1119408598",
+      "id": "paragraph_1593608983608_375489062",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:76"
+    },
+    {
+      "text": "\r\n\r\n// Execute this cell (click the Run button in the top-right corner)\r\n\r\nSELECT * FROM killrvideo.videos WHERE videoid = 12121212-1212-1212-1212-121212121212;\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:53:35+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217681_-335670592",
+      "id": "paragraph_1593609508848_1887417011",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:77"
+    },
+    {
+      "text": "\r\n%md\r\n\r\nReview the results in the previous cell to see that the update worked as expected.\r\n\r\n\r\n**Note (some things to keep in mind about Collections):**\r\n\r\nTo avoid performance problems, only use collections for small-ish\r\nnumbers of elements\r\nSets and maps do not incur the read-before-write penalty, but some\r\nlist operations do. Therefore, when possible, prefer sets to lists\r\nList prepend and append operations are not idempotent, so retrying\r\nafter a timeout may result in duplicate elements\r\nCollections may only be used in primary keys if they are frozen\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Review the results in the previous cell to see that the update worked as expected.</p>\n<p><strong>Note (some things to keep in mind about Collections):</strong></p>\n<p>To avoid performance problems, only use collections for small-ish<br />\nnumbers of elements<br />\nSets and maps do not incur the read-before-write penalty, but some<br />\nlist operations do. Therefore, when possible, prefer sets to lists<br />\nList prepend and append operations are not idempotent, so retrying<br />\nafter a timeout may result in duplicate elements<br />\nCollections may only be used in primary keys if they are frozen</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217681_1368463926",
+      "id": "paragraph_1593609509028_-1743380414",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:78"
+    },
+    {
+      "text": "%md\r\n\r\n\r\n![line](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png \"line\")\r\n\r\nCounters\r\n\r\nIn this section, you will do the following things:\r\n\r\n- Investigate the `video_playback_stats` table in `killrvideo`\r\n\r\n- Add a row to the `video_playback_stats` table\r\n\r\n- Increment the counter of the table to simulate videoing a video\r\n\r\n\r\nKillrVideo uses the `video_playback_stats` table to keep track of the number of times a video has been viewed. A counter is a great data type for this use-case because counters perform well in Cassandra, and in the rare event where the counter might drop an update, it is not a serious problem for the app or its users.\r\n\r\n\r\nLet's start by investigating this table.\r\n\r\n\r\n**Step 1:** In the following cell, describe the `video_playback_stats` table.\r\n\r\n*Need a hint? Click here.*\r\n\r\nYou want to use the `DESCRIBE` command to describe only the table. \\\r\n\r\n*Want the command? Click here.*\r\n\r\n    DESCRIBE TABLE killrvideo.video_playback_stats;\r\n\r\n\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png\" alt=\"line\" title=\"line\" /></p>\n<p>Counters</p>\n<p>In this section, you will do the following things:</p>\n<ul>\n<li>\n<p>Investigate the <code>video_playback_stats</code> table in <code>killrvideo</code></p>\n</li>\n<li>\n<p>Add a row to the <code>video_playback_stats</code> table</p>\n</li>\n<li>\n<p>Increment the counter of the table to simulate videoing a video</p>\n</li>\n</ul>\n<p>KillrVideo uses the <code>video_playback_stats</code> table to keep track of the number of times a video has been viewed. A counter is a great data type for this use-case because counters perform well in Cassandra, and in the rare event where the counter might drop an update, it is not a serious problem for the app or its users.</p>\n<p>Let&rsquo;s start by investigating this table.</p>\n<p><strong>Step 1:</strong> In the following cell, describe the <code>video_playback_stats</code> table.</p>\n<p><em>Need a hint? Click here.</em></p>\n<p>You want to use the <code>DESCRIBE</code> command to describe only the table. \\</p>\n<p><em>Want the command? Click here.</em></p>\n<pre><code>DESCRIBE TABLE killrvideo.video_playback_stats;\n</code></pre>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217682_-547612854",
+      "id": "paragraph_1593609508569_-1270465948",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:79"
+    },
+    {
+      "text": "// Write a command to allow you to review the table definition for video_playback_stats\r\n// Execute this cell (click the Run button in the top-right corner)\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217683_431107083",
+      "id": "paragraph_1593609508387_-833503195",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:80"
+    },
+    {
+      "text": "%md\r\n\r\nNotice that this table has two columns: `videoid` and `views`. Also, notice that `views` is a counter that keeps track of how many times the video has been, uh, viewed.\r\n\r\nIn this section, we want to update a counter. Just to keep things simple, let's use a contrived `uuid` for the `videoid`. We'll use the value `12121212-1212-1212-1212-121212121212`.\r\n\r\n\r\nWe'll start by verifying that a row for this `videoid` does not yet exist in the table.\r\n\r\n\r\n**Step 2:** In the following cell, try to retrieve the row with the `videoid` of `12121212-1212-1212-1212-121212121212`.\r\n\r\n*Need a hint? Click here.*\r\n\r\nFor this command, you will use the `SELECT` statement on the\r\n`video_playback_stats` table in the `killrvideo` keyspace. You only\r\nwant the row where the `videoid` is\r\n`12121212-1212-1212-1212-121212121212`, but it will be easiest just to\r\ngrab all the columns.\r\n\r\n*Want the command? Click here.*\r\n\r\n    SELECT * from killrvideo.video_playback_stats WHERE videoid = 12121212-1212-1212-1212-121212121212;\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Notice that this table has two columns: <code>videoid</code> and <code>views</code>. Also, notice that <code>views</code> is a counter that keeps track of how many times the video has been, uh, viewed.</p>\n<p>In this section, we want to update a counter. Just to keep things simple, let&rsquo;s use a contrived <code>uuid</code> for the <code>videoid</code>. We&rsquo;ll use the value <code>12121212-1212-1212-1212-121212121212</code>.</p>\n<p>We&rsquo;ll start by verifying that a row for this <code>videoid</code> does not yet exist in the table.</p>\n<p><strong>Step 2:</strong> In the following cell, try to retrieve the row with the <code>videoid</code> of <code>12121212-1212-1212-1212-121212121212</code>.</p>\n<p><em>Need a hint? Click here.</em></p>\n<p>For this command, you will use the <code>SELECT</code> statement on the<br />\n<code>video_playback_stats</code> table in the <code>killrvideo</code> keyspace. You only<br />\nwant the row where the <code>videoid</code> is<br />\n<code>12121212-1212-1212-1212-121212121212</code>, but it will be easiest just to<br />\ngrab all the columns.</p>\n<p><em>Want the command? Click here.</em></p>\n<pre><code>SELECT * from killrvideo.video_playback_stats WHERE videoid = 12121212-1212-1212-1212-121212121212;\n</code></pre>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217683_1559238632",
+      "id": "paragraph_1593609507530_-117242648",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:81"
+    },
+    {
+      "text": "// Write a command to try to retrieve the row with a videoid of 2121212-1212-1212-1212-121212121212\r\n// Execute this cell (click the Run button in the top-right corner)",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217684_2066624284",
+      "id": "paragraph_1593609507367_-558938908",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:82"
+    },
+    {
+      "text": "%md\r\n\r\nWe see “No Data Returned” which allows us to verify that the row with that key is not in the table yet.\r\n\r\nLet's try creating the row with that `videoid`.\r\n\r\n\r\n**Step 3:** Create the row by incrementing the `views` counter for the `videoid` `12121212-1212-1212-1212-121212121212`.\r\n\r\n*Need a hint? Click here.*\r\n\r\nYou will be `UPDATE`ing the row in the\r\n`killrvideo.video_playback_stats` with the `videoid` of\r\n`12121212-1212-1212-1212-121212121212`. You will increment the counter\r\nwith code like this: `views = views + 1`.\r\n\r\n*Want the command? Click here.*\r\n\r\n    UPDATE killrvideo.video_playback_stats SET views = views + 1 WHERE videoid = 12121212-1212-1212-1212-121212121212;\r\n\r\n**Thought question:** Since we know we cannot `INSERT` a row with a counter, we can only `UPDATE` the row, what will the value of the counter be after we increment it?\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:52:13+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true,
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>We see “No Data Returned” which allows us to verify that the row with that key is not in the table yet.</p>\n<p>Let&rsquo;s try creating the row with that <code>videoid</code>.</p>\n<p><strong>Step 3:</strong> Create the row by incrementing the <code>views</code> counter for the <code>videoid</code> <code>12121212-1212-1212-1212-121212121212</code>.</p>\n<p><em>Need a hint? Click here.</em></p>\n<p>You will be <code>UPDATE</code>ing the row in the<br />\n<code>killrvideo.video_playback_stats</code> with the <code>videoid</code> of<br />\n<code>12121212-1212-1212-1212-121212121212</code>. You will increment the counter<br />\nwith code like this: <code>views = views + 1</code>.</p>\n<p><em>Want the command? Click here.</em></p>\n<pre><code>UPDATE killrvideo.video_playback_stats SET views = views + 1 WHERE videoid = 12121212-1212-1212-1212-121212121212;\n</code></pre>\n<p><strong>Thought question:</strong> Since we know we cannot <code>INSERT</code> a row with a counter, we can only <code>UPDATE</code> the row, what will the value of the counter be after we increment it?</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217684_529644824",
+      "id": "paragraph_1593609505148_1145910936",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:83"
+    },
+    {
+      "text": "// Write a command to update the views counter of the row with a videoid of 12121212-1212-1212-1212-121212121212\r\n// Execute this cell (click the Run button in the top-right corner)\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217685_1733016894",
+      "id": "paragraph_1593609505002_1167443488",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:84"
+    },
+    {
+      "text": "\r\n%md\r\n\r\n\r\nLet's see the results of the update!\r\n\r\n\r\n**Step 4:** Execute the following cell and inspect the results.\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:52:18+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true,
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Let&rsquo;s see the results of the update!</p>\n<p><strong>Step 4:</strong> Execute the following cell and inspect the results.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217686_-1471391200",
+      "id": "paragraph_1593609504027_-614792343",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:85"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217687_1760289057",
+      "id": "paragraph_1593610070231_-1757913728",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:86"
+    },
+    {
+      "text": "// Execute this cell (click the Run button in the top-right corner)\nSELECT * FROM killrvideo.video_playback_stats WHERE videoid = 12121212-1212-1212-1212-121212121212;\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217688_-1653812882",
+      "id": "paragraph_1593608982771_-1811315353",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:87"
+    },
+    {
+      "text": "\r\n%md\r\n\r\n\r\nThis time we see the row. We created the row with the `UPDATE` command - an upsert! Notice that the value of the `views` counter is one. That's because, when you create a row by incrementing the counter, it's as if the counter started at zero.\r\n\r\n\r\n**Note (some things to keep in mind about counters):**\r\n\r\nCounters cannot be part of a primary key\r\nIncrementing or decrementing counters is not idempotent\r\nIncrementing or decrementing a counter is not always guaranteed to\r\nwork - under high traffic situations, it is possible for one of these\r\noperations to get dropped\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:53:07+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>This time we see the row. We created the row with the <code>UPDATE</code> command - an upsert! Notice that the value of the <code>views</code> counter is one. That&rsquo;s because, when you create a row by incrementing the counter, it&rsquo;s as if the counter started at zero.</p>\n<p><strong>Note (some things to keep in mind about counters):</strong></p>\n<p>Counters cannot be part of a primary key<br />\nIncrementing or decrementing counters is not idempotent<br />\nIncrementing or decrementing a counter is not always guaranteed to<br />\nwork - under high traffic situations, it is possible for one of these<br />\noperations to get dropped</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217688_-936574611",
+      "id": "paragraph_1593610020372_532633635",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "dateStarted": "2020-07-02T07:53:06+0000",
+      "dateFinished": "2020-07-02T07:53:06+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:88"
+    },
+    {
+      "text": "\r\n%md\r\n\r\n![line](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png \"line\")\r\n\r\nCongratulations!!!!\r\n\r\nIf you have made it to the end of this notebook successfully, you have additional data types under your belt.\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png\" alt=\"line\" title=\"line\" /></p>\n<p>Congratulations!!!!</p>\n<p>If you have made it to the end of this notebook successfully, you have additional data types under your belt.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217688_1352593184",
+      "id": "paragraph_1593610021332_-539844212",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:89"
+    },
+    {
+      "text": "\r\n%md\r\n\r\n\r\n![line](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png \"line\")\r\n\r\nBonus Challenge: Create a UDT\r\n\r\nIf you got done early and want something to do while you wait for\r\nothers, here's a bonus challenge\r\n\r\n### In this section, you will do the following things:\r\n\r\n- Create a UDT to represent video encoding\r\n\r\n- Alter the KillrVideo `videos` table to use this UDT\r\n\r\n- Load some data into the altered `videos` table\r\n\r\n- Run a query on the loaded data with the UDT\r\n\r\n- Update the value of a row containing a UDT\r\n\r\n**Here's the pitch:**\r\n\r\nAs KillrVideo grows in popularity, it becomes necessary to support various video formats with different bit rates, encodings and frame sizes. This seems like an ideal use for a UDT. Let's build the UDT and then add it to the `videos` table.\r\n\r\n**Step 1:** In the next cell, write and execute the CQL to create a UDT, named `video_encoding` that contains the fields as described in the following table.\r\n\r\n\r\n![](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/2.png)\r\n\r\n\r\n*Want the solution? Click here.*\r\n\r\n    CREATE TYPE IF NOT EXISTS killrvideo.video_encoding (\r\n        bit_rates   SET<TEXT>,\r\n        encoding    TEXT,\r\n        height      INT,\r\n        width       INT\r\n    );\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:54:05+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png\" alt=\"line\" title=\"line\" /></p>\n<p>Bonus Challenge: Create a UDT</p>\n<p>If you got done early and want something to do while you wait for<br />\nothers, here&rsquo;s a bonus challenge</p>\n<h3>In this section, you will do the following things:</h3>\n<ul>\n<li>\n<p>Create a UDT to represent video encoding</p>\n</li>\n<li>\n<p>Alter the KillrVideo <code>videos</code> table to use this UDT</p>\n</li>\n<li>\n<p>Load some data into the altered <code>videos</code> table</p>\n</li>\n<li>\n<p>Run a query on the loaded data with the UDT</p>\n</li>\n<li>\n<p>Update the value of a row containing a UDT</p>\n</li>\n</ul>\n<p><strong>Here&rsquo;s the pitch:</strong></p>\n<p>As KillrVideo grows in popularity, it becomes necessary to support various video formats with different bit rates, encodings and frame sizes. This seems like an ideal use for a UDT. Let&rsquo;s build the UDT and then add it to the <code>videos</code> table.</p>\n<p><strong>Step 1:</strong> In the next cell, write and execute the CQL to create a UDT, named <code>video_encoding</code> that contains the fields as described in the following table.</p>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/2.png\" alt=\"\" /></p>\n<p><em>Want the solution? Click here.</em></p>\n<pre><code>CREATE TYPE IF NOT EXISTS killrvideo.video_encoding (\n    bit_rates   SET&lt;TEXT&gt;,\n    encoding    TEXT,\n    height      INT,\n    width       INT\n);\n</code></pre>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217689_2131960865",
+      "id": "paragraph_1593610020912_970954860",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "dateStarted": "2020-07-02T07:53:56+0000",
+      "dateFinished": "2020-07-02T07:53:56+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:90"
+    },
+    {
+      "text": "// Create the video.encoding UDT in this cell as described.\r\n// Then, to execute this cell, click the Run button in the top-right corner (or SHIFT-ENTER)\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217689_1140445984",
+      "id": "paragraph_1593610021217_125731471",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:91"
+    },
+    {
+      "text": "\r\n%md\r\n\r\n**Step 2:** In the next cell, truncate the contents of the `videos` table.\r\n\r\n\r\n    TRUNCATE TABLE killrvideo.videos;\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:55:42+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><strong>Step 2:</strong> In the next cell, truncate the contents of the <code>videos</code> table.</p>\n<pre><code>TRUNCATE TABLE killrvideo.videos;\n</code></pre>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217689_-444296261",
+      "id": "paragraph_1593610021215_1649221473",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "dateStarted": "2020-07-02T07:55:40+0000",
+      "dateFinished": "2020-07-02T07:55:40+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:92"
+    },
+    {
+      "text": "// Write the CQL to truncate the videos table\r\n// Then, to execute this cell, click the Run button in the top-rightcorner (or SHIFT-ENTER)\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217690_1190932492",
+      "id": "paragraph_1593610510491_-81496718",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:93"
+    },
+    {
+      "text": "// Write the CQL to insert row in the videos table\r\nINSERT INTO killrvideo.videos (videoid, tags)\r\n  VALUES(12121212-1212-1212-1212-121212121212, { 'Favorite', 'Fast-paced', 'Funny' });\r\n  ",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:56:39+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593676546809_1247960489",
+      "id": "paragraph_1593676546809_1247960489",
+      "dateCreated": "2020-07-02T07:55:46+0000",
+      "status": "READY",
+      "$$hashKey": "object:94"
+    },
+    {
+      "text": "%md\r\n\r\n**Step 3:** In the next cell, alter the `videos` table by adding an `encodings` column of type `FROZEN<video_encoding`.\r\n\r\n\r\n**NOTE:** UDTs that contain containers (e.g., sets, lists, etc.) must be declared `FROZEN` to make it explicit that Cassandra serializes the contents of the UDT into a single value for storage.\r\n\r\n\r\n*Want the solution? Click here.*\r\n\r\n    ALTER TABLE killrvideo.videos ADD (encoding FROZEN<video_encoding>);\r\n\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T08:14:27+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><strong>Step 3:</strong> In the next cell, alter the <code>videos</code> table by adding an <code>encodings</code> column of type <code>FROZEN&lt;video_encoding</code>.</p>\n<p><strong>NOTE:</strong> UDTs that contain containers (e.g., sets, lists, etc.) must be declared <code>FROZEN</code> to make it explicit that Cassandra serializes the contents of the UDT into a single value for storage.</p>\n<p><em>Want the solution? Click here.</em></p>\n<pre><code>ALTER TABLE killrvideo.videos ADD (encoding FROZEN&lt;video_encoding&gt;);\n</code></pre>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217690_1505752340",
+      "id": "paragraph_1593610021051_2022874878",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "dateStarted": "2020-07-02T08:14:27+0000",
+      "dateFinished": "2020-07-02T08:14:29+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:95"
+    },
+    {
+      "text": "// Write the CQL to add the encoding column to the videos table\r\n// Then, to execute this cell, click the Run button in the top-right corner (or SHIFT-ENTER)\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217690_-1361673995",
+      "id": "paragraph_1593610020735_1022153975",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:96"
+    },
+    {
+      "text": "%md\r\n\r\n**Step:** In the following cell, query the videos table for the encoding column value of the row with the videoid of 2644c36e-14bd-11e5-839e-8438355b7e3a.\r\nInspect the output to see what the UDT looks like.\r\n\r\nWant the solution? Click here.\r\n\r\n**SELECT * FROM killrvideo.videos WHERE videoid = 12121212-1212-1212-1212-121212121212;**\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:56:52+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><strong>Step:</strong> In the following cell, query the videos table for the encoding column value of the row with the videoid of 2644c36e-14bd-11e5-839e-8438355b7e3a.<br />\nInspect the output to see what the UDT looks like.</p>\n<p>Want the solution? Click here.</p>\n<p><strong>SELECT * FROM killrvideo.videos WHERE videoid = 12121212-1212-1212-1212-121212121212;</strong></p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217690_-1003727918",
+      "id": "paragraph_1593610020733_172125282",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "dateStarted": "2020-07-02T07:56:52+0000",
+      "dateFinished": "2020-07-02T07:56:52+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:97"
+    },
+    {
+      "text": "// Write the CQL command\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217690_-854179302",
+      "id": "paragraph_1593610959151_-1484408648",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:98"
+    },
+    {
+      "text": "%md\r\n\r\nThe UDT is `FROZEN` which means if you want to update it, you must replace the entire contents of the UDT. Remember, Cassandra encodes the UDT into something like a single blob.\r\n\r\n**Step:** In the following cell, write a CQL UPDATE command to add a bit rate of “1500 Kbps” to the `video_encoding` for the row with the `videoid` of `12121212-1212-1212-1212-121212121212`.\r\n\r\n- Here is an example of the correct format of the UDT *before* the update of the additional bit rate.\r\n\r\n\r\n*Want the solution? Click here.*\r\n\r\n    UPDATE killrvideo.videos\r\n        SET encoding={encoding: '1080p', height: 1080, width: 1920, bit_rates: {'1500 Kbps', '3000 Kbps', '4500 Kbps', '6000 Kbps'}}\r\n        WHERE videoid=12121212-1212-1212-1212-121212121212;\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>The UDT is <code>FROZEN</code> which means if you want to update it, you must replace the entire contents of the UDT. Remember, Cassandra encodes the UDT into something like a single blob.</p>\n<p><strong>Step:</strong> In the following cell, write a CQL UPDATE command to add a bit rate of “1500 Kbps” to the <code>video_encoding</code> for the row with the <code>videoid</code> of <code>12121212-1212-1212-1212-121212121212</code>.</p>\n<ul>\n<li>Here is an example of the correct format of the UDT <em>before</em> the update of the additional bit rate.</li>\n</ul>\n<p><em>Want the solution? Click here.</em></p>\n<pre><code>UPDATE killrvideo.videos\n    SET encoding={encoding: '1080p', height: 1080, width: 1920, bit_rates: {'1500 Kbps', '3000 Kbps', '4500 Kbps', '6000 Kbps'}}\n    WHERE videoid=12121212-1212-1212-1212-121212121212;\n</code></pre>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217691_-1150459484",
+      "id": "paragraph_1593610020592_-1839203345",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:99"
+    },
+    {
+      "text": "// Write a CQL update command to add a bit_rate of 1500 Kbps to the row in the videos table with a videoid of 2644c36e-14bd-11e5-839e-8438355b7e3a\n// Then, to execute this cell, click the Run button in the top-right corner (or SHIFT-ENTER)\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217691_-1593132315",
+      "id": "paragraph_1593610020282_188484614",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:100"
+    },
+    {
+      "text": "SELECT * FROM killrvideo.videos WHERE videoid = 12121212-1212-1212-1212-121212121212;\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:57:19+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217691_-1592149689",
+      "id": "paragraph_1593610020091_1205993492",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:101"
+    },
+    {
+      "text": "",
+      "user": "anonymous",
+      "dateUpdated": "2020-07-02T07:16:57+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1593674217691_476475066",
+      "id": "paragraph_1593608935045_-125238416",
+      "dateCreated": "2020-07-02T07:16:57+0000",
+      "status": "READY",
+      "$$hashKey": "object:102"
+    }
+  ],
+  "name": "5_Advanced_Data_Types",
+  "id": "2FCSMRBUG",
+  "defaultInterpreterGroup": "cassandra",
+  "version": "0.9.0-preview1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/Optional and Supplemental/5_Advanced_Data_Types"
+}

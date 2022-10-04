@@ -38,7 +38,7 @@
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
       "focus": true,
-      "$$hashKey": "object:808"
+      "$$hashKey": "object:57"
     },
     {
       "text": "%sh\nSTATUS=\"$(service cassandra status)\"\n\nif [[ $STATUS == *\"is running\"* ]]; then\n    echo \"Cassandra is running\"\nelse \n    echo \" Cassandra not running .... Starting\"  \n    service cassandra restart > /dev/null 2>&1 &\n    echo \" Started\"  \nfi",
@@ -67,7 +67,7 @@
       "id": "paragraph_1594619789615_1225371573",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:809"
+      "$$hashKey": "object:58"
     },
     {
       "text": "%md\n\n# Exercise 1 – CQL\n\nIn this exercise, you will:\n\n- Create a keyspace for YooToob\n- Create a table to store video metadata\n- Load the data for the video table from a CSV file\n\n# Steps\n\nWelcome to the YooToob company! YooToob hired you to build the latest and greatest video\nsharing application on the Internet. Your task is to ramp up on the domain and become\nacquainted with Apache Cassandra™. To start, you decided to look into creating a table schema\nand to load some video data.\n\nThe video metadata is made up of:\n\n\n<img  src=\"https://raw.githubusercontent.com/fenago/datastax-enterprise-cassandra/master/DS201-Exercises/images/1.PNG\">\n\n",
@@ -106,7 +106,7 @@
       "id": "paragraph_1594619992654_-1909338151",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:810"
+      "$$hashKey": "object:59"
     },
     {
       "text": "%md\r\n1) Make sure Apache Cassandra is still running with nodetool status. If not, restart Apache Cassandra.",
@@ -144,7 +144,7 @@
       "id": "paragraph_1594620217233_-2025011778",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:811"
+      "$$hashKey": "object:60"
     },
     {
       "text": "%sh\n",
@@ -174,7 +174,7 @@
       "id": "paragraph_1594620217394_-242620878",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:812"
+      "$$hashKey": "object:61"
     },
     {
       "text": "%md\n2) In the terminal window, verify cqlsh is working:",
@@ -212,7 +212,7 @@
       "id": "paragraph_1594620217595_1121993654",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:813"
+      "$$hashKey": "object:62"
     },
     {
       "text": "%sh\ncqlsh",
@@ -242,7 +242,7 @@
       "id": "paragraph_1594620217778_204601101",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:814"
+      "$$hashKey": "object:63"
     },
     {
       "text": "%md\r\n3) In cqlsh, create a keyspace called YooToob. Use SimpleStrategy for the replication class with a replication factor of one.",
@@ -280,7 +280,7 @@
       "id": "paragraph_1594620217976_-954419632",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:815"
+      "$$hashKey": "object:64"
     },
     {
       "text": "%cassandra",
@@ -310,7 +310,7 @@
       "id": "paragraph_1594620218136_1220208085",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:816"
+      "$$hashKey": "object:65"
     },
     {
       "text": "%md\n4) In cqlsh switch to the newly created keyspace with the USE command.",
@@ -348,7 +348,7 @@
       "id": "paragraph_1594620231310_16553096",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:817"
+      "$$hashKey": "object:66"
     },
     {
       "user": "anonymous",
@@ -377,7 +377,7 @@
       "id": "paragraph_1594621035843_523719388",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:818"
+      "$$hashKey": "object:67"
     },
     {
       "text": "%md\r\n5) Create a single table called videos with the same structure as shown above. **video_id** is the primary key.",
@@ -415,7 +415,7 @@
       "id": "paragraph_1594621037789_-1831713403",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:819"
+      "$$hashKey": "object:68"
     },
     {
       "user": "anonymous",
@@ -444,7 +444,7 @@
       "id": "paragraph_1594621037928_239968570",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:820"
+      "$$hashKey": "object:69"
     },
     {
       "text": "%md\r\n6) Manually insert a single record into the table using INSERT command. Use the first row\r\nfrom the table below:\r\n\r\n<img  src=\"https://raw.githubusercontent.com/fenago/datastax-enterprise-cassandra/master/DS201-Exercises/images/2.PNG\">\r\n",
@@ -482,7 +482,7 @@
       "id": "paragraph_1594620232090_1718682131",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:821"
+      "$$hashKey": "object:70"
     },
     {
       "user": "anonymous",
@@ -511,7 +511,7 @@
       "id": "paragraph_1594621095907_-1463351805",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:822"
+      "$$hashKey": "object:71"
     },
     {
       "text": "%md\n7) Write a select statement to verify your record was inserted.",
@@ -549,7 +549,7 @@
       "id": "paragraph_1594621099111_-311190853",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:823"
+      "$$hashKey": "object:72"
     },
     {
       "user": "anonymous",
@@ -578,7 +578,7 @@
       "id": "paragraph_1594621099293_2063368570",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:824"
+      "$$hashKey": "object:73"
     },
     {
       "text": "%md\n8) Insert the second record as well and run a select statement to verify it's there.",
@@ -616,7 +616,7 @@
       "id": "paragraph_1594621099470_-1024366471",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:825"
+      "$$hashKey": "object:74"
     },
     {
       "user": "anonymous",
@@ -645,7 +645,7 @@
       "id": "paragraph_1594621099661_-1659008332",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:826"
+      "$$hashKey": "object:75"
     },
     {
       "text": "%md\n9) Let's remove the data you inserted using the TRUNCATE command.",
@@ -683,7 +683,7 @@
       "id": "paragraph_1594621100260_1302404838",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:827"
+      "$$hashKey": "object:76"
     },
     {
       "user": "anonymous",
@@ -712,7 +712,7 @@
       "id": "paragraph_1594621111232_1220097772",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:828"
+      "$$hashKey": "object:77"
     },
     {
       "text": "%md\n10) Execute the following command to import data into your videos table.",
@@ -750,7 +750,7 @@
       "id": "paragraph_1594621111230_96394010",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:829"
+      "$$hashKey": "object:78"
     },
     {
       "text": "INSERT INTO videos (video_id, added_date, title)\r\nVALUES (1645ea59-14bd-11e5-a993-8138354b7e31, '2014-01-29', 'Cassandra History');\r\n\r\nINSERT INTO videos (video_id, added_date, title)\r\nVALUES (245e8024-14bd-11e5-9743-8238356b7e32, '2012-04-03', 'Cassandra & SSDs');\r\n\r\nINSERT INTO videos (video_id, added_date, title)\r\nVALUES (3452f7de-14bd-11e5-855e-8738355b7e3a, '2013-03-17', 'Cassandra Intro');\r\n\r\nINSERT INTO videos (video_id, added_date, title)\r\nVALUES (4845ed97-14bd-11e5-8a40-8338255b7e33, '2013-10-16', 'Apache Cassandra');\r\n\r\nINSERT INTO videos (video_id, added_date, title)\r\nVALUES (5645f8bd-14bd-11e5-af1a-8638355b8e3a, '2013-04-16', 'What is Apache Cassandra?');\r\n",
@@ -780,7 +780,7 @@
       "id": "paragraph_1594621185288_-1459771000",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:830"
+      "$$hashKey": "object:79"
     },
     {
       "text": "%md\n\n11) Use SELECT to verify the data loaded correctly.",
@@ -818,7 +818,7 @@
       "id": "paragraph_1594621185710_-1322636669",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:831"
+      "$$hashKey": "object:80"
     },
     {
       "user": "anonymous",
@@ -847,7 +847,7 @@
       "id": "paragraph_1594621185935_-806759432",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:832"
+      "$$hashKey": "object:81"
     },
     {
       "text": "%md\r\n\r\n12) Use SELECT to COUNT(*) the number of imported rows. It should match the number of\r\nrows COPY reported as imported.",
@@ -885,7 +885,7 @@
       "id": "paragraph_1594621186128_916200564",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:833"
+      "$$hashKey": "object:82"
     },
     {
       "user": "anonymous",
@@ -914,7 +914,7 @@
       "id": "paragraph_1594621186304_-748985928",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:834"
+      "$$hashKey": "object:83"
     },
     {
       "user": "anonymous",
@@ -943,7 +943,7 @@
       "id": "paragraph_1594621100029_1842785796",
       "dateCreated": "2020-07-13T08:31:04+0000",
       "status": "READY",
-      "$$hashKey": "object:835"
+      "$$hashKey": "object:84"
     }
   ],
   "name": "01_CQL",

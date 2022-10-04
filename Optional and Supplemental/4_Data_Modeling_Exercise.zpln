@@ -1,0 +1,1704 @@
+﻿{
+  "paragraphs": [
+    {
+      "text": "%sh\nSTATUS=\"$(service cassandra status)\"\n\nif [[ $STATUS == *\"is running\"* ]]; then\n    echo \"Cassandra is running\"\nelse \n    echo \" Cassandra not running .... Starting\"  \n    service cassandra restart > /dev/null 2>&1 &\n    echo \" Started\"  \nfi",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "sh",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/sh",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976713_-846705323",
+      "id": "paragraph_1593597058621_-101473960",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "focus": true,
+      "$$hashKey": "object:57"
+    },
+    {
+      "text": "\r\n%md\r\n\r\n![line](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png \"line\")\r\n\r\nSet Up the Notebook\r\n\r\nIn this section, you will do the following things:\r\n\r\n- Execute a CQL script to initialize the KillrVideo database for this notebook\r\n\r\n**Step 1:** Execute the following cell to initialize this notebook. Hover over the right-hand corner of the cell and click the *Run* button.\r\n\r\n\r\n#### **Note:** You don't see the CQL script because the code editor is hidden, but you can still run the cell.\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:40:46+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png\" alt=\"line\" title=\"line\" /></p>\n<p>Set Up the Notebook</p>\n<p>In this section, you will do the following things:</p>\n<ul>\n<li>Execute a CQL script to initialize the KillrVideo database for this notebook</li>\n</ul>\n<p><strong>Step 1:</strong> Execute the following cell to initialize this notebook. Hover over the right-hand corner of the cell and click the <em>Run</em> button.</p>\n<h4><strong>Note:</strong> You don&rsquo;t see the CQL script because the code editor is hidden, but you can still run the cell.</h4>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976719_-1982314385",
+      "id": "paragraph_1593597068100_1236430559",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "dateStarted": "2020-10-11T17:40:45+0000",
+      "dateFinished": "2020-10-11T17:40:45+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:58"
+    },
+    {
+      "text": "%cassandra\n\n// Data modeling notebook initialization script\nCREATE KEYSPACE IF NOT EXISTS killrvideo WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };\n\nuse killrvideo;\n\n// Remove this section after DROP bug is fixed (https://datastax.jira.com/browse/CP-3499)\n// Note we create the tables and then drop them so we can recreate them.\n// This assures us the tables have the correct configuration.\n// If we only did the CREATE TABLE IF NOT EXISTS, we might end up with a table with the wrong columns or something...\nCREATE TABLE IF NOT EXISTS user_credentials (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS users (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS videos (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS user_videos (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS latest_videos (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS video_ratings (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS video_ratings_by_user (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS video_playback_stats (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS video_recommendations (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS video_recommendations_by_video (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS videos_by_tag (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS tags_by_letter (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS comments_by_video (key text, PRIMARY KEY(key));\nCREATE TABLE IF NOT EXISTS comments_by_user (key text, PRIMARY KEY(key));\n// END removable section\n\nDROP TABLE IF EXISTS user_credentials;\nDROP TABLE IF EXISTS users;\nDROP TABLE IF EXISTS videos;\nDROP TABLE IF EXISTS user_videos;\nDROP TABLE IF EXISTS latest_videos;\nDROP TABLE IF EXISTS video_ratings;\nDROP TABLE IF EXISTS video_ratings_by_user;\nDROP TABLE IF EXISTS video_playback_stats;\nDROP TABLE IF EXISTS video_recommendations;\nDROP TABLE IF EXISTS video_recommendations_by_video;\nDROP TABLE IF EXISTS videos_by_tag;\nDROP TABLE IF EXISTS tags_by_letter;\nDROP TABLE IF EXISTS comments_by_video;\nDROP TABLE IF EXISTS comments_by_user;\n\n\n// User credentials, keyed by email address so we can authenticate\n//CREATE TABLE IF NOT EXISTS user_credentials (\n//    email     text,\n//    password  text,\n//    userid    uuid,\n//    PRIMARY KEY (email)\n//);\n\n// Users keyed by id\nCREATE TABLE IF NOT EXISTS users (\n    userid     uuid,\n    firstname  text,\n    lastname   text,\n    email      text,\n    created_date timestamp,\n    PRIMARY KEY (userid)\n);\n\n// Videos by id\nCREATE TABLE IF NOT EXISTS videos (\n    videoid                uuid,\n    userid                 uuid,\n    name                   text,\n    description            text,\n    location               text,\n    location_type          int,\n    preview_image_location text,\n    tags                   set<text>,\n    added_date             timestamp,\n    PRIMARY KEY (videoid)\n);\n\nINSERT INTO killrvideo.videos (videoid, name, description, added_date)\n  VALUES(99999999-1111-1111-1111-111111111111, 'Best of Jeff Carpenter', 'A highlights reel of some of Jeff''s greatest vlogs', toTimestamp(now()));\nINSERT INTO killrvideo.videos (videoid, name, description, added_date)\n  VALUES(99999999-2222-2222-2222-222222222222, 'David''s Bloopers', 'A collection of David''s missteps and fleet-a-foot recoveries', toTimestamp(now()));\nINSERT INTO killrvideo.videos (videoid, name, description, added_date)\n  VALUES(99999999-3333-3333-3333-333333333333, 'Cedrick''s Out-takes', 'It may sound like he''s cursing, but it''s just that he''s speaking French',  toTimestamp(now()));\n\n// One-to-many from user point of view (lookup table)\nCREATE TABLE IF NOT EXISTS user_videos (\n    userid                 uuid,\n    added_date             timestamp,\n    videoid                uuid,\n    name                   text,\n    preview_image_location text,\n    PRIMARY KEY (userid, added_date, videoid)\n) WITH CLUSTERING ORDER BY (added_date DESC, videoid ASC);\n\n// Track latest videos, grouped by day (if we ever develop a bad hotspot from the daily grouping here, we could mitigate by\n// splitting the row using an arbitrary group number, making the partition key (yyyymmdd, group_number))\nCREATE TABLE IF NOT EXISTS latest_videos (\n    yyyymmdd text,\n    added_date timestamp,\n    videoid uuid,\n    userid uuid,\n    name text,\n    preview_image_location text,\n    PRIMARY KEY (yyyymmdd, added_date, videoid)\n) WITH CLUSTERING ORDER BY (added_date DESC, videoid ASC);\n\n// Video ratings (counter table)\nCREATE TABLE IF NOT EXISTS video_ratings (\n    videoid uuid,\n    rating_counter counter,\n    rating_total counter,\n    PRIMARY KEY (videoid)\n);\n\n// Video ratings by user (to try and mitigate voting multiple times)\nCREATE TABLE IF NOT EXISTS video_ratings_by_user (\n    videoid uuid,\n    userid uuid,\n    rating int,\n    PRIMARY KEY (videoid, userid)\n);\n\n// Records the number of views/playbacks of a video\nCREATE TABLE IF NOT EXISTS video_playback_stats (\n    videoid uuid,\n    views counter,\n    PRIMARY KEY (videoid)\n);\n\n// Recommendations by user (powered by Spark), with the newest videos added to the site always first\nCREATE TABLE IF NOT EXISTS video_recommendations ( \n    userid uuid,\n    added_date timestamp,\n    videoid uuid,\n    rating float,\n    authorid uuid,\n    name text,\n    preview_image_location text,\n    PRIMARY KEY(userid, added_date, videoid)\n) WITH CLUSTERING ORDER BY (added_date DESC, videoid ASC);\n\nINSERT INTO killrvideo.video_recommendations (userid, added_date, videoid, rating, name)\n  VALUES(11111111-1111-1111-1111-111111111111,toTimestamp(now()), 99999999-1111-1111-1111-111111111111, 5.0, 'Gotta love this video');\nINSERT INTO killrvideo.video_recommendations (userid, added_date, videoid, rating, name)\n  VALUES(22222222-2222-2222-2222-222222222222,toTimestamp(now()), 99999999-2222-2222-2222-222222222222, 4.0, 'Side-splitting entertainment');\nINSERT INTO killrvideo.video_recommendations (userid, added_date, videoid, rating, name)\n  VALUES(11111111-1111-1111-1111-111111111111,toTimestamp(now()), 99999999-3333-3333-3333-333333333333, 3.0, 'Needs sub-titles');\n\n// Recommendations by video (powered by Spark)\nCREATE TABLE IF NOT EXISTS video_recommendations_by_video (\n    videoid uuid,\n    userid uuid,\n    rating float,\n    added_date timestamp STATIC,\n    authorid uuid STATIC,\n    name text STATIC,\n    preview_image_location text STATIC,\n    PRIMARY KEY(videoid, userid)\n);\n\n// Index for tag keywords\nCREATE TABLE IF NOT EXISTS videos_by_tag (\n    tag text,\n    videoid uuid,\n    added_date timestamp,\n    userid uuid,\n    name text,\n    preview_image_location text,\n    tagged_date timestamp,\n    PRIMARY KEY (tag, videoid)\n);\n\n// Index for tags by first letter in the tag\nCREATE TABLE IF NOT EXISTS tags_by_letter (\n    first_letter text,\n    tag text,\n    PRIMARY KEY (first_letter, tag)\n);\n\n// Comments for a given video\nCREATE TABLE IF NOT EXISTS comments_by_video (\n    videoid uuid,\n    commentid timeuuid,\n    userid uuid,\n    comment text,\n    PRIMARY KEY (videoid, commentid)\n) WITH CLUSTERING ORDER BY (commentid DESC);\n\n// Comments for a given user\nCREATE TABLE IF NOT EXISTS comments_by_user (\n    userid uuid,\n    commentid timeuuid,\n    videoid uuid,\n    comment text,\n    PRIMARY KEY (userid, commentid)\n) WITH CLUSTERING ORDER BY (commentid DESC);\n\n//CREATE SEARCH INDEX ON killrvideo.videos;\n\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\n  VALUES(11111111-1111-1111-1111-111111111111, toTimestamp(now()), 'Jeffrey', 'Carpenter', 'jc@fenago.com');\n//INSERT INTO killrvideo.user_credentials (userid, email, password)\n//  VALUES(11111111-1111-1111-1111-111111111111, 'jc@fenago.com', 'J3ffL0v3$C@ss@ndr@');\n  \nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\n  VALUES(22222222-2222-2222-2222-222222222222, toTimestamp(now()), 'Eric', 'Zietlow', 'ez@fenago.com');\n//INSERT INTO killrvideo.user_credentials (userid, email, password)\n//  VALUES(22222222-2222-2222-2222-222222222222, 'ez@fenago.com', 'C@ss@ndr@R0ck$');\n\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\n  VALUES(33333333-3333-3333-3333-333333333333, toTimestamp(now()), 'Cedrick', 'Lunven', 'cl@fenago.com');\n//INSERT INTO killrvideo.user_credentials (userid, email, password)\n//  VALUES(33333333-3333-3333-3333-333333333333, 'cl@fenago.com', 'Fr@nc3L0v3$C@ss@ndr@');\n\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\n  VALUES(44444444-4444-4444-4444-444444444444, toTimestamp(now()), 'David', 'Gilardi', 'dg@fenago.com');\n//INSERT INTO killrvideo.user_credentials (userid, email, password)\n//  VALUES(44444444-4444-4444-4444-444444444444, 'dg@fenago.com', 'H@t$0ff2C@ss@ndr@');\n\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\n  VALUES(55555555-5555-5555-5555-555555555555, toTimestamp(now()), 'Cristina', 'Veale', 'cv@fenago.com');\n//INSERT INTO killrvideo.user_credentials (userid, email, password)\n//  VALUES(55555555-5555-5555-5555-555555555555, 'cv@fenago.com', '3@$tC0@$tC@ss@ndr@');\n\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\n  VALUES(66666666-6666-6666-6666-666666666666, toTimestamp(now()), 'Adron', 'Hall', 'ah@fenago.com');\n//INSERT INTO killrvideo.user_credentials (userid, email, password)\n//  VALUES(66666666-6666-6666-6666-666666666666, 'ah@fenago.com', 'C@ss@ndr@43v3r');\n\nINSERT INTO killrvideo.users (userid, created_date, firstname, lastname, email)\n  VALUES(77777777-7777-7777-7777-777777777777, toTimestamp(now()), 'Aleks', 'volochnev', 'av@fenago.com');\n//INSERT INTO killrvideo.user_credentials (userid, email, password)\n//  VALUES(77777777-7777-7777-7777-777777777777, 'av@fenago.com', 'C@ss@ndr@3v3rywh3r3');\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T18:29:55+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/undefined",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976719_1826181701",
+      "id": "paragraph_1593597070380_-401674082",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:59"
+    },
+    {
+      "text": "\r\n%md\r\n\r\n![line](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png \"line\" )\r\n# <center><span style=\"color:teal\">Let's Look at the `video_recommendations` Table and Data</span></center>\r\n\r\n### <span style=\"color:teal\">In this section, you will do the following things:</span>\r\n- Familiarize yourself with the `video_recommendations` table using the `DESCRIBE` command\r\n- Look at the contents of the table\r\n- Do a simple query on the table\r\n\r\n#### <span style=\"color:teal\"><b>Step 1:</b></span> In the following cell, describe the `video_recommendations` table to familiarize yourself with its definition.\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\r\nYou can use the `DESCRIBE TABLE` command.\r\n Remember, the keyspace name is `killrvideo` and the table name is `video_recommendations`.\r\n</details>\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Want to see the command? Click here.</span></i></summary>\r\n\r\n```\r\nDESCRIBE TABLE killrvideo.video_recommendations;\r\n```\r\n\r\n</details>\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png\" alt=\"line\" title=\"line\" /></p>\n<h1><center><span style=\"color:teal\">Let&rsquo;s Look at the <code>video_recommendations</code> Table and Data</span></center></h1>\n<h3><span style=\"color:teal\">In this section, you will do the following things:</span></h3>\n<ul>\n<li>Familiarize yourself with the <code>video_recommendations</code> table using the <code>DESCRIBE</code> command</li>\n<li>Look at the contents of the table</li>\n<li>Do a simple query on the table</li>\n</ul>\n<h4><span style=\"color:teal\"><b>Step 1:</b></span> In the following cell, describe the <code>video_recommendations</code> table to familiarize yourself with its definition.</h4>\n<details>\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\nYou can use the `DESCRIBE TABLE` command.\n Remember, the keyspace name is `killrvideo` and the table name is `video_recommendations`.\n</details>\n<details>\n<summary><i><span style=\"color:blue\">Want to see the command? Click here.</span></i></summary>\n<pre><code>DESCRIBE TABLE killrvideo.video_recommendations;\n</code></pre>\n</details>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976719_-678901365",
+      "id": "paragraph_1593597071160_332084240",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:60"
+    },
+    {
+      "text": "\r\n// Write the command to describe the user_crednetials table in this cell\r\n// Execute this cell by clicking on the cell and pressing SHIFT+ENTER or clicking on the Run button in the top-right corner of this cell\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976719_1231601803",
+      "id": "paragraph_1593597072002_2093026678",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:61"
+    },
+    {
+      "text": "\r\n%md\r\n\r\n\r\n**Step 2:** Review details of this table definition.\r\n\r\n- Note that the primary key consists of a single partition key (`userid`) and two clustering columns (`added_date` and `videoid`)\r\n\r\n- Notice also the `WITH CLUSTERING ORDER BY` clause, which defines the storage order of the data within partitions\r\n\r\n![VideoRecommendationsTable](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/VideoRecommendationsTable.png)\r\n\r\n\r\n\r\n\r\n**Step 3:** To see the `video_recommendations` data, execute the following cell.\r\n\r\n**Note:** You don't see the CQL script because the code editor is hidden, but you can still run the cell.\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T18:30:25+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><strong>Step 2:</strong> Review details of this table definition.</p>\n<ul>\n<li>\n<p>Note that the primary key consists of a single partition key (<code>userid</code>) and two clustering columns (<code>added_date</code> and <code>videoid</code>)</p>\n</li>\n<li>\n<p>Notice also the <code>WITH CLUSTERING ORDER BY</code> clause, which defines the storage order of the data within partitions</p>\n</li>\n</ul>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/VideoRecommendationsTable.png\" alt=\"VideoRecommendationsTable\" /></p>\n<p><strong>Step 3:</strong> To see the <code>video_recommendations</code> data, execute the following cell.</p>\n<p><strong>Note:</strong> You don&rsquo;t see the CQL script because the code editor is hidden, but you can still run the cell.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976719_537024406",
+      "id": "paragraph_1593597072240_1102624901",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "dateStarted": "2020-10-11T18:30:15+0000",
+      "dateFinished": "2020-10-11T18:30:17+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:62"
+    },
+    {
+      "text": "// We have hidden this cell because we don't encourage the general use of this command\n// This command requires a full table scan\n// So, it works fine for small tables, but large tables would require massive amounts of data transfer - which is not performant\nSELECT * FROM killrvideo.video_recommendations;\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T18:37:31+0000",
+      "config": {
+        "colWidth": 12,
+        "fontSize": 9,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "editorMode": "ace/mode/text",
+        "editorHide": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602441037690_174990247",
+      "id": "paragraph_1602441037690_174990247",
+      "dateCreated": "2020-10-11T18:30:37+0000",
+      "status": "READY",
+      "$$hashKey": "object:63"
+    },
+    {
+      "text": "%md\r\n\r\n### <span style=\"color:teal\">Points of interest in the data above</span>\r\n- We have contrived some `uuid` values for these rows. You would use real `uuid`s in production, but these are constant, which makes the exercises consistent\r\n- You see that the `authorid` and `preview_image_location` columns contain no data, which is OK because Cassandra supports sparse tables\r\n\r\n#### <span style=\"color:teal\"><b>Step 4:</b></span> In the next cell, search for the rows where `userid = 11111111-1111-1111-1111-111111111111`.\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\r\nYou can use a `SELECT` command to retrieve all columns.\r\nRemember, the keyspace name is `killrvideo` and the table name is `video_recommendations`.\r\nThe `WHERE` clause will use `userid = 11111111-1111-1111-1111-111111111111`.\r\n</details>\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Want the code? Click here.</span></i></summary>\r\n\r\n```\r\nSELECT * from killrvideo.video_recommendations WHERE userid = 11111111-1111-1111-1111-111111111111;\r\n```\r\n\r\n</details>\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h3><span style=\"color:teal\">Points of interest in the data above</span></h3>\n<ul>\n<li>We have contrived some <code>uuid</code> values for these rows. You would use real <code>uuid</code>s in production, but these are constant, which makes the exercises consistent</li>\n<li>You see that the <code>authorid</code> and <code>preview_image_location</code> columns contain no data, which is OK because Cassandra supports sparse tables</li>\n</ul>\n<h4><span style=\"color:teal\"><b>Step 4:</b></span> In the next cell, search for the rows where <code>userid = 11111111-1111-1111-1111-111111111111</code>.</h4>\n<details>\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\nYou can use a `SELECT` command to retrieve all columns.\nRemember, the keyspace name is `killrvideo` and the table name is `video_recommendations`.\nThe `WHERE` clause will use `userid = 11111111-1111-1111-1111-111111111111`.\n</details>\n<details>\n<summary><i><span style=\"color:blue\">Want the code? Click here.</span></i></summary>\n<pre><code>SELECT * from killrvideo.video_recommendations WHERE userid = 11111111-1111-1111-1111-111111111111;\n</code></pre>\n</details>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976719_320208600",
+      "id": "paragraph_1593597072160_347223826",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:64"
+    },
+    {
+      "text": "\r\n// Write the command to retrieve from video_recommendations where userid is 11111111-1111-1111-1111-111111111111\r\n// Execute this cell by clicking on the cell and pressing SHIFT+ENTER or clicking on the Run button in the top-right corner of this cell\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976720_-108080244",
+      "id": "paragraph_1593597072001_-1658448631",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:65"
+    },
+    {
+      "text": "\r\n%md\r\n\r\nWe see both rows with the specified `userid`. That seemed to work as expected - no big surprises!\r\n\r\n\r\n#### **Note:**\r\n\r\nIt may not be obvious from this simple example, but notice that Cassandra orders the results by the clustering columns as specified in the `WITH CLUSTERING ORDER` clause used when creating the table. This default ordering is one reason for clustering columns and using this clause.\r\n\r\n\r\n**Thought question:** If you only wanted a single row, how would you change the query?\r\n\r\n\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>We see both rows with the specified <code>userid</code>. That seemed to work as expected - no big surprises!</p>\n<h4><strong>Note:</strong></h4>\n<p>It may not be obvious from this simple example, but notice that Cassandra orders the results by the clustering columns as specified in the <code>WITH CLUSTERING ORDER</code> clause used when creating the table. This default ordering is one reason for clustering columns and using this clause.</p>\n<p><strong>Thought question:</strong> If you only wanted a single row, how would you change the query?</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976720_-525318181",
+      "id": "paragraph_1593597072121_-93502904",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:66"
+    },
+    {
+      "text": "%md\r\n\r\n![line](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png \"line\" )\r\n# <center><span style=\"color:teal\">Same Table, Different Query...</span></center>\r\n\r\n### <span style=\"color:teal\">In this section, you will do the following things:</span>\r\n- Perform a query without using the partition key and see what happens\r\n\r\n#### Let's say we want to find all the top reviews. If you are used to the relational world, the obvious answer is to query based on `rating`.\r\n\r\n#### <span style=\"color:teal\"><b>Step 1:</b></span> In the following cell, formulate and execute a query based on `rating`.\r\n\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\r\nYou can use a `SELECT` command to retrieve all columns.\r\nRemember, the keyspace name is `killrvideo` and the table name is `video_recommendations`.\r\n> The `WHERE` clause will use `rating = 5.0`.\r\nBut here's the real hint: _The query isn't going to work. try it out and see._\r\n</details>\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Want the code? Click here.</span></i></summary>\r\n\r\n```\r\nSELECT * from killrvideo.video_recommendations WHERE rating = 5.0;\r\n```\r\n\r\n</details>\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png\" alt=\"line\" title=\"line\" /></p>\n<h1><center><span style=\"color:teal\">Same Table, Different Query&hellip;</span></center></h1>\n<h3><span style=\"color:teal\">In this section, you will do the following things:</span></h3>\n<ul>\n<li>Perform a query without using the partition key and see what happens</li>\n</ul>\n<h4>Let&rsquo;s say we want to find all the top reviews. If you are used to the relational world, the obvious answer is to query based on <code>rating</code>.</h4>\n<h4><span style=\"color:teal\"><b>Step 1:</b></span> In the following cell, formulate and execute a query based on <code>rating</code>.</h4>\n<details>\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\nYou can use a `SELECT` command to retrieve all columns.\nRemember, the keyspace name is `killrvideo` and the table name is `video_recommendations`.\n> The `WHERE` clause will use `rating = 5.0`.\nBut here's the real hint: _The query isn't going to work. try it out and see._\n</details>\n<details>\n<summary><i><span style=\"color:blue\">Want the code? Click here.</span></i></summary>\n<pre><code>SELECT * from killrvideo.video_recommendations WHERE rating = 5.0;\n</code></pre>\n</details>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976720_-1392306987",
+      "id": "paragraph_1593597071901_1057846967",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:67"
+    },
+    {
+      "text": "// Write a query to retrieve all rows with the rating = 5.0\r\n// Execute this cell by clicking on the cell and pressing SHIFT+ENTER or clicking on the Run button in the top-right corner of this cell\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976720_1543792822",
+      "id": "paragraph_1593597072101_376036256",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:68"
+    },
+    {
+      "text": "\r\n%md\r\n\r\n### What just happened?\r\n\r\nIn the previous cell, we tried to do a query without using a partition key. This doesn't work in Cassandra because it would require a full-table scan!\r\n\r\nThe big secret about Cassandra: *Cassandra is just a big distributed hash-table!*\r\n\r\n- Which means it's fast but, you must use the full partition key in *all* queries because that is what Cassandra hashes to find the partition\r\n- Partitions are sets of rows and, within each partition, Cassandra orders the rows according to the clustering columns\r\n- Fast queries retrieve a single (relatively small) partition\r\n\r\n\r\nOK, let's come clean here. Cassandra is really much more than just a distributed hashtable, but as a logical model to help you think about Cassandra data modeling, the hashtable idea works reasonably well.\r\n\r\n\r\n**Note:**\r\n\r\nCasssandra hashes the full partition key to retrieve a partition. This has implied consequences:\r\n\r\n- Retrieving a single partition is very fast\r\n- Retrieving multiple partitions will be slower\r\n- Partition keys have no inherent order, so you cannot perform \"greater than\" or \"less than\" types of operations on partition keys\r\n- Since Cassandra orders the rows *within a partition* based on clustering columns, you *can* perform \"greater than\" or \"less than\" operations on clustering columns *after* you specify the partition key\r\n\r\n\r\nThe bottom line: If you want your Cassandra queries to be fast:\r\n\r\n- Create tables where the *full* partition key is how you will query the table\r\n- The clustering columns are how you want to order the results\r\n- Do *not* require more than one partition key per query\r\n\r\n\r\n**Note:**\r\n\r\nIn addition to ordering query results, you can also use clustering\r\ncolumns to create a unique primary key for each row (if necessary).\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h3>What just happened?</h3>\n<p>In the previous cell, we tried to do a query without using a partition key. This doesn&rsquo;t work in Cassandra because it would require a full-table scan!</p>\n<p>The big secret about Cassandra: <em>Cassandra is just a big distributed hash-table!</em></p>\n<ul>\n<li>Which means it&rsquo;s fast but, you must use the full partition key in <em>all</em> queries because that is what Cassandra hashes to find the partition</li>\n<li>Partitions are sets of rows and, within each partition, Cassandra orders the rows according to the clustering columns</li>\n<li>Fast queries retrieve a single (relatively small) partition</li>\n</ul>\n<p>OK, let&rsquo;s come clean here. Cassandra is really much more than just a distributed hashtable, but as a logical model to help you think about Cassandra data modeling, the hashtable idea works reasonably well.</p>\n<p><strong>Note:</strong></p>\n<p>Casssandra hashes the full partition key to retrieve a partition. This has implied consequences:</p>\n<ul>\n<li>Retrieving a single partition is very fast</li>\n<li>Retrieving multiple partitions will be slower</li>\n<li>Partition keys have no inherent order, so you cannot perform &ldquo;greater than&rdquo; or &ldquo;less than&rdquo; types of operations on partition keys</li>\n<li>Since Cassandra orders the rows <em>within a partition</em> based on clustering columns, you <em>can</em> perform &ldquo;greater than&rdquo; or &ldquo;less than&rdquo; operations on clustering columns <em>after</emYou specify the partition key</li>\n</ul>\n<p>The bottom line: If you want your Cassandra queries to be fast:</p>\n<ul>\n<li>Create tables where the <em>full</em> partition key is how you will query the table</li>\n<li>The clustering columns are how you want to order the results</li>\n<li>Do <em>not</em> require more than one partition key per query</li>\n</ul>\n<p><strong>Note:</strong></p>\n<p>In addition to ordering query results, you can also use clustering<br />\ncolumns to create a unique primary key for each row (if necessary).</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976720_1528240573",
+      "id": "paragraph_1593597071900_-1123380663",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:69"
+    },
+    {
+      "text": "%md\r\n\r\n![line](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png \"line\" )\r\n# <center><span style=\"color:teal\">What's Up, Sert?</span></center>\r\n\r\n### <span style=\"color:teal\">In this section, you will do the following things:</span>\r\n- Try to insert a previously inserted row and see what happens\r\n- Understand why Cassandra handles inserts this way\r\n\r\nLet's look at an existing row in the `users` table (and practice our CQL skills in the process). As a reminder, this table has the following definition.\r\n\r\n```\r\nCREATE TABLE users (\r\n    userid     uuid,\r\n    firstname  text,\r\n    lastname   text,\r\n    email      text,\r\n    created_date timestamp,\r\n    PRIMARY KEY (userid)\r\n);\r\n```\r\n\r\n#### <span style=\"color:teal\"><b>Step 1:</b></span> In the following cell, write and execute a query to retrieve the row associated with `userid = 11111111-1111-1111-1111-111111111111`.\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\r\nYou can use a `SELECT` statement that retrieves all columns (`*`).\r\n Remember, the keyspace name is `killrvideo` and the table name is `users`.\r\n> The `WHERE` clause should specify `userid = 11111111-1111-1111-1111-111111111111`.\r\n</details>\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Want the code? Click here.</span></i></summary>\r\n\r\n```\r\nSELECT * FROM killrvideo.users WHERE userid = 11111111-1111-1111-1111-111111111111;\r\n```\r\n\r\n</details>\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png\" alt=\"line\" title=\"line\" /></p>\n<h1><center><span style=\"color:teal\">What&rsquo;s Up, Sert?</span></center></h1>\n<h3><span style=\"color:teal\">In this section, you will do the following things:</span></h3>\n<ul>\n<li>Try to insert a previously inserted row and see what happens</li>\n<li>Understand why Cassandra handles inserts this way</li>\n</ul>\n<p>Let&rsquo;s look at an existing row in the <code>users</code> table (and practice our CQL skills in the process). As a reminder, this table has the following definition.</p>\n<pre><code>CREATE TABLE users (\n    userid     uuid,\n    firstname  text,\n    lastname   text,\n    email      text,\n    created_date timestamp,\n    PRIMARY KEY (userid)\n);\n</code></pre>\n<h4><span style=\"color:teal\"><b>Step 1:</b></span> In the following cell, write and execute a query to retrieve the row associated with <code>userid = 11111111-1111-1111-1111-111111111111</code>.</h4>\n<details>\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\nYou can use a `SELECT` statement that retrieves all columns (`*`).\n Remember, the keyspace name is `killrvideo` and the table name is `users`.\n> The `WHERE` clause should specify `userid = 11111111-1111-1111-1111-111111111111`.\n</details>\n<details>\n<summary><i><span style=\"color:blue\">Want the code? Click here.</span></i></summary>\n<pre><code>SELECT * FROM killrvideo.users WHERE userid = 11111111-1111-1111-1111-111111111111;\n</code></pre>\n</details>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976720_-30403736",
+      "id": "paragraph_1593597071840_651023598",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:70"
+    },
+    {
+      "text": "%md\r\n\r\nWe see that this row exists and that the value of the `firstname` column is `Jeffrey`.\r\n\r\n**Step 2:** In the following cell, write and execute an `INSERT` statement to insert a row with a different `firstname` as follows.\r\n\r\n- `userid` is `11111111-1111-1111-1111-111111111111`\r\n- `created_date` as now (`toTimestamp(now())`)\r\n- `email` as `jc@fenago.com`\r\n- `firstname` as `Jeff`\r\n- `lastname` as `Carpenter`\r\n\r\nIf you are coming from a relational database background, you anticipate that this command will fail because of the existing row…\r\n\r\n\r\n\r\n<details>\r\n\r\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\r\n\r\nYou can use an `INSERT` command.\r\n Remember, the keyspace name is `killrvideo` and the table name is `users`.\r\n> The columns are `userid`, `created_date`, `email`, `firstname` and `lastname`.\r\n> The associated `VALUES` are `11111111-1111-1111-1111-111111111111`, `toTimestamp(now())`, `jc@fenago.com`, `Jeff` and `Carpenter`.\r\n\r\n</details>\r\n\r\n<details>\r\n\r\n<summary><i><span style=\"color:blue\">Want the code? Click here.</span></i></summary>\r\n\r\n```\r\nINSERT INTO killrvideo.users (userid, created_date, email, firstname, lastname)\r\n  VALUES(11111111-1111-1111-1111-111111111111, toTimestamp(now()), 'jc@fenago.com', 'Jeff', 'Carpenter');\r\n```\r\n\r\n</details>\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>We see that this row exists and that the value of the <code>firstname</code> column is <code>Jeffrey</code>.</p>\n<p><strong>Step 2:</strong> In the following cell, write and execute an <code>INSERT</code> statement to insert a row with a different <code>firstname</code> as follows.</p>\n<ul>\n<li><code>userid</code> is <code>11111111-1111-1111-1111-111111111111</code></li>\n<li><code>created_date</code> as now (<code>toTimestamp(now())</code>)</li>\n<li><code>email</code> as <code>jc@fenago.com</code></li>\n<li><code>firstname</code> as <code>Jeff</code></li>\n<li><code>lastname</code> as <code>Carpenter</code></li>\n</ul>\n<p>If you are coming from a relational database background, you anticipate that this command will fail because of the existing row…</p>\n<details>\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\n<blockquote>\n<p>You can use an <code>INSERT</code> command.<br />\nRemember, the keyspace name is <code>killrvideo</code> and the table name is <code>users</code>.<br />\nThe columns are <code>userid</code>, <code>created_date</code>, <code>email</code>, <code>firstname</code> and <code>lastname</code>.<br />\nThe associated <code>VALUES</code> are <code>11111111-1111-1111-1111-111111111111</code>, <code>toTimestamp(now())</code>, <code>jc@fenago.com</code>, <code>Jeff</code> and <code>Carpenter</code>.</p>\n</blockquote>\n</details>\n<details>\n<summary><i><span style=\"color:blue\">Want the code? Click here.</span></i></summary>\n<pre><code>INSERT INTO killrvideo.users (userid, created_date, email, firstname, lastname)\n  VALUES(11111111-1111-1111-1111-111111111111, toTimestamp(now()), 'jc@fenago.com', 'Jeff', 'Carpenter');\n</code></pre>\n</details>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976721_508527208",
+      "id": "paragraph_1593597072060_-1385807317",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:71"
+    },
+    {
+      "text": "\r\n// Write a query to retrieve the row associated with userid =\r\n// Execute this cell by clicking on the cell and pressing SHIFT+ENTER or clicking on the Run button in the top-right corner of this cell\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T18:32:52+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976721_148634820",
+      "id": "paragraph_1593597071811_1847006105",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:72"
+    },
+    {
+      "text": "%md\r\n\r\nWe see that this row exists and that the value of the `firstname` column is `Jeffrey`.\r\n\r\n<span style=\"color:teal\"><b>Step 2:</b></span> In the following cell, write and execute an `INSERT` statement to insert a row with a different `firstname` as follows.\r\n\r\n- `userid` is `11111111-1111-1111-1111-111111111111`\r\n- `created_date` as now (`toTimestamp(now())`)\r\n- `email` as `jc@fenago.com`\r\n- `firstname` as `Jeff`\r\n- `lastname` as `Carpenter`\r\n\r\nIf you are coming from a relational database background, you anticipate that this command will fail because of the existing row...\r\n\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\r\nYou can use an `INSERT` command.\r\n Remember, the keyspace name is `killrvideo` and the table name is `users`.\r\n> The columns are `userid`, `created_date`, `email`, `firstname` and `lastname`.\r\n> The associated `VALUES` are `11111111-1111-1111-1111-111111111111`, `toTimestamp(now())`, `jc@fenago.com`, `Jeff` and `Carpenter`.\r\n</details>\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Want the code? Click here.</span></i></summary>\r\n\r\n```\r\nINSERT INTO killrvideo.users (userid, created_date, email, firstname, lastname)\r\n  VALUES(11111111-1111-1111-1111-111111111111, toTimestamp(now()), 'jc@fenago.com', 'Jeff', 'Carpenter');\r\n```\r\n\r\n</details>\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>We see that this row exists and that the value of the <code>firstname</code> column is <code>Jeffrey</code>.</p>\n<p><span style=\"color:teal\"><b>Step 2:</b></span> In the following cell, write and execute an <code>INSERT</code> statement to insert a row with a different <code>firstname</code> as follows.</p>\n<ul>\n<li><code>userid</code> is <code>11111111-1111-1111-1111-111111111111</code></li>\n<li><code>created_date</code> as now (<code>toTimestamp(now())</code>)</li>\n<li><code>email</code> as <code>jc@fenago.com</code></li>\n<li><code>firstname</code> as <code>Jeff</code></li>\n<li><code>lastname</code> as <code>Carpenter</code></li>\n</ul>\n<p>If you are coming from a relational database background, you anticipate that this command will fail because of the existing row&hellip;</p>\n<details>\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\nYou can use an `INSERT` command.\n Remember, the keyspace name is `killrvideo` and the table name is `users`.\n> The columns are `userid`, `created_date`, `email`, `firstname` and `lastname`.\n> The associated `VALUES` are `11111111-1111-1111-1111-111111111111`, `toTimestamp(now())`, `jc@fenago.com`, `Jeff` and `Carpenter`.\n</details>\n<details>\n<summary><i><span style=\"color:blue\">Want the code? Click here.</span></i></summary>\n<pre><code>INSERT INTO killrvideo.users (userid, created_date, email, firstname, lastname)\n  VALUES(11111111-1111-1111-1111-111111111111, toTimestamp(now()), 'jc@fenago.com', 'Jeff', 'Carpenter');\n</code></pre>\n</details>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976721_-1585414837",
+      "id": "paragraph_1593597071810_-1319028012",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:73"
+    },
+    {
+      "text": "\r\n// Write an INSERT statement to insert a row with the firstname Jeff\r\n// Execute this cell by clicking on the cell and pressing SHIFT+ENTER or clicking on the Run button in the top-right corner of this cell\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976721_-2144127471",
+      "id": "paragraph_1593597071923_1621288230",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:74"
+    },
+    {
+      "text": "%md\r\n\r\n\r\n### <center><span style=\"color:teal\">No errors! Why?</span></center>\r\nIt appears that the `INSERT` statement worked! How can that be?\r\nLet's query the row again and look at the column values...\r\n\r\n\r\n\r\n#### <span style=\"color:teal\"><b>Step 3:</b></span> In the following cell, perform the same query you executed in Step 1.\r\n<br>\r\n<details>\r\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\r\n> Seriously? You just wrote this query two steps ago! :)\r\n> Go back to Step 1 and copy that query and paste it in the following cell.\r\n</details>\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Want the code? Click here.</span></i></summary>\r\n\r\n```\r\nSELECT * FROM killrvideo.users WHERE userid = 11111111-1111-1111-1111-111111111111;\r\n```\r\n\r\n</details>\r\n\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h3><center><span style=\"color:teal\">No errors! Why?</span></center></h3>\n<p>It appears that the <code>INSERT</code> statement worked! How can that be?<br />\nLet&rsquo;s query the row again and look at the column values&hellip;</p>\n<h4><span style=\"color:teal\"><b>Step 3:</b></span> In the following cell, perform the same query you executed in Step 1.</h4>\n<br>\n<details>\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\n> Seriously? You just wrote this query two steps ago! :)\n> Go back to Step 1 and copy that query and paste it in the following cell.\n</details>\n<details>\n<summary><i><span style=\"color:blue\">Want the code? Click here.</span></i></summary>\n<pre><code>SELECT * FROM killrvideo.users WHERE userid = 11111111-1111-1111-1111-111111111111;\n</code></pre>\n</details>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976721_-640587992",
+      "id": "paragraph_1593597072030_-1608527747",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:75"
+    },
+    {
+      "text": "\r\n// Write a query to retrieve the row associated with userid =\r\n// Execute this cell by clicking on the cell and pressing SHIFT+ENTER or clicking on the Run button in the top-right corner of this cell\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976721_1925148422",
+      "id": "paragraph_1593597071800_-659721206",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:76"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976722_-2011371854",
+      "id": "paragraph_1593597071698_167488222",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:77"
+    },
+    {
+      "text": "%md\r\n\r\n\r\n **Step 4:** Compare the results from the Step 1 query to the results from the Step 2 query.\r\n\r\nCareful analysis reveals the second `INSERT` command updated the `firstname` column value for this row!\r\n\r\n\r\n#### Useful discussion (worth the read):\r\n\r\n\r\nYeah, this is a bit of a shock to those coming from the relational world. But here's the reason: Cassandra does *not* do a read before writing because that would cripple Cassandra's performance. Instead, Cassandra assumes that if you are inserting a row, the row doesn't exist and Cassandra proceeds to quickly write the row.\r\n\r\nA similar situation occurs with updates.\r\n\r\nCassandra does not read anything before writing an update. So, if the record we are updating does not exist, Cassandra merely creates it.\r\n\r\nWe refer to each of these situations as an *upsert*. Upserts are not earth-shattering, but you need to be aware of them.\r\n\r\nIf you absolutely *must* perform a read before writing due to a race condition, Cassandra provides *lightweight transactions*. Lightweight transactions force Cassandra to read before writing, but they have serious performance implications and should be avoided if possible.\r\n\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><strong>Step 4:</strong> Compare the results from the Step 1 query to the results from the Step 2 query.</p>\n<p>Careful analysis reveals the second <code>INSERT</code> command updated the <code>firstname</code> column value for this row!</p>\n<h4>Useful discussion (worth the read):</h4>\n<p>Yeah, this is a bit of a shock to those coming from the relational world. But here&rsquo;s the reason: Cassandra does <em>not</em> do a read before writing because that would cripple Cassandra&rsquo;s performance. Instead, Cassandra assumes that if you are inserting a row, the row doesn&rsquo;t exist and Cassandra proceeds to quickly write the row.</p>\n<p>A similar situation occurs with updates.</p>\n<p>Cassandra does not read anything before writing an update. So, if the record we are updating does not exist, Cassandra merely creates it.</p>\n<p>We refer to each of these situations as an <em>upsert</em>. Upserts are not earth-shattering, but you need to be aware of them.</p>\n<p>If you absolutely <em>must</em> perform a read before writing due to a race condition, Cassandra provides <em>lightweight transactions</em>. Lightweight transactions force Cassandra to read before writing, but they have serious performance implications and should be avoided if possible.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976722_-835685550",
+      "id": "paragraph_1593597071690_955435097",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:78"
+    },
+    {
+      "text": "%md\r\n\r\n![line](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png \"line\")\r\n\r\nA Cassandra Data Modeling Recipe\r\n\r\nIn this section, you will do the following things:\r\n\r\n- Learn a process for Cassandra Data Modeling\r\n\r\n- Practice each of the steps of this process\r\n\r\n\r\n**Introduction**\r\n\r\nWhen modeling in the relational world, the traditional approach is to create E/R diagrams, identify tables and then normalize until the cows come home.\r\n\r\nThis approach won't work for Cassandra because you can end up with tables that won't support your queries, or will perform poorly.\r\n\r\nSo instead, Cassandra data modeling starts with the queries in mind. Here are the steps to the process.\r\n\r\n1. Enumerate all use-cases and their interdependencies\r\n2. Use the use cases to identify all queries the app will perform\r\n3. Use the queries to drive the table definitions\r\n\r\nLet's see how this works…\r\n\r\n\r\nSince the use-cases drive the queries, it is useful first to identify the use-cases. Also, since the app may obtain information during one use-case that may be used in another use-case, it is also important to note the dependency of the use-cases.\r\n\r\nLet's consider the use-cases associated with the KillrVideo app - specifically with respect to users of the app. This works best if you can collaborate.\r\n\r\n\r\n**Step 1:** Find a buddy (or two) around you to collaborate with.\r\n\r\n\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png\" alt=\"line\" title=\"line\" /></p>\n<p>A Cassandra Data Modeling Recipe</p>\n<p>In this section, you will do the following things:</p>\n<ul>\n<li>\n<p>Learn a process for Cassandra Data Modeling</p>\n</li>\n<li>\n<p>Practice each of the steps of this process</p>\n</li>\n</ul>\n<p><strong>Introduction</strong></p>\n<p>When modeling in the relational world, the traditional approach is to create E/R diagrams, identify tables and then normalize until the cows come home.</p>\n<p>This approach won&rsquo;t work for Cassandra because you can end up with tables that won&rsquo;t support your queries, or will perform poorly.</p>\n<p>So instead, Cassandra data modeling starts with the queries in mind. Here are the steps to the process.</p>\n<ol>\n<li>Enumerate all use-cases and their interdependencies</li>\n<li>Use the use cases to identify all queries the app will perform</li>\n<li>Use the queries to drive the table definitions</li>\n</ol>\n<p>Let&rsquo;s see how this works…</p>\n<p>Since the use-cases drive the queries, it is useful first to identify the use-cases. Also, since the app may obtain information during one use-case that may be used in another use-case, it is also important to note the dependency of the use-cases.</p>\n<p>Let&rsquo;s consider the use-cases associated with the KillrVideo app - specifically with respect to users of the app. This works best if you can collaborate.</p>\n<p><strong>Step 1:</strong> Find a buddy (or two) around you to collaborate with.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976722_-566901766",
+      "id": "paragraph_1593597071642_1154927778",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:79"
+    },
+    {
+      "text": "\r\n%md\r\n\r\n#### <span style=\"color:teal\"><b>Step 2:</b></span> Discuss the user-related use-cases associated with the KillrVideo app.\r\n\r\n- Start by enumerating the user-centric use-cases (e.g., What's the first thing a user must do? What's the next thing?)\r\n- Order the use-cases to identify any dependent data (Does performing a use-case require you first to perform another uses-case? If so, note the order.)\r\n\r\n#### There is nothing to execute in this step - just note the use-cases and their dependencies.\r\n\r\n<br>\r\n<details>\r\n<summary><i><span style=\"color:blue\">Want a hint? Click here.</span></i></summary>\r\n\r\n> If we think of the natural flow for a user of the app, probably the first thing a user will do is to register with the app.\r\n> So the first use-case should be _Register-User_.\r\n>\r\n> Another thing a user might want to do would be to see some sort of state relative to the app.\r\n> For example, they may want to review their profile, viewing history, upload history, etc.\r\n> We'll refer to this use-case as _Get-User-Info_.\r\n>\r\n> Users will need to authenticate with the app so that the app can interact with the user according to the user's preferences and permissions.\r\n> We'll refer to this use-case as _Authenticate-User_.\r\n>\r\n> If we limit our consideration to these three use-cases, we see that Register-User must occur before Authenticate-User.\r\n> We also see that Get-User-Info depends on Register-User and Authenticate-User.\r\n</details>\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Want to compare your answers? Click here.</span></i></summary>\r\n\r\n> User use-cases:\r\n> - Register-User\r\n> - Authenticate-User (depends on Register-User)\r\n> - Get-User-Info (depends on Register-User and/or Authenticate-User)\r\n\r\n</details>\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4><span style=\"color:teal\"><b>Step 2:</b></span> Discuss the user-related use-cases associated with the KillrVideo app.</h4>\n<ul>\n<li>Start by enumerating the user-centric use-cases (e.g., What&rsquo;s the first thing a user must do? What&rsquo;s the next thing?)</li>\n<li>Order the use-cases to identify any dependent data (Does performing a use-case require you first to perform another uses-case? If so, note the order.)</li>\n</ul>\n<h4>There is nothing to execute in this step - just note the use-cases and their dependencies.</h4>\n<br>\n<details>\n<summary><i><span style=\"color:blue\">Want a hint? Click here.</span></i></summary>\n<blockquote>\n<p>If we think of the natural flow for a user of the app, probably the first thing a user will do is to register with the app.<br />\nSo the first use-case should be <em>Register-User</em>.</p>\n<p>Another thing a user might want to do would be to see some sort of state relative to the app.<br />\nFor example, they may want to review their profile, viewing history, upload history, etc.<br />\nWe&rsquo;ll refer to this use-case as <em>Get-User-Info</em>.</p>\n<p>Users will need to authenticate with the app so that the app can interact with the user according to the user&rsquo;s preferences and permissions.<br />\nWe&rsquo;ll refer to this use-case as <em>Authenticate-User</em>.</p>\n<p>If we limit our consideration to these three use-cases, we see that Register-User must occur before Authenticate-User.<br />\nWe also see that Get-User-Info depends on Register-User and Authenticate-User.</p>\n</blockquote>\n</details>\n<details>\n<summary><i><span style=\"color:blue\">Want to compare your answers? Click here.</span></i></summary>\n<blockquote>\n<p>User use-cases:</p>\n<ul>\n<li>Register-User</li>\n<li>Authenticate-User (depends on Register-User)</li>\n<li>Get-User-Info (depends on Register-User and/or Authenticate-User)</li>\n</ul>\n</blockquote>\n</details>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976722_-78420454",
+      "id": "paragraph_1593597071641_-589009236",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:80"
+    },
+    {
+      "text": "\r\n%md\r\n\r\n#### Armed with the use-cases, you are ready to identify the queries.\r\n\r\n#### <span style=\"color:teal\"><b>Step 3:</b></span> Use the use-cases to identify the queries as follows:\r\n\r\n- For each use-case, determine the database access you will need to support the use-case\r\n- For each access, identify the inputs and the outputs\r\n- For queries, the inputs become keys and the outputs become data columns\r\n\r\n#### There is nothing to execute in this step - just note the database accesses, their associated use-cases, any key data and the returned data.\r\n\r\n<br>\r\n<details>\r\n<summary><i><span style=\"color:blue\">Want a hint? Click here.</span></i></summary>\r\n\r\n> Given the use-cases, we can think through the process of each and identify any database access associated with the use-case.\r\n> When we determine that a use-case requires a query, we must think about the query in terms of what data the query must return, and how we can identify that data.\r\n> The identifying data becomes the key and the returned data becomes, uh, the data.\r\n>\r\n> Take time to enumerate the database accesses.\r\n> For each access, you may want to keep track of its associated use-case.\r\n> For queries, you want to note the key data and the returned data.\r\n> Also, if queries return multiple rows, note any requirements for row ordering.\r\n\r\n</details>\r\n\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Want to compare your answers? Click here.</span></i></summary>\r\n\r\n> DB Access: CreateUser (use-case: Register-User)\r\n> - Input: User's email address, user's password, user ID\r\n> - Output: None\r\n>\r\n> DB Access: GetPasswordAndIdByEmail (use-case: Authenticate-User)\r\n> - Input: User's email address\r\n> - Output: User's password (hash), user ID\r\n>\r\n> DB Access: GetUserInfoById (use-case: Get-User-Info)\r\n> - Input: User's ID\r\n> - Output: User's name (first and last), email, created date\r\n\r\n</details>",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4>Armed with the use-cases, you are ready to identify the queries.</h4>\n<h4><span style=\"color:teal\"><b>Step 3:</b></span> Use the use-cases to identify the queries as follows:</h4>\n<ul>\n<li>For each use-case, determine the database access you will need to support the use-case</li>\n<li>For each access, identify the inputs and the outputs</li>\n<li>For queries, the inputs become keys and the outputs become data columns</li>\n</ul>\n<h4>There is nothing to execute in this step - just note the database accesses, their associated use-cases, any key data and the returned data.</h4>\n<br>\n<details>\n<summary><i><span style=\"color:blue\">Want a hint? Click here.</span></i></summary>\n<blockquote>\n<p>Given the use-cases, we can think through the process of each and identify any database access associated with the use-case.<br />\nWhen we determine that a use-case requires a query, we must think about the query in terms of what data the query must return, and how we can identify that data.<br />\nThe identifying data becomes the key and the returned data becomes, uh, the data.</p>\n<p>Take time to enumerate the database accesses.<br />\nFor each access, you may want to keep track of its associated use-case.<br />\nFor queries, you want to note the key data and the returned data.<br />\nAlso, if queries return multiple rows, note any requirements for row ordering.</p>\n</blockquote>\n</details>\n<details>\n<summary><i><span style=\"color:blue\">Want to compare your answers? Click here.</span></i></summary>\n<blockquote>\n<p>DB Access: CreateUser (use-case: Register-User)</p>\n<ul>\n<li>Input: User&rsquo;s email address, user&rsquo;s password, user ID</li>\n<li>Output: None</li>\n</ul>\n<p>DB Access: GetPasswordAndIdByEmail (use-case: Authenticate-User)</p>\n<ul>\n<li>Input: User&rsquo;s email address</li>\n<li>Output: User&rsquo;s password (hash), user ID</li>\n</ul>\n<p>DB Access: GetUserInfoById (use-case: Get-User-Info)</p>\n<ul>\n<li>Input: User&rsquo;s ID</li>\n<li>Output: User&rsquo;s name (first and last), email, created date</li>\n</ul>\n</blockquote>\n</details>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976722_-1929841718",
+      "id": "paragraph_1593597071581_229932841",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:81"
+    },
+    {
+      "text": "%md\n\n#### Let's use the queries to define the schema.\n\n---\n\n#### <span style=\"color:teal\">First Big Ah-Ha:</span>\n\n>\n> Wait! Does this mean I create a new table for each query?\n> - Generally, yes!\n> - Sometimes you can use a table to satisfy more than one query, but not always\n\n<details>\n<summary><i><span style=\"color:blue\">Click here for further explanation.</span></i></summary>\n\n> In the relational world, you might create a single table and query it in different ways.\n> This seems like a good approach because data is normalized, which means we only need to store it once.\n> The problem is that the relational world may also require joins and projections which do not scale - your app will not keep up.\n>\n> Instead, in the Cassandra world, we create tables to support specific queries.\n> This means that the results for a query are precomputed and are sitting in a partition, ready to be retrieved quickly.\n> This approach is fast and scales.\n\n</details>\n\n---\n\n#### <span style=\"color:teal\">Second Big Ah-Ha:</span>\n\n>\n> Won't this cause denormalization?!!!!!!\n> - Yes!\n> - But it's alright\n\n<details>\n<summary><i><span style=\"color:blue\">Click here for further explanation.</span></i></summary>\n\n> Denormalization is a way of life in the world of Cassandra.\n> We realize your college professor taught you that denormalization is evil, etc., but relax!\n> Denormalization is not the evil boogie-man.\n> Many large companies denormalize massive amounts of data - it's what allows them to scale and be successful!\n> Yes, your app will need to keep track of what data is where and be sure to update the necessary tables, but it's not really that difficult once you get used to it.\n\n</details>\n\n---\n\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4>Let&rsquo;s use the queries to define the schema.</h4>\n<hr />\n<h4><span style=\"color:teal\">First Big Ah-Ha:</span></h4>\n<blockquote>\n<p>Wait! Does this mean I create a new table for each query?</p>\n<ul>\n<li>Generally, yes!</li>\n<li>Sometimes you can use a table to satisfy more than one query, but not always</li>\n</ul>\n</blockquote>\n<details>\n<summary><i><span style=\"color:blue\">Click here for further explanation.</span></i></summary>\n<blockquote>\n<p>In the relational world, you might create a single table and query it in different ways.<br />\nThis seems like a good approach because data is normalized, which means we only need to store it once.<br />\nThe problem is that the relational world may also require joins and projections which do not scale - your app will not keep up.</p>\n<p>Instead, in the Cassandra world, we create tables to support specific queries.<br />\nThis means that the results for a query are precomputed and are sitting in a partition, ready to be retrieved quickly.<br />\nThis approach is fast and scales.</p>\n</blockquote>\n</details>\n<hr />\n<h4><span style=\"color:teal\">Second Big Ah-Ha:</span></h4>\n<blockquote>\n<p>Won&rsquo;t this cause denormalization?!!!!!!</p>\n<ul>\n<li>Yes!</li>\n<li>But it&rsquo;s alright</li>\n</ul>\n</blockquote>\n<details>\n<summary><i><span style=\"color:blue\">Click here for further explanation.</span></i></summary>\n<blockquote>\n<p>Denormalization is a way of life in the world of Cassandra.<br />\nWe realize your college professor taught you that denormalization is evil, etc., but relax!<br />\nDenormalization is not the evil boogie-man.<br />\nMany large companies denormalize massive amounts of data - it&rsquo;s what allows them to scale and be successful!<br />\nYes, your app will need to keep track of what data is where and be sure to update the necessary tables, but it&rsquo;s not really that difficult once you get used to it.</p>\n</blockquote>\n</details>\n<hr />\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976722_1237385124",
+      "id": "paragraph_1593597071483_-2092135890",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:82"
+    },
+    {
+      "text": "%md\r\n\r\n#### <span style=\"color:teal\"><b>Step 4:</b></span> For each database access, determine the table design.\r\n\r\n- Identify the columns and their data types\r\n- Determine the partition key, which are the inputs in the previous step\r\n- If the output has multiple rows and requires ordering, identify the clustering columns accordingly\r\n- Make sure each row has a unique primary key\r\n\r\n<br>\r\n<details>\r\n<summary><i><span style=\"color:blue\">Want a hint? Click here.</span></i></summary>\r\n\r\n> Define the tables you will need based on the database access you determined in the previous step.\r\n> For queries, the input usually becomes the partition key.\r\n> The output from the queries become the other columns of the table.\r\n> If the query retrieves multiple columns and if you need to have the resulting rows ordered, make the ordering columns clustering columns.\r\n>\r\n> If the query returns multiple columns, then you may also need to add some clustering columns to ensure the primary key is unique.\r\n Remember, if the primary key is not unique, then when you go to insert a second row, you may cause an upsert that updates and existing row.\r\n>\r\n> Once you think you have considered these concerns, try creating the CQL to create the table.\r\n\r\n</details>\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Want to compare answers? Click here.</span></i></summary>\r\n\r\n> Notice that the CreateUser access will require a table with:\r\n> - An `email` column as the partition key\r\n> - `password` and `userid` columns as payload data\r\n> - We'll name this table `user_credentials`\r\n>\r\n> The GetPasswordAndIdByEmail query will also use the `user_credentials` table.\r\n>\r\n> The GetUserInfoById query will require a table with:\r\n> - `userid` as the partition key\r\n> - Various payload data such as `firstname`, `lastname`, `email` and `created_date`\r\n> - This defines a `users` table - which is the same table we created in the CQL notebook, so we can use that\r\n\r\n</details>\r\n<br>\r\n\r\n#### Now, we are ready to write the actual CQL! Here's the `user_credentials` table design.\r\n\r\n![user_credentials](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/user_credentials.png \"user_credentials\" )\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4><span style=\"color:teal\"><b>Step 4:</b></span> For each database access, determine the table design.</h4>\n<ul>\n<li>Identify the columns and their data types</li>\n<li>Determine the partition key, which are the inputs in the previous step</li>\n<li>If the output has multiple rows and requires ordering, identify the clustering columns accordingly</li>\n<li>Make sure each row has a unique primary key</li>\n</ul>\n<br>\n<details>\n<summary><i><span style=\"color:blue\">Want a hint? Click here.</span></i></summary>\n<blockquote>\n<p>Define the tables you will need based on the database access you determined in the previous step.<br />\nFor queries, the input usually becomes the partition key.<br />\nThe output from the queries become the other columns of the table.<br />\nIf the query retrieves multiple columns and if you need to have the resulting rows ordered, make the ordering columns clustering columns.</p>\n<p>If the query returns multiple columns, then you may also need to add some clustering columns to ensure the primary key is unique.<br />\nRemember, if the primary key is not unique, then when you go to insert a second row, you may cause an upsert that updates and existing row.</p>\n<p>Once you think you have considered these concerns, try creating the CQL to create the table.</p>\n</blockquote>\n</details>\n<details>\n<summary><i><span style=\"color:blue\">Want to compare answers? Click here.</span></i></summary>\n<blockquote>\n<p>Notice that the CreateUser access will require a table with:</p>\n<ul>\n<li>An <code>email</code> column as the partition key</li>\n<li><code>password</code> and <code>userid</code> columns as payload data</li>\n<li>We&rsquo;ll name this table <code>user_credentials</code></li>\n</ul>\n<p>The GetPasswordAndIdByEmail query will also use the <code>user_credentials</code> table.</p>\n<p>The GetUserInfoById query will require a table with:</p>\n<ul>\n<li><code>userid</code> as the partition key</li>\n<li>Various payload data such as <code>firstname</code>, <code>lastname</code>, <code>email</code> and <code>created_date</code></li>\n<li>This defines a <code>users</code> table - which is the same table we created in the CQL notebook, so we can use that</li>\n</ul>\n</blockquote>\n</details>\n<br>\n<h4>Now, we are ready to write the actual CQL! Here&rsquo;s the <code>user_credentials</code> table design.</h4>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/user_credentials.png\" alt=\"user_credentials\" title=\"user_credentials\" /></p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976723_1755758372",
+      "id": "paragraph_1593597071482_-616040426",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:83"
+    },
+    {
+      "text": "\r\n\r\n%md\r\n\r\n#### <span style=\"color:teal\"><b>Step 5:</b></span> In the next cell, create the `user_credentials` table as discussed and shown above.\r\n<br>\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\r\n\r\n```\r\nCREATE TABLE killrvideo.user_credentials (\r\n  // Fill in the next line with the first column name (hint: rhymes with \"flea-ale\") and type\r\n  ,\r\n  // Fill in the next line with the second column name (hint: rhymes with \"bass-bird\") and type\r\n  ,\r\n  // Fill in the next line with the third column name (hint: rhymes with \"loser-by-me\") and type\r\n  ,\r\n  PRIMARY KEY(\r\n    // Fill in the next line with the partition key column name\r\n    \r\n  )\r\n);\r\n```\r\n\r\n</details>\r\n<details>\r\n<summary><i><span style=\"color:blue\">Want to see the solution? Click here.</span></i></summary>\r\n\r\n```\r\nCREATE TABLE killrvideo.user_credentials (\r\n  email TEXT,\r\n  password TEXT,\r\n  userid UUID,\r\n  PRIMARY KEY(email)\r\n);\r\n```\r\n\r\n</details>\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4><span style=\"color:teal\"><b>Step 5:</b></span> In the next cell, create the <code>user_credentials</code> table as discussed and shown above.</h4>\n<br>\n<details>\n<summary><i><span style=\"color:blue\">Need a hint? Click here.</span></i></summary>\n<pre><code>CREATE TABLE killrvideo.user_credentials (\n  // Fill in the next line with the first column name (hint: rhymes with &quot;flea-ale&quot;) and type\n  ,\n  // Fill in the next line with the second column name (hint: rhymes with &quot;bass-bird&quot;) and type\n  ,\n  // Fill in the next line with the third column name (hint: rhymes with &quot;loser-by-me&quot;) and type\n  ,\n  PRIMARY KEY(\n    // Fill in the next line with the partition key column name\n    \n  )\n);\n</code></pre>\n</details>\n<details>\n<summary><i><span style=\"color:blue\">Want to see the solution? Click here.</span></i></summary>\n<pre><code>CREATE TABLE killrvideo.user_credentials (\n  email TEXT,\n  password TEXT,\n  userid UUID,\n  PRIMARY KEY(email)\n);\n</code></pre>\n</details>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976723_-317026155",
+      "id": "paragraph_1593597071481_1127208937",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:84"
+    },
+    {
+      "text": "\r\n// Write the CQL to create the user_credentials table here:\r\n// Execute this cell by clicking on the cell and pressing SHIFT+ENTER or clicking on the Run button in the top-right corner of this cell\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976723_-889728337",
+      "id": "paragraph_1593597071524_486203777",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:85"
+    },
+    {
+      "text": "\r\n%md\r\n\r\nLet's look at the users in the `users` table.\r\n\r\n\r\n**Step 6:** Execute the following cell and check out the results.\r\n\r\n\r\n**Note:** You don't see the CQL script because the code editor is hidden, but you can still run the cell.\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T18:33:02+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p>Let&rsquo;s look at the users in the <code>users</code> table.</p>\n<p><strong>Step 6:</strong> Execute the following cell and check out the results.</p>\n<p><strong>Note:</strong> You don&rsquo;t see the CQL script because the code editor is hidden, but you can still run the cell.</p>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976723_1780782359",
+      "id": "paragraph_1593597071401_-1949346261",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "dateStarted": "2020-10-11T18:33:03+0000",
+      "dateFinished": "2020-10-11T18:33:03+0000",
+      "status": "FINISHED",
+      "$$hashKey": "object:86"
+    },
+    {
+      "text": "// See the contents of the entire users table\n// Note: this query performs a full table scan and should not be used in a production setting\n// Execute this cell by clicking on the cell and pressing SHIFT+ENTER or clicking on the CL.ONE button in the top-right corner of this cell\n\nSELECT * FROM killrvideo.users;",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976723_1870570412",
+      "id": "paragraph_1593597071400_1834175724",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:87"
+    },
+    {
+      "text": "%md\r\n\r\n#### The users in the `users` table also need to be in the `user_credentials` table - that's how denormalization works.\r\n\r\n<br>\r\n\r\n#### <span style=\"color:teal\"><b>Step 7:</b></span> For each row in the `users` table, create a row in the `user_credentials` table.\r\n\r\n- The two tables contain denormalized data, so make sure the denormalized columns are consistent\r\n- Do _NOT_ use the `uuid()` method for the `userid` column in the `user_credentials` because `uuid()` would generate a different ID and the `userid`s in the two tables need to match\r\n\r\n<br>\r\n\r\n#### Here is a list of user data for reference:\r\n\r\n\r\n<h4><center>\r\n <table style=\"width:60%\" border=\"1\">\r\n  <tr style=\"background-color:blue;color:white\">\r\n    <th>First Name</th>\r\n    <th>Last Name</th>\r\n    <th>Email</th>\r\n    <th>Password</th>\r\n    <th>userid</th>\r\n  </tr>\r\n  <tr style=\"background-color:white\">\r\n    <td>Jeff</td>\r\n    <td>Carpenter</td>\r\n    <td>jc@fenago.com</td>\r\n    <td>J3ffL0v3$C@ss@ndr@</td>\r\n    <td>11111111-1111-1111-1111-111111111111</td>\r\n  </tr>\r\n  <tr style=\"background-color:lightgray\">\r\n    <td>Eric</td>\r\n    <td>Zietlow</td>\r\n    <td>ez@fenago.com</td>\r\n    <td>C@ss@ndr@R0ck$</td>\r\n    <td>22222222-2222-2222-2222-222222222222</td>\r\n  </tr>\r\n  <tr style=\"background-color:white\">\r\n    <td>Cedric</td>\r\n    <td>Lunven</td>\r\n    <td>cl@fenago.com</td>\r\n    <td>Fr@nc3L0v3$C@ss@ndr@</td>\r\n    <td>33333333-3333-3333-3333-333333333333</td>\r\n  </tr>\r\n  <tr style=\"background-color:lightgray\">\r\n    <td>David</td>\r\n    <td>Gilardi</td>\r\n    <td>dg@fenago.com</td>\r\n    <td>H@t$0ff2C@ss@ndr@</td>\r\n    <td>44444444-4444-4444-4444-444444444444</td>\r\n  </tr>\r\n  <tr style=\"background-color:white\">\r\n    <td>Cristina</td>\r\n    <td>Veale</td>\r\n    <td>cv@fenago.com</td>\r\n    <td>3@$tC0@$tC@ss@ndr@</td>\r\n    <td>55555555-5555-5555-5555-555555555555</td>\r\n  </tr>\r\n  <tr style=\"background-color:lightgray\">\r\n    <td>Aleks</td>\r\n    <td>Volochnev</td>\r\n    <td>av@fenago.com</td>\r\n    <td>C@ss@ndr@43v3r</td>\r\n    <td>66666666-6666-6666-6666-666666666666</td>\r\n  <tr style=\"background-color:white\">\r\n    <td>Ardon</td>\r\n    <td>Hall</td>\r\n    <td>ah@fenago.com</td>\r\n    <td>C@ss@ndr@3v3rywh3r3</td>\r\n    <td>77777777-7777-7777-7777-777777777777</td>\r\n  </tr>\r\n</table>\r\n</center></h4>\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Want a hint? Click here.</span></i></summary>\r\n\r\n```\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\nVALUES(\r\n  // Place Jeff's userid on the next line (copy it exactly from the previous cell, dashes and all)\r\n  ,\r\n  // Place Jeff's email on the next line (in single quotes)\r\n  ,\r\n  // Place Jeff's password on the next line (in single quotes)\r\n  );\r\n\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\nVALUES(\r\n  // Place Eric's userid on the next line (copy it exactly from the previous cell, dashes and all)\r\n  ,\r\n  // Place Eric's email on the next line (in single quotes)\r\n  ,\r\n  // Place Eric's password on the next line (in single quotes)\r\n  );\r\n  \r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\nVALUES(\r\n  // Place Cedrick's userid on the next line (copy it exactly from the previous cell, dashes and all)\r\n  ,\r\n  // Place Cedrick's email on the next line (in single quotes)\r\n  ,\r\n  // Place Cedrick's password on the next line (in single quotes)\r\n  );\r\n\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\nVALUES(\r\n  // Place David's userid on the next line (copy it exactly from the previous cell, dashes and all)\r\n  ,\r\n  // Place David's email on the next line (in single quotes)\r\n  ,\r\n  // Place David's password on the next line (in single quotes)\r\n  );\r\n  \r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\nVALUES(\r\n  // Place Cristina's userid on the next line (copy it exactly from the previous cell, dashes and all)\r\n  ,\r\n  // Place Cristina's email on the next line (in single quotes)\r\n  ,\r\n  // Place Cristina's password on the next line (in single quotes)\r\n  );\r\n\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\nVALUES(\r\n  // Place Adron's userid on the next line (copy it exactly from the previous cell, dashes and all)\r\n  ,\r\n  // Place Adron's email on the next line (in single quotes)\r\n  ,\r\n  // Place Adron's password on the next line (in single quotes)\r\n  );\r\n  \r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\nVALUES(\r\n  // Place Aleks' userid on the next line (copy it exactly from the previous cell, dashes and all)\r\n  ,\r\n  // Place Aleks' email on the next line (in single quotes)\r\n  ,\r\n  // Place Aleks' password on the next line (in single quotes)\r\n  );\r\n```\r\n\r\n</details>\r\n<details>\r\n<summary><i><span style=\"color:blue\">Want the answer? Click here.</span></i></summary>\r\n\r\n```\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\n  VALUES(11111111-1111-1111-1111-111111111111, 'jc@fenago.com', 'J3ffL0v3$C@ss@ndr@');\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\n  VALUES(22222222-2222-2222-2222-222222222222, 'ez@fenago.com', 'C@ss@ndr@R0ck$');\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\n  VALUES(33333333-3333-3333-3333-333333333333, 'cl@fenago.com', 'Fr@nc3L0v3$C@ss@ndr@');\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\n  VALUES(44444444-4444-4444-4444-444444444444, 'dg@fenago.com', '3@$tC0@$tC@ss@ndr@');\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\n  VALUES(55555555-5555-5555-5555-555555555555, 'cv@fenago.com', 'H@t$0ff2C@ss@ndr@');\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\n  VALUES(66666666-6666-6666-6666-666666666666, 'ah@fenago.com', 'C@ss@ndr@43v3r');\r\nINSERT INTO killrvideo.user_credentials (userid, email, password)\r\n  VALUES(77777777-7777-7777-7777-777777777777, 'av@fenago.com', 'C@ss@ndr@3v3rywh3r3');\r\n```\r\n\r\n</details>\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4>The users in the <code>users</code> table also need to be in the <code>user_credentials</code> table - that&rsquo;s how denormalization works.</h4>\n<br>\n<h4><span style=\"color:teal\"><b>Step 7:</b></span> For each row in the <code>users</code> table, create a row in the <code>user_credentials</code> table.</h4>\n<ul>\n<li>The two tables contain denormalized data, so make sure the denormalized columns are consistent</li>\n<li>Do <em>NOT</em> use the <code>uuid()</code> method for the <code>userid</code> column in the <code>user_credentials</code> because <code>uuid()</code> would generate a different ID and the <code>userid</code>s in the two tables need to match</li>\n</ul>\n<br>\n<h4>Here is a list of user data for reference:</h4>\n<h4><center>\n <table style=\"width:60%\" border=\"1\">\n  <tr style=\"background-color:blue;color:white\">\n    <th>First Name</th>\n    <th>Last Name</th>\n    <th>Email</th>\n    <th>Password</th>\n    <th>userid</th>\n  </tr>\n  <tr style=\"background-color:white\">\n    <td>Jeff</td>\n    <td>Carpenter</td>\n    <td>jc@fenago.com</td>\n    <td>J3ffL0v3$C@ss@ndr@</td>\n    <td>11111111-1111-1111-1111-111111111111</td>\n  </tr>\n  <tr style=\"background-color:lightgray\">\n    <td>Eric</td>\n    <td>Zietlow</td>\n    <td>ez@fenago.com</td>\n    <td>C@ss@ndr@R0ck$</td>\n    <td>22222222-2222-2222-2222-222222222222</td>\n  </tr>\n  <tr style=\"background-color:white\">\n    <td>Cedric</td>\n    <td>Lunven</td>\n    <td>cl@fenago.com</td>\n    <td>Fr@nc3L0v3$C@ss@ndr@</td>\n    <td>33333333-3333-3333-3333-333333333333</td>\n  </tr>\n  <tr style=\"background-color:lightgray\">\n    <td>David</td>\n    <td>Gilardi</td>\n    <td>dg@fenago.com</td>\n    <td>H@t$0ff2C@ss@ndr@</td>\n    <td>44444444-4444-4444-4444-444444444444</td>\n  </tr>\n  <tr style=\"background-color:white\">\n    <td>Cristina</td>\n    <td>Veale</td>\n    <td>cv@fenago.com</td>\n    <td>3@$tC0@$tC@ss@ndr@</td>\n    <td>55555555-5555-5555-5555-555555555555</td>\n  </tr>\n  <tr style=\"background-color:lightgray\">\n    <td>Aleks</td>\n    <td>Volochnev</td>\n    <td>av@fenago.com</td>\n    <td>C@ss@ndr@43v3r</td>\n    <td>66666666-6666-6666-6666-666666666666</td>\n  <tr style=\"background-color:white\">\n    <td>Ardon</td>\n    <td>Hall</td>\n    <td>ah@fenago.com</td>\n    <td>C@ss@ndr@3v3rywh3r3</td>\n    <td>77777777-7777-7777-7777-777777777777</td>\n  </tr>\n</table>\n</center></h4>\n<details>\n<summary><i><span style=\"color:blue\">Want a hint? Click here.</span></i></summary>\n<pre><code>INSERT INTO killrvideo.user_credentials (userid, email, password)\nVALUES(\n  // Place Jeff's userid on the next line (copy it exactly from the previous cell, dashes and all)\n  ,\n  // Place Jeff's email on the next line (in single quotes)\n  ,\n  // Place Jeff's password on the next line (in single quotes)\n  );\n\nINSERT INTO killrvideo.user_credentials (userid, email, password)\nVALUES(\n  // Place Eric's userid on the next line (copy it exactly from the previous cell, dashes and all)\n  ,\n  // Place Eric's email on the next line (in single quotes)\n  ,\n  // Place Eric's password on the next line (in single quotes)\n  );\n  \nINSERT INTO killrvideo.user_credentials (userid, email, password)\nVALUES(\n  // Place Cedrick's userid on the next line (copy it exactly from the previous cell, dashes and all)\n  ,\n  // Place Cedrick's email on the next line (in single quotes)\n  ,\n  // Place Cedrick's password on the next line (in single quotes)\n  );\n\nINSERT INTO killrvideo.user_credentials (userid, email, password)\nVALUES(\n  // Place David's userid on the next line (copy it exactly from the previous cell, dashes and all)\n  ,\n  // Place David's email on the next line (in single quotes)\n  ,\n  // Place David's password on the next line (in single quotes)\n  );\n  \nINSERT INTO killrvideo.user_credentials (userid, email, password)\nVALUES(\n  // Place Cristina's userid on the next line (copy it exactly from the previous cell, dashes and all)\n  ,\n  // Place Cristina's email on the next line (in single quotes)\n  ,\n  // Place Cristina's password on the next line (in single quotes)\n  );\n\nINSERT INTO killrvideo.user_credentials (userid, email, password)\nVALUES(\n  // Place Adron's userid on the next line (copy it exactly from the previous cell, dashes and all)\n  ,\n  // Place Adron's email on the next line (in single quotes)\n  ,\n  // Place Adron's password on the next line (in single quotes)\n  );\n  \nINSERT INTO killrvideo.user_credentials (userid, email, password)\nVALUES(\n  // Place Aleks' userid on the next line (copy it exactly from the previous cell, dashes and all)\n  ,\n  // Place Aleks' email on the next line (in single quotes)\n  ,\n  // Place Aleks' password on the next line (in single quotes)\n  );\n</code></pre>\n</details>\n<details>\n<summary><i><span style=\"color:blue\">Want the answer? Click here.</span></i></summary>\n<pre><code>INSERT INTO killrvideo.user_credentials (userid, email, password)\n  VALUES(11111111-1111-1111-1111-111111111111, 'jc@fenago.com', 'J3ffL0v3$C@ss@ndr@');\nINSERT INTO killrvideo.user_credentials (userid, email, password)\n  VALUES(22222222-2222-2222-2222-222222222222, 'ez@fenago.com', 'C@ss@ndr@R0ck$');\nINSERT INTO killrvideo.user_credentials (userid, email, password)\n  VALUES(33333333-3333-3333-3333-333333333333, 'cl@fenago.com', 'Fr@nc3L0v3$C@ss@ndr@');\nINSERT INTO killrvideo.user_credentials (userid, email, password)\n  VALUES(44444444-4444-4444-4444-444444444444, 'dg@fenago.com', '3@$tC0@$tC@ss@ndr@');\nINSERT INTO killrvideo.user_credentials (userid, email, password)\n  VALUES(55555555-5555-5555-5555-555555555555, 'cv@fenago.com', 'H@t$0ff2C@ss@ndr@');\nINSERT INTO killrvideo.user_credentials (userid, email, password)\n  VALUES(66666666-6666-6666-6666-666666666666, 'ah@fenago.com', 'C@ss@ndr@43v3r');\nINSERT INTO killrvideo.user_credentials (userid, email, password)\n  VALUES(77777777-7777-7777-7777-777777777777, 'av@fenago.com', 'C@ss@ndr@3v3rywh3r3');\n</code></pre>\n</details>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976724_-802993980",
+      "id": "paragraph_1593597071320_-1637988930",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:88"
+    },
+    {
+      "text": "// Write the CQL to insert the seven (advocates) users into user_credentials here:\n// Execute this cell by clicking on the cell and pressing SHIFT+ENTER or clicking on the Run button in the top-right corner of this cell\n\n    \n    ",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976724_-1200960254",
+      "id": "paragraph_1593597071319_-994572508",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:89"
+    },
+    {
+      "text": "%md\n\n **Step 8:** Execute the next *two* cells to confirm the contents of the `user_credentials` and `users` tables.\n\n\n#### **Note:** You don't see the CQL script because the code editor is hidden, but you can still run the cell.\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><strong>Step 8:</strong> Execute the next <em>two</em> cells to confirm the contents of the <code>user_credentials</code> and <code>users</code> tables.</p>\n<h4><strong>Note:</strong> You don&rsquo;t see the CQL script because the code editor is hidden, but you can still run the cell.</h4>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976724_-1502818702",
+      "id": "paragraph_1593597071261_197141284",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:90"
+    },
+    {
+      "text": "// See the contents of the entire user_credentials table\n// Note: this query requires a full table scan - we would never run this type of query on a production database table\n// Execute this cell by clicking on the cell and pressing SHIFT+ENTER or clicking on the CL.ONE button in the top-right corner of this cell\nSELECT * FROM killrvideo.user_credentials;",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976724_-2136073244",
+      "id": "paragraph_1593597071261_970050553",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:91"
+    },
+    {
+      "text": "// See the contents of the entire users table\n// Note: this query requires a full table scan - we would never run this type of query on a production database table\n// Execute this cell by clicking on the cell and pressing SHIFT+ENTER or clicking on the CL.ONE button in the top-right corner of this cell\n\nSELECT * FROM killrvideo.users;",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976724_248388791",
+      "id": "paragraph_1593597071260_1611762153",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:92"
+    },
+    {
+      "text": "%md\n\n **Step 9:** Review your work.\n\n- Compare the `email` and `userid` column values of the two tables to make sure the values are consistent and correct\n\n\n![line](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png \"line\")\n\nCongratulations!!!!\n\n#### If you have made it to the end of this notebook successfully, you are armed with the essential Cassandra data modeling skills!\n\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><strong>Step 9:</strong> Review your work.</p>\n<ul>\n<li>Compare the <code>email</code> and <code>userid</code> column values of the two tables to make sure the values are consistent and correct</li>\n</ul>\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png\" alt=\"line\" title=\"line\" /></p>\n<p>Congratulations!!!!</p>\n<h4>If you have made it to the end of this notebook successfully, you are armed with the essential Cassandra data modeling skills!</h4>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976724_1953465673",
+      "id": "paragraph_1593597071120_-178228062",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:93"
+    },
+    {
+      "text": "%md\n\n![line](https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png \"line\" )\n\n# <center><span style=\"color:teal\">Bonus Challenge: Model the KillrVideo comments domain</span></center>\n\n<center>If you got done early and want something to do while you wait for others, here's a bonus challenge</center>\n\n<span style=\"color:teal\">In this section, you will do the following things:</span>\n\n- Create a data model for the \"comments\" domain within KillrVideo\n\n\n<span style=\"color:teal\">Since this is a bonus exercise, we won't hold your hand. If you need help, refer back to the previous exercise as a pattern.</span>\n\n#### **Here's the pitch:**\n#### In this bonus challenge, we want to try and work through a very simple data model. Let’s limit ourselves to the section of KillrVideo that deals with comments about videos. In this domain, users make comments about various videos. Of course, other users like to peruse the comments about a video for sundry reasons. Also, any user may want to review the comments they have made.\n#### This is a simple domain. Let’s start by identifying the data items in this domain.\n\n\n#### <span style=\"color:teal\"><b>Step 1:</b></span> List the names and meanings of the data items for the video comments domain.\n\n<details>\n<summary><i><span style=\"color:blue\">Want to compare your answers to ours? Click here.</span></i></summary>\n\n**videoid** – The ID of the video that is the subject of the comment\n**userid** – The ID of the user who made the comment\n**comment** – The text of the comment\n\n</details>\n\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<p><img src=\"https://raw.githubusercontent.com/fenago/apache-cassandra/master/datadrax_images/line.png\" alt=\"line\" title=\"line\" /></p>\n<h1><center><span style=\"color:teal\">Bonus Challenge: Model the KillrVideo comments domain</span></center></h1>\n<center>If you got done early and want something to do while you wait for others, here's a bonus challenge</center>\n<p><span style=\"color:teal\">In this section, you will do the following things:</span></p>\n<ul>\n<li>Create a data model for the &ldquo;comments&rdquo; domain within KillrVideo</li>\n</ul>\n<p><span style=\"color:teal\">Since this is a bonus exercise, we won&rsquo;t hold your hand. If you need help, refer back to the previous exercise as a pattern.</span></p>\n<h4><strong>Here&rsquo;s the pitch:</strong></h4>\n<h4>In this bonus challenge, we want to try and work through a very simple data model. Let’s limit ourselves to the section of KillrVideo that deals with comments about videos. In this domain, users make comments about various videos. Of course, other users like to peruse the comments about a video for sundry reasons. Also, any user may want to review the comments they have made.</h4>\n<h4>This is a simple domain. Let’s start by identifying the data items in this domain.</h4>\n<h4><span style=\"color:teal\"><b>Step 1:</b></span> List the names and meanings of the data items for the video comments domain.</h4>\n<details>\n<summary><i><span style=\"color:blue\">Want to compare your answers to ours? Click here.</span></i></summary>\n<p><strong>videoid</strong> – The ID of the video that is the subject of the comment<br />\n<strong>userid</strong> – The ID of the user who made the comment<br />\n<strong>comment</strong> – The text of the comment</p>\n</details>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976725_-1775769305",
+      "id": "paragraph_1593597071101_1596502426",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:94"
+    },
+    {
+      "text": "%md\r\n\r\n#### <span style=\"color:teal\"><b>Step 2:</b></span> List the use-cases associated with this domain.\r\n\r\n<details>\r\n<summary><i><span style=\"color:blue\">Want to compare your answers to ours? Click here.</span></i></summary>\r\n\r\nYour answers may vary based on your understanding of the problem and the domain. The following represents our perspective:\r\n\r\n**Create a comment** - A user creates a comment on a video\r\n**See video comments** - A user wants to see all comments associate with a video\r\n**Review my comments** - A user wants to review the comments he/she has created\r\n**Review other user’s comments** - A user wants to see all comments created by some other user\r\n\r\n</details>\r\n\r\n\r\n\r\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4><span style=\"color:teal\"><b>Step 2:</b></span> List the use-cases associated with this domain.</h4>\n<details>\n<summary><i><span style=\"color:blue\">Want to compare your answers to ours? Click here.</span></i></summary>\n<p>Your answers may vary based on your understanding of the problem and the domain. The following represents our perspective:</p>\n<p><strong>Create a comment</strong> - A user creates a comment on a video<br />\n<strong>See video comments</strong> - A user wants to see all comments associate with a video<br />\n<strong>Review my comments</strong> - A user wants to review the comments he/she has created<br />\n<strong>Review other user’s comments</strong> - A user wants to see all comments created by some other user</p>\n</details>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976725_-166126376",
+      "id": "paragraph_1593597071048_-1215902367",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:95"
+    },
+    {
+      "text": "%md\n\n#### <span style=\"color:teal\"><b>Step 3:</b></span> Create database access pattern(s), including identifying the inputs and outputs, necessary to support all the use-cases.\n\n<details>\n<summary><i><span style=\"color:blue\">Want to compare your answers to ours? Click here.</span></i></summary>\n\n> #### **CreateComment:** (use-case: Create a comment)\n> - **Input:** videoid, userid, comment\n> - **Output:** none\n>\n> #### **CommentsByVideo:** (use-case: See video comments)\n> - **Input:** videoid\n> - **Output:** comments, userids\n>\n> #### **CommentsByUser:** (use-case: Review my comments and Review other user’s comments)\n> - **Input:** userid\n> - **Output:** videoids, comments\n\n</details>\n\n\n\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4><span style=\"color:teal\"><b>Step 3:</b></span> Create database access pattern(s), including identifying the inputs and outputs, necessary to support all the use-cases.</h4>\n<details>\n<summary><i><span style=\"color:blue\">Want to compare your answers to ours? Click here.</span></i></summary>\n<blockquote>\n<h4><strong>CreateComment:</strong> (use-case: Create a comment)</h4>\n<ul>\n<li><strong>Input:</strong> videoid, userid, comment</li>\n<li><strong>Output:</strong> none</li>\n</ul>\n<h4><strong>CommentsByVideo:</strong> (use-case: See video comments)</h4>\n<ul>\n<li><strong>Input:</strong> videoid</li>\n<li><strong>Output:</strong> comments, userids</li>\n</ul>\n<h4><strong>CommentsByUser:</strong> (use-case: Review my comments and Review other user’s comments)</h4>\n<ul>\n<li><strong>Input:</strong> userid</li>\n<li><strong>Output:</strong> videoids, comments</li>\n</ul>\n</blockquote>\n</details>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976725_542861686",
+      "id": "paragraph_1593597071042_-2019361547",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:96"
+    },
+    {
+      "text": "%md\n\n#### <span style=\"color:teal\"><b>Step 4:</b></span> For each database access pattern that has an output, define the tables.\n\n- Name the table\n- Identify the column names and their associated data types\n- Determine the partition key (and its data type) as defined by the access pattern input\n- Determine any ordering for the output (probably most recent comments first)\n- Make sure the primary key is unique for each row\n\n<details>\n<summary><i><span style=\"color:blue\">Want to compare your answers to ours? Click here.</span></i></summary>\n\n**CommentsByVideo:** // Note that the commentid makes the row unique and provides necessary ordering\n    - **Table name:** comments_by_video\n    - **Column:** comment TEXT\n    - **Column:** userid UUID\n    - **Column:** videoid UUID\n    - **Column:** commentid TIMEUUID\n    - **Primary key:** (videoid, commentid)\n\n<br>\n\n**CommentsByUser:** // Note that the commentid makes the row unique and provides necessary ordering\n    - **Table name:** comments_by_user\n    - **Column:** comment TEXT\n    - **Column:** videoid UUID\n    - **Column:** userid UUID\n    - **Column:** commentid TIMEUUID\n    - **Primary key:** (userid, commentid)\n\n</details>\n\n\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4><span style=\"color:teal\"><b>Step 4:</b></span> For each database access pattern that has an output, define the tables.</h4>\n<ul>\n<li>Name the table</li>\n<li>Identify the column names and their associated data types</li>\n<li>Determine the partition key (and its data type) as defined by the access pattern input</li>\n<li>Determine any ordering for the output (probably most recent comments first)</li>\n<li>Make sure the primary key is unique for each row</li>\n</ul>\n<details>\n<summary><i><span style=\"color:blue\">Want to compare your answers to ours? Click here.</span></i></summary>\n<p><strong>CommentsByVideo:</strong> // Note that the commentid makes the row unique and provides necessary ordering<br />\n- <strong>Table name:</strong> comments_by_video<br />\n- <strong>Column:</strong> comment TEXT<br />\n- <strong>Column:</strong> userid UUID<br />\n- <strong>Column:</strong> videoid UUID<br />\n- <strong>Column:</strong> commentid TIMEUUID<br />\n- <strong>Primary key:</strong> (videoid, commentid)</p>\n<br>\n<p><strong>CommentsByUser:</strong> // Note that the commentid makes the row unique and provides necessary ordering<br />\n- <strong>Table name:</strong> comments_by_user<br />\n- <strong>Column:</strong> comment TEXT<br />\n- <strong>Column:</strong> videoid UUID<br />\n- <strong>Column:</strong> userid UUID<br />\n- <strong>Column:</strong> commentid TIMEUUID<br />\n- <strong>Primary key:</strong> (userid, commentid)</p>\n</details>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976725_2024933513",
+      "id": "paragraph_1593597071000_497336291",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:97"
+    },
+    {
+      "text": "%md\n\n#### <span style=\"color:teal\"><b>Step 5:</b></span> For each table definition, write the CQL to create the table.\n\n<details>\n<summary><i><span style=\"color:blue\">Want to compare your answers to ours? Click here.</span></i></summary>\n\n```\n\tCREATE TABLE killrvideo.comments_by_video (\n\t\tvideoid UUID,\n\t\tcommentid TIMEUUID,\n\t\tcomment TEXT,\n\t\tuserid UUID,\n\t\tPRIMARY KEY(videoid, commentid))\n\n\tCREATE TABLE killrvideo.comments_by_user (\n\t\tuserid UUID,\n\t\tcommentid TIMEUUID,\n\t\tcomment TEXT,\n\t\tvideoid UUID,\n\t\tPRIMARY KEY(userid, commentid))\n```\n\n</details>\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4><span style=\"color:teal\"><b>Step 5:</b></span> For each table definition, write the CQL to create the table.</h4>\n<details>\n<summary><i><span style=\"color:blue\">Want to compare your answers to ours? Click here.</span></i></summary>\n<blockquote>\n<pre><code></code></pre>\n</blockquote>\n<pre><code>CREATE TABLE killrvideo.comments_by_video (\n\tvideoid UUID,\n\tcommentid TIMEUUID,\n\tcomment TEXT,\n\tuserid UUID,\n\tPRIMARY KEY(videoid, commentid))\n\nCREATE TABLE killrvideo.comments_by_user (\n\tuserid UUID,\n\tcommentid TIMEUUID,\n\tcomment TEXT,\n\tvideoid UUID,\n\tPRIMARY KEY(userid, commentid))\n</code></pre>\n<pre><code>\n&lt;/details&gt;</code></pre>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976725_1372446850",
+      "id": "paragraph_1593597070961_256812353",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:98"
+    },
+    {
+      "text": "",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976725_-1928607083",
+      "id": "paragraph_1593605631203_1243690477",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:99"
+    },
+    {
+      "text": "%md\n\n\n#### <span style=\"color:teal\"><b>Step 6:</b></span> For each query access pattern, write the CQL for the query.\n\n<details>\n<summary><i><span style=\"color:blue\">Want to compare your answers to ours? Click here.</span></i></summary>\n\n```\n\tSELECT * FROM killrvideo.comments_by_video WHERE videoid = SomeVideoID;\n\tSELECT * FROM killrvideo.comments_by_user WHERE userid = SomeUserID;\n```\n</details>\n\n",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "<div class=\"markdown-body\">\n<h4><span style=\"color:teal\"><b>Step 6:</b></span> For each query access pattern, write the CQL for the query.</h4>\n<details>\n<summary><i><span style=\"color:blue\">Want to compare your answers to ours? Click here.</span></i></summary>\n<pre><code>\tSELECT * FROM killrvideo.comments_by_video WHERE videoid = SomeVideoID;\n\tSELECT * FROM killrvideo.comments_by_user WHERE userid = SomeUserID;\n</code></pre>\n</details>\n\n</div>"
+          }
+        ]
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976726_-226237265",
+      "id": "paragraph_1593597070940_599505386",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:100"
+    },
+    {
+      "text": "// drop tables if they exist already.\r\n\r\n DROP TABLE killrvideo.comments_by_video;\r\n DROP TABLE killrvideo.comments_by_user;",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976726_439637891",
+      "id": "paragraph_1593597070900_-2120873669",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:101"
+    },
+    {
+      "text": "",
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "editorHide": false,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976726_962844113",
+      "id": "paragraph_1593597070870_-1749725652",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:102"
+    },
+    {
+      "user": "anonymous",
+      "dateUpdated": "2020-10-11T17:39:36+0000",
+      "config": {
+        "editorSetting": {
+          "language": "text",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12,
+        "editorMode": "ace/mode/text",
+        "fontSize": 9,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "runtimeInfos": {},
+      "progressUpdateIntervalMs": 500,
+      "jobName": "paragraph_1602437976726_-590010812",
+      "id": "paragraph_1593601010062_1233301978",
+      "dateCreated": "2020-10-11T17:39:36+0000",
+      "status": "READY",
+      "$$hashKey": "object:103"
+    }
+  ],
+  "name": "4_Data_Modeling_Exercise",
+  "id": "2FP1QX6PX",
+  "defaultInterpreterGroup": "cassandra",
+  "version": "0.9.0-preview1",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false,
+    "looknfeel": "default",
+    "personalizedMode": "false"
+  },
+  "info": {},
+  "path": "/Optional and Supplemental/4_Data_Modeling_Exercise"
+}
